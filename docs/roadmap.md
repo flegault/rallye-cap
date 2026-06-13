@@ -11,6 +11,9 @@
 
 ## Prochaines fonctionnalités candidates
 
+- Fusionner les vues `Équipe` et `Ordre` en une seule vue de préparation.
+- Ajouter une section `Partager` séparée pour les exports, liens et QR codes.
+- Retirer la vue terrain de l'expérience principale.
 - Explorer Firebase/Firestore pour publier optionnellement un match avec un lien ou un QR code toujours à jour.
 - Gérer les changements de dernière minute: absence, retrait en cours de match, ajout imprévu.
 - Sauvegarder plusieurs matchs.
@@ -21,6 +24,21 @@
 - Ajouter une sortie texte très simple pour impression de dernière minute avec une mini imprimante via Funny Print.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
 - En mode défense, afficher les deux premiers frappeurs de la prochaine manche offensive si applicable.
+
+## Préparation: fusion Équipe + Ordre
+
+Fusionner les vues actuelles `Équipe` et `Ordre` pour réduire les étapes avant génération.
+
+À conserver:
+
+- activation / désactivation temporaire d'un joueur sans suppression;
+- suppression explicite d'un joueur;
+- ordre manuel par glisser-déposer;
+- mélange aléatoire.
+
+Idée potentielle:
+
+- permettre de revenir au dernier ordre manuel après un mélange aléatoire.
 
 ## Publication optionnelle en ligne
 
@@ -34,6 +52,8 @@ Modèle souhaité:
 - mise à jour du match publié quand l'entraîneur modifie l'alignement;
 - données minimales: prénoms, numéros si disponibles, ordre, positions, infos de match;
 - accès public seulement aux personnes qui ont le lien;
+- vue parents en lecture seule avec informations limitées comme minimum;
+- mode assistant modifiable à évaluer plus tard;
 - possibilité de dépublier ou remplacer le lien plus tard.
 
 Notes de coût:
@@ -115,3 +135,5 @@ Il n'est pas nécessaire de distinguer les raisons dans l'app. Un joueur prêté
 ## Décisions prises
 
 - Les archives de matchs passés seront verrouillées en lecture seule. Elles servent à consulter l'historique, pas à modifier rétroactivement un alignement.
+- L'archivage des matchs sera déclenché par une action manuelle, pas automatiquement.
+- La publication en ligne doit au minimum supporter un mode parents en lecture seule avec informations limitées.

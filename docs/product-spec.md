@@ -77,6 +77,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - En attaque, afficher aussi les lanceurs de la prochaine manche défensive de notre équipe quand cette prochaine défense existe, pour préparer les casques.
 - En défense, afficher les positions défensives de la manche courante.
 - En défense, afficher aussi les deux premiers frappeurs de la prochaine manche offensive de notre équipe quand cette prochaine présence au bâton existe.
+- Permettre l'ajout ou le retrait d'une manche en cours de match quand le contexte réel change, par exemple quand il reste assez de temps pour une 5e manche.
 - Ne pas afficher d'aperçu de frappeurs après la dernière présence offensive possible du match.
 - Ne pas afficher d'aperçu des lanceurs après la dernière manche défensive possible du match.
 

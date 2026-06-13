@@ -83,6 +83,12 @@ Objectif progressif:
 - séparer les responsabilités;
 - éviter un grand changement de framework tant que les règles métier ne sont pas testées.
 
+Découpage actuel:
+
+- `index.html`: structure HTML et points de montage;
+- `styles.css`: styles de l'application;
+- `app.js`: état, moteur d'alignement, rendu, exports et interactions.
+
 Découpage recommandé:
 
 - `src/domain/lineup.js`: génération, validations, statistiques;
