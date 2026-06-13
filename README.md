@@ -13,3 +13,7 @@ Ouvrir `index.html` dans un navigateur moderne. Les données restent sauvegardé
 - `docs/site-structure.md`: structure de navigation et pistes d'optimisation UX.
 - `docs/technical-notes.md`: état, architecture et notes d'implémentation.
 - `docs/roadmap.md`: améliorations, dettes et décisions à prendre.
+
+## Tests
+
+Ouvrir `tests/rules.html` dans un navigateur pour exécuter les tests des règles obligatoires.

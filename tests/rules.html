@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tests règles Rallye-Cap</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;margin:24px;color:#162033}
+main{max-width:860px;margin:auto}
+.result{border:1px solid #dbe5ef;border-radius:12px;padding:12px;margin:10px 0}
+.ok{background:#e6f7ed}.bad{background:#ffe7ea}
+pre{white-space:pre-wrap;background:#f8fafc;padding:12px;border-radius:8px}
+</style>
+</head>
+<body>
+<main>
+<h1>Tests règles Rallye-Cap</h1>
+<div id="results"></div>
+</main>
+<script src="../rules.js"></script>
+<script>
+const players=['p1','p2','p3','p4','p5','p6','p7','p8'];
+const validSchedule=[
+  {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
+  {pos:{p2:'1B',p3:'2B',p4:'3B',p5:'AC',p7:'L1',p8:'L2'}},
+  {pos:{p3:'1B',p1:'2B',p5:'3B',p6:'AC',p2:'L1',p4:'L2'}},
+  {pos:{p4:'1B',p1:'3B',p6:'2B',p7:'AC',p3:'L1',p5:'L2'}}
+];
+
+const tests=[
+  {
+    name:'horaire valide respecte les règles obligatoires',
+    run:()=>RallyeCapRules.validateSchedule(validSchedule,players).ok
+  },
+  {
+    name:'détecte 1B plus d’une fois',
+    run:()=>RallyeCapRules.validateSchedule([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
+      {pos:{p1:'1B',p3:'2B',p4:'3B',p5:'AC',p7:'L1',p8:'L2'}}
+    ],players).violations.some(v=>v.rule==='first-base-once')
+  },
+  {
+    name:'détecte lanceur deux manches consécutives',
+    run:()=>RallyeCapRules.validateSchedule([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
+      {pos:{p2:'1B',p3:'2B',p4:'3B',p5:'AC',p6:'L1',p7:'L2'}}
+    ],players).violations.some(v=>v.rule==='pitch-consecutive')
+  },
+  {
+    name:'détecte banc deux manches consécutives',
+    run:()=>RallyeCapRules.validateSchedule([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
+      {pos:{p1:'2B',p2:'1B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}}
+    ],players).violations.some(v=>v.rule==='bench-consecutive')
+  },
+  {
+    name:'détecte une manche avec moins de 6 défenseurs',
+    run:()=>RallyeCapRules.validateSchedule([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1'}}
+    ],players).violations.some(v=>v.rule==='defense-count')
+  }
+];
+
+const results=document.querySelector('#results');
+let failures=0;
+tests.forEach(test=>{
+  let ok=false,error=null;
+  try{ok=Boolean(test.run())}catch(err){error=err;ok=false}
+  if(!ok)failures++;
+  const div=document.createElement('div');
+  div.className='result '+(ok?'ok':'bad');
+  div.innerHTML='<strong>'+(ok?'OK':'ÉCHEC')+'</strong> '+test.name+(error?'<pre>'+String(error.stack||error)+'</pre>':'');
+  results.appendChild(div);
+});
+const summary=document.createElement('p');
+summary.textContent=failures?failures+' test(s) échoué(s).':'Tous les tests passent.';
+results.prepend(summary);
+</script>
+</body>
+</html>

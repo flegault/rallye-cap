@@ -7,7 +7,6 @@ Ce document décrit la structure actuelle de l'application et sert de base pour 
 L'application est une SPA avec quatre vues principales accessibles par hash URL:
 
 - `#equipe`
-- `#ordre`
 - `#alignement`
 - `#partager`
 - `#match`
@@ -22,7 +21,7 @@ La navigation est disponible dans:
 
 ```text
 Alignement Rallye-Cap
-+-- Équipe (#equipe)
++-- Préparation (#equipe)
 |   +-- Infos du match
 |   |   +-- Nom de l'équipe
 |   |   +-- Adversaire
@@ -33,7 +32,6 @@ Alignement Rallye-Cap
 |   |   +-- Activer / désactiver un joueur
 |   |   +-- Supprimer un joueur
 |   +-- Ajouter ou coller des joueurs
-+-- Ordre (#ordre)
 |   +-- Ordre des frappeurs
 |   |   +-- Réordonner par glisser-déposer
 |   |   +-- Mélanger l'ordre
@@ -42,15 +40,15 @@ Alignement Rallye-Cap
 +-- Alignement (#alignement)
 |   +-- Actions
 |   |   +-- Régénérer
-|   |   +-- Copier courriel HTML
-|   |   +-- PDF entraîneur
-|   |   +-- Image parents
-|   |   +-- Exporter mode match
+|   |   +-- Partager
+|   +-- Manches
+|   |   +-- Retirer une manche
+|   |   +-- Nombre de manches courant
+|   |   +-- Ajouter une manche
 |   +-- Validations
 |   +-- Équité
 |   +-- Tableau principal
 |   |   +-- Positions par joueur et par manche
-|   |   +-- Ajout / retrait de manche
 |   |   +-- Sélection de joueur ou de manche
 |   |   +-- Échange manuel de positions par glisser-déposer
 |   +-- Légende des positions
@@ -71,13 +69,13 @@ Alignement Rallye-Cap
     |   +-- Défense: positions défensives
     +-- Navigation précédent / suivant
     +-- Points de progression
-    +-- Exports rapides
+    +-- Lien vers Partager
 ```
 
 ## Flux principal actuel
 
 ```text
-Équipe → Ordre → Alignement → Partager → Mode match
+Préparation -> Alignement -> Partager -> Mode match
 ```
 
 Ce flux est logique pour préparer un match avant d'arriver au terrain.
@@ -85,9 +83,9 @@ Ce flux est logique pour préparer un match avant d'arriver au terrain.
 ## Flux secondaires actuels
 
 - Charger un exemple puis aller directement à l'alignement.
-- Modifier l'équipe après génération.
-- Modifier l'ordre après génération.
+- Modifier la préparation après génération.
 - Régénérer l'alignement.
+- Ajouter ou retirer une manche si le contexte réel change.
 - Corriger des problèmes à partir des suggestions.
 - Exporter depuis la section `Partager`.
 - Utiliser le mode match comme écran de consultation pendant la partie.
@@ -95,7 +93,6 @@ Ce flux est logique pour préparer un match avant d'arriver au terrain.
 ## Frictions connues
 
 - L'écran `Alignement` contient beaucoup de sections et peut paraître dense.
-- Les contrôles d'ajout/retrait de manche sont cachés dans le dernier en-tête de tableau.
 - Le mode match pourrait mieux anticiper la prochaine action utile:
   - en attaque: prochains lanceurs à préparer si applicable;
   - en défense: deux premiers frappeurs de la prochaine présence offensive si applicable.
@@ -141,52 +138,40 @@ Découpage potentiel:
 ## Questions UX à explorer
 
 - Est-ce que les statistiques avancées devraient être repliées par défaut?
-- Est-ce que l'ajout/retrait de manche devrait être un réglage visible avant génération plutôt qu'un contrôle dans le tableau?
+- Est-ce que le réglage des manches devrait aussi être disponible dans le mode match, en plus de l'écran d'alignement?
 
 ## Décisions UX prises
 
-- Fusionner les vues `Équipe` et `Ordre` en une seule vue de préparation.
+- Les vues `Équipe` et `Ordre` sont fusionnées en une seule vue de préparation.
 - Garder la possibilité de désactiver temporairement un joueur sans le supprimer.
 - Garder la possibilité d'ajuster l'ordre des frappeurs manuellement.
 - Garder une action pour rendre l'ordre aléatoire.
+- Regrouper les exports et publications dans une section séparée `Partager`.
+- La section `Partager` doit utiliser des conventions UI faciles à reconnaître: impression/PDF, copier, image, texte, lien, QR code.
+- Retirer la vue terrain de l'expérience principale.
+- L'ajout et le retrait de manche doivent rester possibles en cours de match, parce qu'une 5e manche peut être ajoutée si le temps le permet.
+- L'ajout/retrait de manche est accessible clairement dans l'écran d'alignement.
 
-## Vue de préparation cible
-
-La future vue de préparation devrait contenir:
-
-- informations du match;
-- liste des joueurs;
-- activation / désactivation temporaire des joueurs;
-- ajout de joueurs;
-- suppression d'un joueur seulement comme action explicite;
-- ordre des frappeurs;
-- réorganisation manuelle;
-- action `Mélanger`;
-
-Comportement attendu pour l'ordre:
+## Comportement de préparation
 
 - L'ordre manuel est la référence modifiable par l'entraîneur.
 - Quand l'entraîneur mélange l'ordre, le nouvel ordre devient simplement l'ordre courant.
 - Si l'entraîneur modifie manuellement l'ordre après un mélange, ce nouvel ordre devient l'ordre courant.
 - Désactiver temporairement un joueur le retire du match courant, mais ne supprime pas le joueur de la liste.
 
-## Décisions UX additionnelles
+## Section Partager
 
-- Regrouper les exports et publications dans une section séparée `Partager`.
-- La section `Partager` doit utiliser des conventions UI faciles à reconnaître: impression/PDF, copier, image, texte, lien, QR code.
-- Retirer la vue terrain de l'expérience principale.
-- L'ajout et le retrait de manche doivent rester possibles en cours de match, parce qu'une 5e manche peut être ajoutée si le temps le permet.
-- L'ajout/retrait de manche ne doit pas être caché uniquement dans le tableau; il doit être accessible de façon claire dans le flux de match ou d'alignement.
-
-## Section Partager cible
-
-La future section `Partager` devrait regrouper:
+La section `Partager` regroupe:
 
 - PDF / impression entraîneur;
 - image parents;
-- texte mini imprimante;
 - copie courriel HTML;
-- publication en ligne future;
-- QR code futur.
+- export du mode match autonome.
+
+À venir:
+
+- texte mini imprimante;
+- publication en ligne;
+- QR code.
 
 Le mode publication en ligne devrait au minimum offrir une vue parents en lecture seule avec des informations limitées.

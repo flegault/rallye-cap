@@ -17,9 +17,10 @@ Ce dépôt contient une application SPA statique pour préparer un alignement de
 
 - `index.html` contient la structure HTML et charge les fichiers statiques.
 - `styles.css` contient les styles.
-- `app.js` contient la logique applicative.
+- `app.js` contient la logique applicative principale.
+- `rules.js` contient les validations pures des règles obligatoires.
 - L'état est sauvegardé dans `localStorage` avec la clé `rallye_cap_qc_v4`.
-- Les vues principales sont: équipe, ordre des frappeurs, alignement, mode match.
+- Les vues principales sont: préparation, alignement, partager, mode match.
 - Le moteur d'alignement, les validations, le rendu et les exports sont encore regroupés dans `app.js`.
 
 ## Priorités de maintenance
@@ -32,5 +33,5 @@ Ce dépôt contient une application SPA statique pour préparer un alignement de
 ## Risques connus
 
 - Les sorties PowerShell peuvent afficher du mojibake même quand les fichiers sont bien encodés. Vérifier les fichiers en UTF-8 avant de corriger des accents.
-- Il n'y a pas de tests automatisés.
+- Il y a une base de tests navigateur dans `tests/rules.html`, mais pas encore de suite automatisée complète.
 - Les fonctionnalités presse-papiers, fenêtre d'impression et téléchargement dépendent du navigateur.

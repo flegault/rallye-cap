@@ -2,16 +2,11 @@
 
 ## Maintenant
 
-- Confirmer l'encodage UTF-8 dans les outils utilisés et éviter les faux diagnostics causés par l'affichage PowerShell.
-- Documenter les règles métier actuelles.
-- Spécifier la gestion des absences, retraits en cours de match et ajouts de dernière minute.
 - Vérifier que le moteur respecte les règles obligatoires avant les objectifs d'équité.
-- Ajouter une base de tests pour la logique d'alignement.
-- Extraire la logique métier du script DOM.
+- Extraire la logique métier de `app.js` dans des modules testables.
 
 ## Prochaines fonctionnalités candidates
 
-- Fusionner les vues `Équipe` et `Ordre` en une seule vue de préparation.
 - Explorer Firebase/Firestore pour publier optionnellement un match avec un lien ou un QR code toujours à jour.
 - Gérer les changements de dernière minute: absence, retrait en cours de match, ajout imprévu.
 - Sauvegarder plusieurs matchs.
@@ -23,9 +18,9 @@
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
 - En mode défense, afficher les deux premiers frappeurs de la prochaine manche offensive si applicable.
 
-## Préparation: fusion Équipe + Ordre
+## Préparation
 
-Fusionner les vues actuelles `Équipe` et `Ordre` pour réduire les étapes avant génération.
+La vue `Préparation` regroupe maintenant l'ancienne vue `Équipe` et l'ancienne vue `Ordre`.
 
 À conserver:
 
@@ -117,11 +112,10 @@ Il n'est pas nécessaire de distinguer les raisons dans l'app. Un joueur prêté
 
 ## Bugs et dettes connues
 
-- Textes mojibake dans l'interface.
 - Aucun test automatisé.
-- `index.html` est trop gros pour une maintenance confortable.
 - Les exports peuvent diverger de l'affichage principal parce qu'ils reconstruisent leur propre HTML.
 - Les comportements de presse-papiers et de fenêtres surgissantes varient selon le navigateur.
+- `app.js` contient encore trop de responsabilités: état, moteur d'alignement, rendu, exports et interactions.
 
 ## Décisions à prendre
 
@@ -137,3 +131,16 @@ Il n'est pas nécessaire de distinguer les raisons dans l'app. Un joueur prêté
 - La publication en ligne doit au minimum supporter un mode parents en lecture seule avec informations limitées.
 - Les exports et publications sont regroupés dans une section `Partager`.
 - La vue terrain est retirée de l'expérience principale.
+
+## Livré
+
+- Documentation produit, technique, roadmap et notes pour agents.
+- Documentation de la structure du site et des pistes d'optimisation UX.
+- Découpage statique: `index.html`, `styles.css`, `app.js`.
+- Section `Partager` séparée pour les exports.
+- Retrait de la vue terrain de l'expérience principale.
+- Fusion des vues `Équipe` et `Ordre` en une seule vue `Préparation`.
+- Contrôles visibles pour ajouter ou retirer une manche dans l'écran d'alignement.
+- Module `rules.js` pour valider les règles obligatoires.
+- Base de tests navigateur dans `tests/rules.html`.
+- Encodage UTF-8 documenté; les faux diagnostics causés par l'affichage PowerShell sont identifiés.

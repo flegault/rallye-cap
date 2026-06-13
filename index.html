@@ -12,8 +12,7 @@
     <div class="brand"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub">Ordre au bâton • Défensive • Mode match</div></div></div>
     <button class="hamb" id="hamb">☰</button>
     <nav class="nav" id="nav">
-      <a href="#equipe" data-nav="equipe">Équipe</a>
-      <a href="#ordre" data-nav="ordre">Ordre</a>
+      <a href="#equipe" data-nav="equipe">Préparation</a>
       <a href="#alignement" data-nav="alignement">Alignement</a>
       <a href="#partager" data-nav="partager">Partager</a>
       <a href="#match" data-nav="match">Mode match</a>
@@ -38,15 +37,14 @@
     </div>
   </section>
   <div class="steps noPrint">
-    <a class="step" href="#equipe" data-step="equipe"><span class="n">1</span><b>Équipe</b></a>
-    <a class="step" href="#ordre" data-step="ordre"><span class="n">2</span><b>Ordre</b></a>
-    <a class="step" href="#alignement" data-step="alignement"><span class="n">3</span><b>Alignement</b></a>
-    <a class="step" href="#partager" data-step="partager"><span class="n">4</span><b>Partager</b></a>
-    <a class="step" href="#match" data-step="match"><span class="n">5</span><b>Mode match</b></a>
+    <a class="step" href="#equipe" data-step="equipe"><span class="n">1</span><b>Préparation</b></a>
+    <a class="step" href="#alignement" data-step="alignement"><span class="n">2</span><b>Alignement</b></a>
+    <a class="step" href="#partager" data-step="partager"><span class="n">3</span><b>Partager</b></a>
+    <a class="step" href="#match" data-step="match"><span class="n">4</span><b>Mode match</b></a>
   </div>
   <section class="view" id="view-equipe">
     <div class="card">
-      <div class="spaced"><div><h2>1. Création de l’équipe</h2><p class="hint">Les données restent seulement sur cet appareil.</p></div><div class="segment" aria-label="Locale ou visiteur"><button data-side="visiteur">Visiteur</button><button data-side="locale">Locale</button></div></div>
+      <div class="spaced"><div><h2>1. Préparation du match</h2><p class="hint">Les données restent seulement sur cet appareil.</p></div><div class="segment" aria-label="Locale ou visiteur"><button data-side="visiteur">Visiteur</button><button data-side="locale">Locale</button></div></div>
       <div class="grid">
         <label><span>Nom de l’équipe</span><input id="team" placeholder="Expos de Montréal" /></label>
         <label><span>Adversaire</span><input id="opp" placeholder="Padres de San Diego" /></label>
@@ -62,19 +60,20 @@
       <h3>Ajouter ou coller des joueurs</h3>
       <div class="grid2"><label><span>Un nom par ligne, ou séparé par virgule</span><textarea id="names" placeholder="Émile, Julien, Noah"></textarea></label><button class="btn brandBtn" id="addNames">Ajouter</button></div>
     </div>
-  </section>
-  <section class="view" id="view-ordre">
     <div class="card">
-      <div class="spaced"><div><h2>2. Ordre des frappeurs</h2><p class="hint">Glisse les noms pour changer l’ordre. Le terrain reste associé aux joueurs.</p></div><button class="btn iconOnly secondary" id="shuffleBtn" title="Mélanger l’ordre" aria-label="Mélanger l’ordre">↝</button></div>
+      <div class="spaced"><div><h3>Ordre des frappeurs</h3><p class="hint">Glisse les noms pour changer l’ordre. Le terrain reste associé aux joueurs actifs.</p></div><button class="btn iconOnly secondary" id="shuffleBtn" title="Mélanger l’ordre" aria-label="Mélanger l’ordre">↝</button></div>
       <div class="switchLine"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div><b>Frappe fixe</b><div class="tiny">6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
       <div class="alerts" id="orderAlerts"></div>
       <div class="sortable" id="order"></div>
-      <div class="row" style="margin-top:16px"><a class="btn secondary" href="#equipe">Retour</a><a class="btn brandBtn" href="#alignement" id="toAlign">Continuer</a></div>
+      <div class="row" style="margin-top:16px"><a class="btn brandBtn" href="#alignement" id="toAlign">Continuer</a></div>
     </div>
   </section>
   <section class="view" id="view-alignement">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Les cellules rouges indiquent uniquement les violations de règles. Glisse une cellule verticalement pour échanger seulement les positions.</p></div><div class="row"><button class="btn secondary" id="regenBtn">Régénérer</button><a class="btn brandBtn" href="#partager">Partager</a></div></div>
+      <div class="spaced"><div><h2>2. Alignement</h2><p class="hint">Les cellules rouges indiquent uniquement les violations de règles. Glisse une cellule verticalement pour échanger seulement les positions.</p></div><div class="row"><button class="btn secondary" id="regenBtn">Régénérer</button><a class="btn brandBtn" href="#partager">Partager</a></div></div>
+    </div>
+    <div class="card noPrint">
+      <div class="spaced"><div><h3>Manches</h3><p class="hint">Ajuste le nombre de manches si le contexte réel change pendant le match.</p></div><div class="row"><button class="btn secondary" id="removeInningBtn">Retirer une manche</button><span class="tag" id="inningCountTag">4 manches</span><button class="btn secondary" id="addInningBtn">Ajouter une manche</button></div></div>
     </div>
     <div class="card"><h3>Validations</h3><div class="alerts" id="validations"></div></div>
     <div class="card scoresCard"><h3>Équité</h3><div class="scores" id="scores"></div></div>
@@ -88,7 +87,7 @@
   </section>
   <section class="view" id="view-partager">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>4. Partager</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode match.</p></div><a class="btn brandBtn" href="#match">Ouvrir le mode match</a></div>
+      <div class="spaced"><div><h2>3. Partager</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode match.</p></div><a class="btn brandBtn" href="#match">Ouvrir le mode match</a></div>
     </div>
     <div class="grid3">
       <div class="card">
@@ -112,12 +111,13 @@
     </div>
   </section>
   <section class="view" id="view-match">
-    <div class="card noPrint"><div class="spaced"><div><h2>5. Mode match</h2><p class="hint">Avance/recul par boutons, clavier ou swipe. L’équipe locale frappe en fin de manche.</p></div><div class="row"><a class="btn secondary" href="#partager">Partager</a></div></div></div>
+    <div class="card noPrint"><div class="spaced"><div><h2>4. Mode match</h2><p class="hint">Avance/recul par boutons, clavier ou swipe. L’équipe locale frappe en fin de manche.</p></div><div class="row"><a class="btn secondary" href="#partager">Partager</a></div></div></div>
     <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
-  <div class="foot noPrint">Fait pour Rallye-Cap • Sauvegarde locale seulement</div>
+<div class="foot noPrint">Fait pour Rallye-Cap • Sauvegarde locale seulement</div>
 </main>
 <div class="modalOverlay" id="modalOverlay"><div class="modal"><h3 id="modalTitle"></h3><p id="modalText"></p><div class="row" id="modalActions"></div></div></div>
+<script src="rules.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
