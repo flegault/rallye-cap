@@ -67,7 +67,6 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Ajustement manuel des positions par glisser-déposer dans une manche.
 - Validations et suggestions.
 - Statistiques par joueur.
-- Vue terrain.
 - Mode match navigable par boutons, clavier ou geste tactile.
 - Exports: courriel HTML, impression/PDF, image parents, mode match HTML autonome.
 

@@ -15,6 +15,7 @@
       <a href="#equipe" data-nav="equipe">Équipe</a>
       <a href="#ordre" data-nav="ordre">Ordre</a>
       <a href="#alignement" data-nav="alignement">Alignement</a>
+      <a href="#partager" data-nav="partager">Partager</a>
       <a href="#match" data-nav="match">Mode match</a>
       <button id="resetBtn">Réinitialiser</button>
     </nav>
@@ -40,7 +41,8 @@
     <a class="step" href="#equipe" data-step="equipe"><span class="n">1</span><b>Équipe</b></a>
     <a class="step" href="#ordre" data-step="ordre"><span class="n">2</span><b>Ordre</b></a>
     <a class="step" href="#alignement" data-step="alignement"><span class="n">3</span><b>Alignement</b></a>
-    <a class="step" href="#match" data-step="match"><span class="n">4</span><b>Mode match</b></a>
+    <a class="step" href="#partager" data-step="partager"><span class="n">4</span><b>Partager</b></a>
+    <a class="step" href="#match" data-step="match"><span class="n">5</span><b>Mode match</b></a>
   </div>
   <section class="view" id="view-equipe">
     <div class="card">
@@ -72,7 +74,7 @@
   </section>
   <section class="view" id="view-alignement">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Les cellules rouges indiquent uniquement les violations de règles. Glisse une cellule verticalement pour échanger seulement les positions.</p></div><div class="row"><button class="btn secondary" id="regenBtn">Régénérer</button><button class="btn secondary" id="copyHtmlBtn">Copier courriel HTML</button><button class="btn secondary" id="printCoachBtn">PDF entraîneur</button><button class="btn secondary" id="parentImageBtn">Image parents</button><button class="btn brandBtn" id="exportMatchBtn">Exporter mode match</button></div></div>
+      <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Les cellules rouges indiquent uniquement les violations de règles. Glisse une cellule verticalement pour échanger seulement les positions.</p></div><div class="row"><button class="btn secondary" id="regenBtn">Régénérer</button><a class="btn brandBtn" href="#partager">Partager</a></div></div>
     </div>
     <div class="card"><h3>Validations</h3><div class="alerts" id="validations"></div></div>
     <div class="card scoresCard"><h3>Équité</h3><div class="scores" id="scores"></div></div>
@@ -83,10 +85,34 @@
     </div>
     <div class="card suggestionsCard"><h3>Problèmes et suggestions</h3><div class="suggestions" id="suggestions"></div></div>
     <div class="card statsCard"><h3>Statistiques</h3><div class="tableWrap" id="stats"></div></div>
-    <div class="card"><h3>Vue terrain</h3><div class="field" id="field"></div></div>
+  </section>
+  <section class="view" id="view-partager">
+    <div class="card noPrint">
+      <div class="spaced"><div><h2>4. Partager</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode match.</p></div><a class="btn brandBtn" href="#match">Ouvrir le mode match</a></div>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <h3>Entraîneurs</h3>
+        <p class="hint">Version imprimable de l'alignement complet.</p>
+        <button class="btn secondary" id="printCoachBtn">PDF entraîneur</button>
+      </div>
+      <div class="card">
+        <h3>Parents</h3>
+        <p class="hint">Image simple à envoyer dans un groupe ou une conversation.</p>
+        <button class="btn secondary" id="parentImageBtn">Image parents</button>
+      </div>
+      <div class="card">
+        <h3>Courriel</h3>
+        <p class="hint">Copie HTML prête à coller dans un courriel.</p>
+        <button class="btn secondary" id="copyHtmlBtn">Copier courriel HTML</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="spaced"><div><h3>Mode match autonome</h3><p class="hint">Fichier HTML consultable sans l'éditeur principal.</p></div><button class="btn brandBtn" id="exportMatchBtn">Exporter mode match</button></div>
+    </div>
   </section>
   <section class="view" id="view-match">
-    <div class="card noPrint"><div class="spaced"><div><h2>4. Mode match</h2><p class="hint">Avance/recul par boutons, clavier ou swipe. L’équipe locale frappe en fin de manche.</p></div><div class="row"><button class="btn secondary" id="exportMatchBtn2">Exporter mode match</button><button class="btn secondary" id="parentImageBtn2">Image parents</button></div></div></div>
+    <div class="card noPrint"><div class="spaced"><div><h2>5. Mode match</h2><p class="hint">Avance/recul par boutons, clavier ou swipe. L’équipe locale frappe en fin de manche.</p></div><div class="row"><a class="btn secondary" href="#partager">Partager</a></div></div></div>
     <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
   <div class="foot noPrint">Fait pour Rallye-Cap • Sauvegarde locale seulement</div>

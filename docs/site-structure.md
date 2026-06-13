@@ -9,6 +9,7 @@ L'application est une SPA avec quatre vues principales accessibles par hash URL:
 - `#equipe`
 - `#ordre`
 - `#alignement`
+- `#partager`
 - `#match`
 
 La navigation est disponible dans:
@@ -55,7 +56,15 @@ Alignement Rallye-Cap
 |   +-- Légende des positions
 |   +-- Problèmes et suggestions
 |   +-- Statistiques
-|   +-- Vue terrain
++-- Partager (#partager)
+|   +-- Entraîneurs
+|   |   +-- PDF entraîneur
+|   +-- Parents
+|   |   +-- Image parents
+|   +-- Courriel
+|   |   +-- Copier courriel HTML
+|   +-- Mode match autonome
+|       +-- Exporter mode match
 +-- Mode match (#match)
     +-- Carte de manche courante
     |   +-- Attaque: frappeurs de la manche
@@ -68,7 +77,7 @@ Alignement Rallye-Cap
 ## Flux principal actuel
 
 ```text
-Équipe → Ordre → Alignement → Mode match
+Équipe → Ordre → Alignement → Partager → Mode match
 ```
 
 Ce flux est logique pour préparer un match avant d'arriver au terrain.
@@ -80,15 +89,13 @@ Ce flux est logique pour préparer un match avant d'arriver au terrain.
 - Modifier l'ordre après génération.
 - Régénérer l'alignement.
 - Corriger des problèmes à partir des suggestions.
-- Exporter pour parents ou entraîneurs.
+- Exporter depuis la section `Partager`.
 - Utiliser le mode match comme écran de consultation pendant la partie.
 
 ## Frictions connues
 
 - L'écran `Alignement` contient beaucoup de sections et peut paraître dense.
-- Certaines actions d'export sont mélangées avec les actions d'édition.
 - Les contrôles d'ajout/retrait de manche sont cachés dans le dernier en-tête de tableau.
-- La vue terrain ne fonctionne pas assez bien pour être conservée dans l'expérience principale.
 - Le mode match pourrait mieux anticiper la prochaine action utile:
   - en attaque: prochains lanceurs à préparer si applicable;
   - en défense: deux premiers frappeurs de la prochaine présence offensive si applicable.
@@ -133,7 +140,6 @@ Découpage potentiel:
 
 ## Questions UX à explorer
 
-- Est-ce que les exports devraient être regroupés dans une section `Partager`?
 - Est-ce que les statistiques avancées devraient être repliées par défaut?
 - Est-ce que l'ajout/retrait de manche devrait être un réglage visible avant génération plutôt qu'un contrôle dans le tableau?
 

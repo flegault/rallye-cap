@@ -12,8 +12,6 @@
 ## Prochaines fonctionnalités candidates
 
 - Fusionner les vues `Équipe` et `Ordre` en une seule vue de préparation.
-- Ajouter une section `Partager` séparée pour les exports, liens et QR codes.
-- Retirer la vue terrain de l'expérience principale.
 - Explorer Firebase/Firestore pour publier optionnellement un match avec un lien ou un QR code toujours à jour.
 - Gérer les changements de dernière minute: absence, retrait en cours de match, ajout imprévu.
 - Sauvegarder plusieurs matchs.
@@ -137,3 +135,5 @@ Il n'est pas nécessaire de distinguer les raisons dans l'app. Un joueur prêté
 - Les archives de matchs passés seront verrouillées en lecture seule. Elles servent à consulter l'historique, pas à modifier rétroactivement un alignement.
 - L'archivage des matchs sera déclenché par une action manuelle, pas automatiquement.
 - La publication en ligne doit au minimum supporter un mode parents en lecture seule avec informations limitées.
+- Les exports et publications sont regroupés dans une section `Partager`.
+- La vue terrain est retirée de l'expérience principale.
