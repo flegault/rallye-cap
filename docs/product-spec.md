@@ -1,0 +1,85 @@
+# Spécification produit
+
+## Objectif
+
+L'application aide un entraîneur Rallye-Cap à préparer rapidement un alignement clair pour un match: ordre des frappeurs, défensive par manche, équité de temps de jeu et supports partageables.
+
+## Public cible
+
+- Entraîneurs qui préparent l'alignement avant le match.
+- Assistants qui consultent les positions pendant le match.
+- Parents qui reçoivent une version simple à lire.
+
+## Parcours principal
+
+1. Entrer les informations du match: équipe, adversaire, date, endroit, local ou visiteur.
+2. Ajouter les joueurs et activer ceux qui participent au match.
+3. Ajuster l'ordre des frappeurs.
+4. Générer ou modifier l'alignement défensif.
+5. Vérifier les alertes et l'indice d'équité.
+6. Exporter un mode match, une version imprimable ou une image parents.
+
+## Règles métier actuelles
+
+- Les règles Rallye-Cap sont considérées uniformes par défaut. Il ne faut pas ajouter de profils par association ou catégorie sans nouvelle décision produit.
+- Le nombre de joueurs actifs doit être entre 6 et 12.
+- Le nombre de manches doit être entre 4 et 9.
+- Chaque manche défensive doit avoir 6 défenseurs.
+- Les positions défensives sont `1B`, `2B`, `3B`, `AC`, `L1`, `L2`; les autres joueurs sont au banc.
+- En mode frappe fixe, il y a 6 frappeurs par manche et l'ordre continue à la manche suivante.
+
+## Règles obligatoires de défensive
+
+Ces règles sont obligatoires. L'application doit les traiter comme des erreurs à corriger, pas comme de simples préférences d'équité.
+
+- Premier but: un joueur peut jouer `1B` au maximum une fois dans le match.
+- Lanceurs: un joueur ne peut pas être lanceur deux manches consécutives. `L1` et `L2` comptent tous les deux comme une présence de lanceur.
+- Banc: un joueur ne peut pas être au banc deux manches consécutives.
+- Défense complète: chaque manche doit avoir exactement 6 défenseurs et chaque position défensive doit être assignée une seule fois.
+
+Hypothèse produit:
+
+- Avec 4 manches et entre 6 et 12 joueurs actifs, l'application devrait normalement pouvoir produire un alignement qui respecte ces contraintes.
+- Si une contrainte devient impossible à cause d'un changement en cours de match ou d'un nombre différent de manches, l'application doit l'expliquer clairement.
+
+## Objectifs d'équité
+
+Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas masquer les règles obligatoires.
+
+- Répartir le temps de jeu total le plus équitablement possible.
+- Répartir les présences défensives le plus équitablement possible.
+- Répartir les présences au bâton le plus équitablement possible en mode frappe fixe.
+- Varier les positions autant que possible après respect des règles obligatoires.
+
+## Exigences de langue et d'encodage
+
+- La langue de référence est le français du Québec.
+- Le HTML doit rester `lang="fr-CA"` avec `<meta charset="utf-8">`.
+- Les fichiers doivent être enregistrés en UTF-8.
+- Les textes visibles doivent utiliser des caractères français corrects, pas des chaînes mojibake comme `Ã©`, `Ã¨`, `â€™`, `âœ”`.
+
+## Fonctionnalités existantes
+
+- Ajout de joueurs par liste, virgules ou lignes.
+- Activation et suppression de joueurs.
+- Réorganisation de l'ordre par glisser-déposer.
+- Génération automatique de la défensive.
+- Ajustement manuel des positions par glisser-déposer dans une manche.
+- Validations et suggestions.
+- Statistiques par joueur.
+- Vue terrain.
+- Mode match navigable par boutons, clavier ou geste tactile.
+- Exports: courriel HTML, impression/PDF, image parents, mode match HTML autonome.
+
+## Mode match
+
+- En attaque, afficher seulement les frappeurs de la manche courante.
+- En attaque, afficher aussi les lanceurs de la prochaine manche défensive de notre équipe quand cette prochaine défense existe, pour préparer les casques.
+- En défense, afficher les positions défensives de la manche courante.
+- En défense, afficher aussi les deux premiers frappeurs de la prochaine manche offensive de notre équipe quand cette prochaine présence au bâton existe.
+- Ne pas afficher d'aperçu de frappeurs après la dernière présence offensive possible du match.
+- Ne pas afficher d'aperçu des lanceurs après la dernière manche défensive possible du match.
+
+## Questions ouvertes
+
+- La gestion multi-match doit-elle être limitée aux matchs à venir ou inclure une archive complète des anciens matchs?
