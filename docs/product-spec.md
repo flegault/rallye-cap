@@ -107,6 +107,11 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - `Inactif`: le joueur est enregistré sans participer au match courant.
 - Quand un joueur actif est retiré pendant un match débuté, les manches barrées ne sont pas modifiées. Les assignations non barrées du joueur sont retirées et l'entraîneur doit corriger manuellement.
 - Si seulement 6 joueurs sont actifs, retirer un joueur exige un remplacement.
+- Quand un remplacement se fait pendant un match débuté, le tableau doit préserver l'historique du joueur remplacé dans les demi-manches barrées, ajouter une ligne pour le nouveau joueur, retirer l'ancien joueur de l'ordre futur et retirer l'ancien joueur des assignations défensives futures non barrées.
+- Quand un remplacement se fait avant le début du match, le nouveau joueur doit prendre la place du joueur retiré dans l'ordre et dans le tableau.
+- Si un retrait ou une désactivation crée une manche future avec moins de 6 positions assignées, l'application doit offrir un chemin clair pour corriger l'alignement. Les corrections possibles incluent une suggestion automatique pour insérer un joueur du banc, une action manuelle rapide depuis une cellule `BANC`, ou une ligne/zone indiquant les positions non assignées.
+- Le match ne doit pas pouvoir être débuté si l'alignement n'est pas minimalement prêt: nombre de joueurs actif valide, positions défensives complètes pour les manches prévues, et absence de blocage majeur connu.
+- Charger un exemple pendant un match débuté doit être interdit ou demander une confirmation explicite indiquant que les données du match courant seront remplacées.
 
 ## Questions ouvertes
 

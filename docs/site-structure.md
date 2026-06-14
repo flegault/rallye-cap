@@ -144,6 +144,8 @@ Découpage potentiel:
 
 - Est-ce que les statistiques avancées devraient être repliées par défaut?
 - Est-ce que le réglage des manches devrait aussi être disponible dans le mode match, en plus de l'écran d'alignement?
+- Est-ce que les sous-en-têtes du tableau doivent garder les textes `Début` et `Fin`, ou seulement les icônes et cadenas puisque la colonne gauche est toujours le début et la colonne droite est toujours la fin?
+- Quel patron d'interaction est le plus rapide sur téléphone pour corriger une position défensive manquante après un retrait de joueur: clic sur `BANC`, zone `Positions non assignées`, ou menu d'action par manche?
 
 ## Décisions UX prises
 
@@ -156,6 +158,7 @@ Découpage potentiel:
 - Le tableau de statut en haut de page affiche une ligne pleine largeur avec le nom de notre équipe et l'état du match, puis quatre cartes: joueurs actifs, manches, côté `Local` ou `Visiteur`, et équité.
 - `Charger un exemple` est dans l'en-tête de `Préparation` et ne change pas de vue.
 - La préparation affiche les informations du match sur une ligne: notre équipe, son côté `Local` ou `Visiteur`, un bouton d'échange, le côté de l'adversaire, l'adversaire, la date et l'endroit.
+- Le bouton d'échange `Local` / `Visiteur` doit rester stable visuellement quand les côtés changent.
 - L'action `Optimiser` remplace `Régénérer` et doit être près du tableau principal.
 - Le bouton `Optimiser` devient grisé après optimisation et se réactive dès qu'une modification manuelle est faite.
 - L'ajout et le retrait de manches sont des icônes `-` et `+` dans l'en-tête de la dernière manche.
@@ -181,6 +184,8 @@ Découpage potentiel:
 - Les demi-manches barrées doivent rester continues depuis le début du match. L'interface confirme les changements qui barrent ou débarrent plusieurs demi-manches.
 - Une manche peut être ouverte, partiellement barrée ou complètement barrée.
 - Les changements de joueurs pendant un match touchent seulement les manches non barrées et demandent confirmation quand ils ont un impact important.
+- Cliquer sur l'en-tête `Ordre` devrait permettre de désélectionner la sélection courante du tableau principal.
+- Le bouton `Débuter le match` devrait rester indisponible tant que l'alignement n'est pas minimalement prêt.
 - Quand `Frappe fixe` est désactivé, le tableau et les exports ne doivent pas afficher de rang de frappe `(#)` ni de frappeurs par manche.
 - Les cartes d'équité utilisent les mêmes libellés dans les deux modes: `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` est ajouté seulement quand `Frappe fixe` est activé.
 - `Temps de jeu` inclut les présences au bâton seulement quand `Frappe fixe` est activé; sinon il reflète la défensive seulement.

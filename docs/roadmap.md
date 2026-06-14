@@ -150,6 +150,31 @@ Première tranche expérimentale:
 - retrait d'un joueur actif avec avertissement, sans toucher aux manches barrées;
 - obligation de remplacer un joueur si seulement 6 joueurs sont actifs.
 
+## Stabilisation changements en cours de match
+
+Bogues majeurs à prioriser:
+
+- Retirer ou désactiver un joueur pendant un match peut laisser des manches futures avec moins de 6 positions assignées et rendre l'alignement difficile à corriger.
+  - Première correction livrée: générer une suggestion pour insérer un joueur du banc dans une position manquante et permettre de cliquer une cellule `BANC` pour remplir automatiquement une position manquante.
+  - À évaluer plus tard: ajouter une ligne ou zone `Positions non assignées` en bas du tableau.
+- Remplacer un joueur pendant un match doit préserver l'historique du joueur remplacé dans les demi-manches barrées, ajouter une ligne pour le nouveau joueur, retirer l'ancien joueur de l'ordre futur et retirer l'ancien joueur des assignations défensives futures non barrées.
+  - Première correction livrée: les joueurs inactifs qui ont de l'historique verrouillé restent visibles dans le tableau, et les snapshots de frappe verrouillés peuvent afficher un ancien joueur.
+- Remplacer un joueur avant le début du match doit mettre le nouveau joueur exactement à la place de l'ancien dans l'ordre et dans le tableau.
+
+Irritants UX à corriger:
+
+- Le bouton d'échange `Local` / `Visiteur` ne devrait pas bouger quand on inverse les côtés.
+- L'en-tête de manche devrait rester sur une ligne. À évaluer: retirer les textes `Début` et `Fin` si la colonne gauche est toujours le début et la colonne droite est toujours la fin.
+- Il devrait être possible de désélectionner la sélection du tableau principal, par exemple en cliquant sur l'en-tête `Ordre`.
+- `Charger un exemple` ne devrait pas être disponible pendant un match débuté, ou devrait demander une confirmation claire que le match courant sera remplacé.
+- `Débuter le match` devrait être bloqué tant que l'alignement n'est pas minimalement prêt: joueurs actifs valides, positions assignées et aucune erreur majeure.
+
+Questions à trancher avant implémentation:
+
+- Quelle correction manuelle est la plus rapide sur téléphone pour une position manquante: clic sur `BANC`, ligne `Positions non assignées`, ou menu d'action sur la manche?
+- Est-ce que les joueurs remplacés pendant un match doivent rester visibles jusqu'à la fin du match même s'ils ne sont plus actifs pour les manches futures?
+- Est-ce que `Charger un exemple` doit être simplement désactivé pendant un match débuté ou disponible avec confirmation destructive?
+
 ## Bugs et dettes connues
 
 - Aucun test automatisé.
