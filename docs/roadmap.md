@@ -2,9 +2,38 @@
 
 ## Maintenant
 
-- Stabiliser la première version expérimentale des changements de joueurs pendant un match: démarrage explicite, cadenas de manches, demi-manches barrées, ajout/remplacement/retrait de joueurs sur téléphone.
+- Stabiliser les changements de joueurs en cours de match: retrait, remplacement, ajout imprévu et historique des manches déjà jouées.
 - Vérifier que le moteur respecte les règles obligatoires avant les objectifs d'équité.
 - Extraire la logique métier de `app.js` dans des modules testables.
+- Ajouter des tests pour la génération, les validations et les cas limites du mode `Jouer`.
+
+## Workflow cible: découpage de livraison
+
+1. Navigation et libellés:
+   - créer les vues `Match`, `Joueurs`, `Alignement partant`, `Jouer`, `Partage`, `Spectateur`;
+   - déplacer `Charger un exemple` dans le menu avec confirmation destructive;
+   - retirer `Partager` et `Spectateur` des étapes numérotées.
+   - Livré en première tranche: navigation, étapes numérotées, vues séparées, alias de l'ancienne route `#equipe` vers `#match`.
+2. Verrouillage par phase:
+   - empêcher la modification des informations de match, joueurs et alignement partant après le début;
+   - masquer les actions non disponibles plutôt que les afficher désactivées quand elles n'ont plus de sens.
+   - Livré en première tranche: champs de match, joueurs, ajout de joueurs, frappe fixe et optimisation sont verrouillés ou masqués après le début.
+3. Vue `Jouer`:
+   - remplacer les cadenas par `Passer à la prochaine demi-manche`;
+   - afficher clairement la demi-manche courante;
+   - griser les demi-manches passées;
+   - synchroniser le défilement horizontal du tableau avec la demi-manche courante sur mobile.
+   - Livré en première tranche: entrer dans `Jouer` démarre le match avec confirmation, affiche la demi-manche courante et permet d'avancer ou de revenir avec confirmation.
+4. Changements en cours de match:
+   - enlever un joueur seulement s'il reste plus de 6 joueurs actifs;
+   - remplacer un joueur par un joueur inactif ou un nouveau nom;
+   - ajouter un joueur si moins de 12 joueurs sont actifs;
+   - garder l'historique et appliquer les changements seulement aux demi-manches futures.
+   - Partiellement livré: ajout, retrait et remplacement existent en première version, avec historique conservé pour les demi-manches passées. Reste à stabiliser les cas qui laissent des positions futures incomplètes.
+5. Partage:
+   - rendre les exports disponibles seulement si le match respecte les règles de base;
+   - garder l'accès au mode `Spectateur` même si les exports sont bloqués.
+   - Partiellement livré: `Partage` et `Spectateur` sont sortis des étapes numérotées. Reste à contrôler plus finement les exports selon la validité du match.
 
 ## Prochaines fonctionnalités candidates
 
@@ -13,21 +42,24 @@
 - Sauvegarder plusieurs matchs.
 - Ajouter une archive des matchs passés.
 - Importer et exporter une liste de joueurs.
+- Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
 - Dupliquer un match existant.
 - Ajouter un écran de résumé avant impression.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
 - En mode défense, afficher les deux premiers frappeurs de la prochaine manche offensive si applicable.
 - Harmoniser le look du mode match avec le reste de l'application.
 
-## Préparation
+## Match et joueurs
 
-La vue `Préparation` regroupe maintenant l'ancienne vue `Équipe` et l'ancienne vue `Ordre`.
+Le découpage actuel sépare la préparation en deux étapes:
 
-À conserver:
+- `Match`: noms d'équipes, local/visiteur, date et endroit;
+- `Joueurs`: liste des joueurs, ajout, renommage, présence/absence, remplacement et suppression avant le début.
 
-- activation / désactivation temporaire d'un joueur sans suppression;
-- suppression explicite d'un joueur;
-- action `Charger un exemple` placée dans l'en-tête de préparation.
+À stabiliser:
+
+- normaliser automatiquement la casse des noms de joueurs à l'ajout;
+- garder les actions de modification clairement bloquées quand le match est débuté.
 
 ## Alignement
 
@@ -133,7 +165,7 @@ Statuts possibles:
 
 Il n'est pas nécessaire de distinguer les raisons dans l'app. Une absence, un retard, une blessure, un départ, un joueur prêté à l'autre équipe ou une autre indisponibilité peuvent être traités comme un changement de disponibilité. Un joueur emprunté ou présent sans être prévu est traité comme ajouté au match.
 
-Première tranche expérimentale:
+Première tranche expérimentale livrée:
 
 - bouton explicite `Débuter le match`;
 - bouton `Recommencer le match` après le début, avec confirmation, pour débarrer toutes les demi-manches et réactiver `Optimiser`;
@@ -141,12 +173,12 @@ Première tranche expérimentale:
 - glisser-déposer de l'ordre qui déplace les lignes complètes avant le début du match;
 - lignes du tableau principal stables par joueur après le début du match, avec rang courant dans la première colonne;
 - snapshots d'ordre au bâton pour les demies-manches offensives barrées afin de préserver l'historique;
-- cadenas ouvert ou fermé dans les sous-en-têtes `Début` et `Fin` pour barrer les demi-manches;
-- verrouillage continu: barrer une manche future propose de barrer les manches précédentes, et débarrer une manche propose de débarrer les suivantes;
-- bouton pour barrer ou débarrer la demi-manche courante dans le mode match;
+- progression de match par demi-manche courante dans `Jouer`, sans demander à l'entraîneur de gérer des cadenas manuels;
+- actions pour avancer ou revenir d'une demi-manche, avec confirmation quand on revient;
 - `Optimiser` désactivé quand le match est débuté;
 - ajout d'un joueur en match débuté avec choix `Ajouter`, `Remplacer` ou `Inactif`;
 - remplacement qui substitue les joueurs dans l'ordre et les assignations non barrées;
+- action directe `Remplacer` sur un joueur actif de la liste;
 - retrait d'un joueur actif avec avertissement, sans toucher aux manches barrées;
 - obligation de remplacer un joueur si seulement 6 joueurs sont actifs.
 
@@ -158,22 +190,18 @@ Bogues majeurs à prioriser:
   - Première correction livrée: générer une suggestion pour insérer un joueur du banc dans une position manquante et permettre de cliquer une cellule `BANC` pour remplir automatiquement une position manquante.
   - À évaluer plus tard: ajouter une ligne ou zone `Positions non assignées` en bas du tableau.
 - Remplacer un joueur pendant un match doit préserver l'historique du joueur remplacé dans les demi-manches barrées, ajouter une ligne pour le nouveau joueur, retirer l'ancien joueur de l'ordre futur et retirer l'ancien joueur des assignations défensives futures non barrées.
-  - Première correction livrée: les joueurs inactifs qui ont de l'historique verrouillé restent visibles dans le tableau, et les snapshots de frappe verrouillés peuvent afficher un ancien joueur.
+  - Première correction livrée: les joueurs inactifs qui ont de l'historique verrouillé restent visibles dans le tableau, les snapshots de frappe verrouillés peuvent afficher un ancien joueur, et le nouveau joueur apparaît sous le joueur remplacé pour les manches futures.
 - Remplacer un joueur avant le début du match doit mettre le nouveau joueur exactement à la place de l'ancien dans l'ordre et dans le tableau.
+  - Première correction livrée: l'action `Remplacer` crée le nouveau joueur, reprend les assignations non barrées de l'ancien et rend l'ancien joueur inactif.
 
 Irritants UX à corriger:
 
 - Le bouton d'échange `Local` / `Visiteur` ne devrait pas bouger quand on inverse les côtés.
-- L'en-tête de manche devrait rester sur une ligne. À évaluer: retirer les textes `Début` et `Fin` si la colonne gauche est toujours le début et la colonne droite est toujours la fin.
 - Il devrait être possible de désélectionner la sélection du tableau principal, par exemple en cliquant sur l'en-tête `Ordre`.
-- `Charger un exemple` ne devrait pas être disponible pendant un match débuté, ou devrait demander une confirmation claire que le match courant sera remplacé.
-- `Débuter le match` devrait être bloqué tant que l'alignement n'est pas minimalement prêt: joueurs actifs valides, positions assignées et aucune erreur majeure.
 
 Questions à trancher avant implémentation:
 
 - Quelle correction manuelle est la plus rapide sur téléphone pour une position manquante: clic sur `BANC`, ligne `Positions non assignées`, ou menu d'action sur la manche?
-- Est-ce que les joueurs remplacés pendant un match doivent rester visibles jusqu'à la fin du match même s'ils ne sont plus actifs pour les manches futures?
-- Est-ce que `Charger un exemple` doit être simplement désactivé pendant un match débuté ou disponible avec confirmation destructive?
 
 ## Bugs et dettes connues
 
@@ -193,7 +221,7 @@ Questions à trancher avant implémentation:
 
 - Les archives de matchs passés seront verrouillées en lecture seule. Elles servent à consulter l'historique, pas à modifier rétroactivement un alignement.
 - L'archivage des matchs sera déclenché par une action manuelle, pas automatiquement.
-- La publication en ligne doit au minimum supporter un mode parents en lecture seule avec informations limitées.
+- La publication en ligne doit au minimum supporter un mode spectateur en lecture seule avec informations limitées.
 - Les exports et publications sont regroupés dans une section `Partager`.
 - La vue terrain est retirée de l'expérience principale.
 
@@ -204,7 +232,6 @@ Questions à trancher avant implémentation:
 - Découpage statique: `index.html`, `styles.css`, `app.js`.
 - Section `Partager` séparée pour les exports.
 - Retrait de la vue terrain de l'expérience principale.
-- Fusion des vues `Équipe` et `Ordre` en une seule vue `Préparation`.
 - Contrôles visibles pour ajouter ou retirer une manche dans l'écran d'alignement.
 - Module `rules.js` pour valider les règles obligatoires.
 - Base de tests navigateur dans `tests/rules.html`.
@@ -214,10 +241,8 @@ Questions à trancher avant implémentation:
 - Action `Optimiser` placée près du tableau principal.
 - Boutons de navigation doublés retirés des sections `Alignement`, `Partager` et `Mode match`.
 - Boutons `Continuer` ajoutés en bas des étapes avant le mode match.
-- Bouton `Charger un exemple` déplacé dans la vue `Préparation`, avec un exemple basé sur des joueurs connus des Expos de 1994.
-- `Charger un exemple` ne change plus de vue.
 - Affichage `Visiteur` / `Locale` intégré près des noms d'équipes, avec inversion automatique entre l'équipe et l'adversaire.
-- Gestion séparée de l'ordre retirée de `Préparation`; l'ordre se modifie dans le tableau principal de l'alignement.
+- Gestion séparée de l'ordre retirée; l'ordre se modifie dans le tableau principal de l'alignement.
 - Option `Frappe fixe` déplacée au début de l'écran `Alignement`.
 - Validations et équité déplacées après le tableau principal.
 - Ajout/retrait de manches intégré à la dernière manche du tableau principal avec des icônes `-` et `+`.
@@ -229,3 +254,17 @@ Questions à trancher avant implémentation:
 - Les cartes d'équité sont harmonisées entre les modes avec `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` apparaît seulement en frappe fixe.
 - `Temps de jeu` inclut les présences au bâton en frappe fixe, mais seulement la défensive en frappe variable.
 - En mode frappe variable, les présences au bâton sont retirées des scores d'équité et les colonnes `AB` / `Total` sont retirées des statistiques.
+- Le workflow cible `Match`, `Joueurs`, `Alignement partant`, `Jouer`, `Partage`, `Spectateur` est documenté et livré en première version.
+- Les étapes numérotées suivent maintenant `Match`, `Joueurs`, `Alignement partant`, `Jouer`.
+- `Partager` et `Spectateur` sont sortis des étapes numérotées.
+- `Charger un exemple` est déplacé dans le menu et demande une confirmation parce qu'il réinitialise les données locales.
+- Naviguer vers `Jouer` démarre le match avec confirmation.
+- `Jouer` affiche la demi-manche courante et permet d'avancer ou de revenir avec confirmation.
+- Les informations de match, la liste des joueurs et l'alignement partant sont verrouillés après le début du match.
+- L'étape `Joueurs` permet de renommer directement un joueur et d'utiliser un bouton explicite `Présent` / `Absent`.
+- L'action `Remplacer` est disponible sur un joueur actif et conserve l'historique des demi-manches déjà jouées.
+- Le menu du haut regroupe maintenant `Partager`, `Spectateur`, `Charger un exemple` et `Réinitialiser` dans `Autres`.
+- Les entêtes de demi-manche du tableau principal gardent seulement les icônes bâton et gant.
+- Le bloc `Ajouter des joueurs` se replie quand le minimum de joueurs est atteint et peut être rouvert au besoin.
+- `Charger un exemple` est bloqué pendant un match débuté.
+- Le démarrage de `Jouer` est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs et 6 positions défensives assignées par manche.

@@ -15,15 +15,43 @@ Champs principaux:
 - `battingOrders`: snapshots d'ordre au bâton par demie-manche offensive barrée, indexés sous la forme `inning:debut` ou `inning:fin`
 - `schedule`: positions par manche
 - `started`: match explicitement débuté
-- `locks.innings`: manches barrées depuis le tableau
-- `locks.halves`: demi-manches barrées depuis le mode match, indexées sous la forme `inning:debut` ou `inning:fin`
+- `locks.innings`: ancien stockage de manches barrées, conservé seulement pour compatibilité avec l'état sauvegardé
+- `locks.halves`: stockage interne transitoire des demi-manches complétées, indexées sous la forme `inning:debut` ou `inning:fin`
 - `route`: vue active
 
-Quand `started` est vrai, l'action `Optimiser` est désactivée. Le bouton de démarrage permet de recommencer le match avec confirmation, ce qui remet `started` à `false`, vide `locks` et vide `battingOrders`. Les manches barrées ne doivent pas être recalculées automatiquement. Les changements de joueurs pendant le match doivent viser les manches non barrées et laisser les corrections ambiguës à l'entraîneur.
+Quand `started` est vrai, l'action `Optimiser` est désactivée. Revenir avant le début du match depuis `Jouer` remet `started` à `false`, vide `locks` et vide `battingOrders`, avec confirmation. Les demi-manches complétées ne doivent pas être recalculées automatiquement. Les changements de joueurs pendant le match doivent viser les demi-manches futures et laisser les corrections ambiguës à l'entraîneur.
 
-Le tableau principal rend les manches en deux demies-manches. Les assignations défensives restent stockées par manche dans `schedule`, mais l'édition défensive est bloquée quand la demie-manche défensive correspondante est barrée. Les cadenas de verrouillage vivent dans les sous-en-têtes `Début` et `Fin` et modifient `locks.halves`. Les rangs de frappe affichés pour une demie-manche offensive barrée utilisent `battingOrders` pour éviter de réécrire l'historique quand l'ordre futur change.
+Le tableau principal rend les manches en deux demi-manches. Les assignations défensives restent stockées par manche dans `schedule`, mais l'édition défensive est bloquée quand la demi-manche défensive correspondante est complétée. L'interface n'affiche plus de cadenas; `Jouer` avance ou recule la progression en modifiant encore `locks.halves` à l'interne. Les rangs de frappe affichés pour une demi-manche offensive complétée utilisent `battingOrders` pour éviter de réécrire l'historique quand l'ordre futur change.
 
 Avant le début du match, les lignes du tableau suivent `order` et le glisser-déposer de la première colonne déplace la ligne complète. Quand le match est débuté, le rendu stabilise les lignes par joueur enregistré actif, et `order` sert seulement de rang courant. `generateAll()` remet `order` dans l'ordre des joueurs enregistrés avant de recalculer l'alignement.
+
+## Refactor workflow cible
+
+La première tranche du workflow cible est livrée dans la SPA statique. Les routes principales sont:
+
+- `#match`: édition des métadonnées seulement tant que `started` est faux;
+- `#joueurs`: édition de la liste seulement tant que `started` est faux;
+- `#alignement`: édition complète de l'alignement seulement tant que `started` est faux;
+- `#jouer`: vue de progression pendant un match commencé;
+- `#spectateur`: vue en lecture seule dérivée du même état;
+- `#partager`: exports et liens, sans être une étape numérotée du workflow.
+
+`#jouer` démarre le match avec confirmation si `started` est faux. Le démarrage est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs et 6 positions défensives assignées pour chaque manche prévue. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués dans les vues de préparation.
+
+Le menu du haut garde seulement les étapes principales visibles. `Partager`, `Spectateur`, `Charger un exemple` et `Réinitialiser` sont regroupés dans `Autres`. `Charger un exemple` est bloqué pendant un match débuté.
+
+État transitoire: le workflow cible est visible dans l'interface, mais le modèle interne n'est pas encore complètement refactoré. La progression devrait éventuellement remplacer `locks` par un index de demi-manche courante ou complétée, par exemple `currentHalfIndex`. Les demi-manches passées deviendraient alors de l'historique non modifiable, la demi-manche courante serait mise en évidence, et les demi-manches futures resteraient modifiables seulement par les actions permises dans `Jouer`.
+
+Dette restante: le refactor de workflow a été livré surtout au niveau navigation/rendu. La logique demeure fortement centralisée dans `app.js`, avec des conditions dispersées dans les fonctions de rendu et d'interaction. L'extraction en modules testables reste à faire.
+
+Pour limiter la complexité, les actions en cours de match devraient être des commandes explicites sur l'état:
+
+- avancer à la prochaine demi-manche;
+- revenir à la demi-manche précédente avec confirmation;
+- revenir avant le début avec confirmation et retour à l'alignement partant;
+- enlever un joueur pour le futur;
+- remplacer un joueur pour le futur;
+- ajouter un joueur pour le futur.
 
 ## Moteur d'alignement
 
@@ -82,10 +110,11 @@ Tests navigateur prioritaires:
 - ajout de joueurs;
 - génération et régénération;
 - modification manuelle par glisser-déposer;
-- navigation mode match;
+- navigation `Match`, `Joueurs`, `Alignement partant`, `Jouer`, `Partage`, `Spectateur`;
 - démarrage explicite du match;
-- verrouillage d'une manche complète;
-- verrouillage d'une demi-manche;
+- blocage du démarrage quand l'alignement n'est pas minimalement prêt;
+- progression vers la prochaine demi-manche;
+- retour à la demi-manche précédente avec confirmation;
 - ajout d'un joueur en match débuté;
 - remplacement d'un joueur en match débuté;
 - retrait d'un joueur actif avec seulement 6 joueurs disponibles;

@@ -32,8 +32,10 @@ Alignement Rallye-Cap
 |   |   +-- Charger un exemple
 |   +-- Joueurs enregistrés
 |   |   +-- Activer / désactiver un joueur
+|   |   +-- Renommer un joueur
+|   |   +-- Remplacer un joueur
 |   |   +-- Supprimer un joueur
-|   +-- Ajouter ou coller des joueurs
+|   +-- Ajouter des joueurs
 |   +-- Continuer vers Alignement
 +-- Alignement (#alignement)
 |   +-- Réglages
@@ -83,6 +85,54 @@ Préparation -> Alignement -> Partager -> Mode match
 ```
 
 Ce flux est logique pour préparer un match avant d'arriver au terrain.
+
+## Workflow cible
+
+Le workflow cible suit la réalité d'un match et évite de devoir revenir dans les étapes de préparation après le début.
+
+```text
+📅 Match -> 👨‍👩‍👦‍👦 Joueurs -> 📋 Alignement partant -> ⚾ Jouer
+```
+
+`Partager` devient une page non numérotée accessible par une icône standard de partage. `Spectateur` remplace le mode match actuel comme vue simplifiée en lecture seule accessible par le menu.
+
+Sitemap cible:
+
+```text
+Alignement Rallye-Cap
++-- Match
+|   +-- Nom de l'équipe
+|   +-- Local / visiteur
+|   +-- Adversaire
+|   +-- Date
+|   +-- Endroit
+|   +-- Indication que l'exemple se charge depuis le menu
++-- Joueurs
+|   +-- Joueurs enregistrés
+|   +-- Ajouter un joueur
+|   +-- Renommer un joueur
+|   +-- Activer / désactiver un joueur avant le match
++-- Alignement partant
+|   +-- Frappe fixe
+|   +-- Optimiser
+|   +-- Tableau principal modifiable
+|   +-- Validations
+|   +-- Suggestions
+|   +-- Statistiques et équité
++-- Jouer
+|   +-- Démarrer le match avec confirmation
+|   +-- Demi-manche courante visible
+|   +-- Tableau principal centré sur la demi-manche courante
+|   +-- Manches passées grisées
+|   +-- Passer à la prochaine demi-manche
+|   +-- Revenir à la demi-manche précédente avec confirmation
+|   +-- Enlever / remplacer / ajouter un joueur pour le futur
++-- Partage
+|   +-- Exports disponibles seulement si le match respecte les règles de base
+|   +-- Lien ou export vers Spectateur toujours disponible
++-- Spectateur
+    +-- Vue simplifiée en lecture seule
+```
 
 ## Flux secondaires actuels
 
@@ -149,6 +199,13 @@ Découpage potentiel:
 
 ## Décisions UX prises
 
+- Le workflow cible est `Match`, `Joueurs`, `Alignement partant`, `Jouer`; `Partager` et `Spectateur` ne sont pas des étapes numérotées.
+- Une fois le match commencé, les étapes `Match`, `Joueurs` et `Alignement partant` ne sont plus modifiables.
+- `Jouer` devient la seule vue de gestion active pendant la partie.
+- Le concept de cadenas est retiré du modèle cible. La progression de match détermine les demi-manches passées, courantes et futures.
+- Les changements de joueurs pendant la partie sont accessibles dans `Jouer` après une demi-manche complétée.
+- Le mode match actuel devient `Spectateur`, une vue simplifiée en lecture seule accessible par le menu.
+- `Charger un exemple` vit seulement dans le menu et demande confirmation parce qu'il réinitialise toutes les données locales.
 - Les vues `Équipe` et `Ordre` sont fusionnées en une seule vue de préparation.
 - La préparation se limite aux informations du match et aux joueurs.
 - L'ordre des frappeurs se modifie dans le tableau principal de l'alignement, en glissant les joueurs dans la première colonne.
@@ -184,8 +241,13 @@ Découpage potentiel:
 - Les demi-manches barrées doivent rester continues depuis le début du match. L'interface confirme les changements qui barrent ou débarrent plusieurs demi-manches.
 - Une manche peut être ouverte, partiellement barrée ou complètement barrée.
 - Les changements de joueurs pendant un match touchent seulement les manches non barrées et demandent confirmation quand ils ont un impact important.
+- L'action `Remplacer` est disponible sur un joueur actif dans la liste des joueurs. Avant le match, le nouveau joueur prend la place et les assignations de l'ancien. Pendant un match débuté, les demi-manches barrées gardent l'ancien joueur, et le nouveau joueur apparaît sous lui pour les manches futures.
+- L'étape `Joueurs` permet de renommer directement un joueur et utilise un bouton explicite `Présent` / `Absent` pour la disponibilité.
+- Le bloc `Ajouter des joueurs` se replie quand l'équipe a déjà le minimum de joueurs et peut être rouvert avec un bouton explicite.
+- Le menu du haut garde les étapes principales visibles et regroupe `Partager`, `Spectateur`, `Charger un exemple` et `Réinitialiser` dans `Autres`.
+- Les entêtes de demi-manche du tableau principal affichent seulement les icônes bâton et gant; `Début` est toujours la colonne de gauche et `Fin` la colonne de droite.
+- Le démarrage de `Jouer` est bloqué tant que l'alignement n'a pas 6 à 12 joueurs actifs et 6 positions défensives assignées par manche.
 - Cliquer sur l'en-tête `Ordre` devrait permettre de désélectionner la sélection courante du tableau principal.
-- Le bouton `Débuter le match` devrait rester indisponible tant que l'alignement n'est pas minimalement prêt.
 - Quand `Frappe fixe` est désactivé, le tableau et les exports ne doivent pas afficher de rang de frappe `(#)` ni de frappeurs par manche.
 - Les cartes d'équité utilisent les mêmes libellés dans les deux modes: `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` est ajouté seulement quand `Frappe fixe` est activé.
 - `Temps de jeu` inclut les présences au bâton seulement quand `Frappe fixe` est activé; sinon il reflète la défensive seulement.

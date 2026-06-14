@@ -12,11 +12,19 @@
     <div class="brand"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub">Ordre au bâton • Défensive • Mode match</div></div></div>
     <button class="hamb" id="hamb">☰</button>
     <nav class="nav" id="nav">
-      <a href="#equipe" data-nav="equipe">Préparation</a>
-      <a href="#alignement" data-nav="alignement">Alignement</a>
-      <a href="#partager" data-nav="partager">Partager</a>
-      <a href="#match" data-nav="match">Mode match</a>
-      <button id="resetBtn">Réinitialiser</button>
+      <a href="#match" data-nav="match">📅 Match</a>
+      <a href="#joueurs" data-nav="joueurs">👨‍👩‍👦‍👦 Joueurs</a>
+      <a href="#alignement" data-nav="alignement">📋 Alignement</a>
+      <a href="#jouer" data-nav="jouer">⚾ Jouer</a>
+      <div class="navMore">
+        <button id="moreBtn" aria-expanded="false" aria-controls="moreMenu">⋯ Autres</button>
+        <div class="moreMenu" id="moreMenu">
+          <a href="#partager" data-nav="partager">↗ Partage</a>
+          <a href="#spectateur" data-nav="spectateur">Spectateur</a>
+          <button id="exampleBtn" title="Charge un exemple et réinitialise toutes les données locales">Charger un exemple</button>
+          <button id="resetBtn">Réinitialiser</button>
+        </div>
+      </div>
     </nav>
   </div>
 </header>
@@ -37,39 +45,45 @@
     </div>
   </section>
   <div class="steps noPrint">
-    <a class="step" href="#equipe" data-step="equipe"><span class="n">1</span><b>Préparation</b></a>
-    <a class="step" href="#alignement" data-step="alignement"><span class="n">2</span><b>Alignement</b></a>
-    <a class="step" href="#partager" data-step="partager"><span class="n">3</span><b>Partager</b></a>
-    <a class="step" href="#match" data-step="match"><span class="n">4</span><b>Mode match</b></a>
+    <a class="step" href="#match" data-step="match"><span class="n">1</span><b>📅 Match</b></a>
+    <a class="step" href="#joueurs" data-step="joueurs"><span class="n">2</span><b>👨‍👩‍👦‍👦 Joueurs</b></a>
+    <a class="step" href="#alignement" data-step="alignement"><span class="n">3</span><b>📋 Alignement partant</b></a>
+    <a class="step" href="#jouer" data-step="jouer"><span class="n">4</span><b>⚾ Jouer</b></a>
   </div>
-  <section class="view" id="view-equipe">
+  <section class="view" id="view-match">
     <div class="card">
-      <div class="spaced"><div><h2>1. Préparation du match</h2><p class="hint">Les données restent seulement sur cet appareil.</p></div><button class="btn secondary" id="exampleBtn">Charger un exemple</button></div>
+      <div class="spaced"><div><h2>1. Match</h2><p class="hint">Les données restent seulement sur cet appareil. Un exemple peut être chargé à partir du menu.</p></div></div>
       <div class="prepGrid">
-        <label><span>Nom de l’équipe</span><input id="team" placeholder="Expos de Montréal" /></label>
+        <label><span>Nom de l’équipe</span><input id="team" placeholder="ex. Expos de Montréal" /></label>
         <div class="sideSwap" aria-label="Côtés du match"><span id="teamSideLabel">Visiteur</span><button class="icon soft swapBtn" id="swapSidesBtn" title="Inverser local et visiteur" aria-label="Inverser local et visiteur">⇄</button><span id="oppSideLabel">Local</span></div>
-        <label><span>Adversaire</span><input id="opp" placeholder="Padres de San Diego" /></label>
+        <label><span>Adversaire</span><input id="opp" placeholder="ex. Padres de San Diego" /></label>
         <label><span>Date</span><input id="date" type="date" /></label>
-        <label><span>Endroit</span><input id="place" placeholder="Parc, terrain" /></label>
+        <label><span>Endroit</span><input id="place" placeholder="ex. Parc, terrain" /></label>
       </div>
     </div>
+    <div class="stepActions noPrint"><a class="btn brandBtn" href="#joueurs">Continuer</a></div>
+  </section>
+  <section class="view" id="view-joueurs">
     <div class="card">
-      <div class="spaced"><div><h3>Joueurs enregistrés</h3><p class="hint">Clique sur un joueur ou sur le bouton pour l’activer/désactiver. Le ✕ supprime le joueur.</p></div><span class="tag" id="activeCountTag">0 actif</span></div>
+      <div class="spaced"><div><h2>2. Joueurs</h2><p class="hint">Ajoute, renomme ou active les joueurs avant le début du match.</p></div><span class="tag" id="activeCountTag">0 actif</span></div>
       <div class="players" id="players"></div>
     </div>
-    <div class="card">
-      <h3>Ajouter ou coller des joueurs</h3>
-      <div class="grid2"><label><span>Un nom par ligne, ou séparé par virgule</span><textarea id="names" placeholder="Émile, Julien, Noah"></textarea></label><button class="btn brandBtn" id="addNames">Ajouter</button></div>
+    <div class="card" id="addPlayersCard">
+      <div class="spaced addPlayersHead">
+        <div><h3>Ajouter des joueurs</h3><p class="hint compactHint">L'équipe a déjà le minimum de joueurs. Ajoute seulement les changements de dernière minute.</p></div>
+        <button class="btn secondary compactOnly" id="toggleAddPlayers" type="button">Ajouter</button>
+      </div>
+      <div class="grid2 addPlayersBody"><label><span>Un nom par ligne, ou séparé par virgule</span><textarea id="names" placeholder="ex. Émile, Julien, Noah"></textarea></label><button class="btn brandBtn" id="addNames">Ajouter</button></div>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#alignement" id="toAlign">Continuer</a></div>
   </section>
   <section class="view" id="view-alignement">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>2. Alignement</h2><p class="hint">Glisse les joueurs dans la première colonne pour ajuster l’ordre. Glisse une cellule verticalement pour échanger seulement les positions.</p></div></div>
+      <div class="spaced"><div><h2>3. Alignement partant</h2><p class="hint">Glisse les joueurs dans la première colonne pour ajuster l’ordre. Glisse une cellule verticalement pour échanger seulement les positions.</p></div></div>
       <div class="switchLine"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div><b>Frappe fixe</b><div class="tiny">6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
     </div>
     <div class="card">
-      <div class="spaced"><div><h3>Tableau principal</h3><span class="tiny">Légende dans les pastilles sous le tableau.</span></div><div class="row"><button class="btn secondary" id="startMatchBtn">Débuter le match</button><button class="btn secondary" id="regenBtn">Optimiser</button></div></div>
+      <div class="spaced"><div><h3>Tableau principal</h3><span class="tiny">Légende dans les pastilles sous le tableau.</span></div><div class="row"><button class="btn secondary" id="regenBtn">Optimiser</button></div></div>
       <div class="tableWrap" id="lineup"></div>
       <div class="legend" id="legend"></div>
     </div>
@@ -77,11 +91,21 @@
     <div class="card scoresCard"><h3>Équité</h3><div class="scores" id="scores"></div></div>
     <div class="card suggestionsCard"><h3>Problèmes et suggestions</h3><div class="suggestions" id="suggestions"></div></div>
     <div class="card statsCard"><h3>Statistiques</h3><div class="tableWrap" id="stats"></div></div>
-    <div class="stepActions noPrint"><a class="btn brandBtn" href="#partager">Continuer</a></div>
+    <div class="stepActions noPrint"><a class="btn brandBtn" href="#jouer">Continuer</a></div>
+  </section>
+  <section class="view" id="view-jouer">
+    <div class="card noPrint">
+      <div class="spaced"><div><h2>4. Jouer</h2><p class="hint">Suis la demi-manche courante. Les changements pendant la partie se font ici seulement.</p></div><span class="tag" id="playPhase">Match non débuté</span></div>
+      <div class="row"><button class="btn secondary" id="playPrev">← Revenir</button><button class="btn brandBtn" id="playNext">Prochaine demi-manche →</button></div>
+    </div>
+    <div class="card">
+      <div class="spaced"><div><h3>Tableau de match</h3><span class="tiny">Les demi-manches passées seront grisées pendant la partie.</span></div></div>
+      <div class="tableWrap" id="playLineup"></div>
+    </div>
   </section>
   <section class="view" id="view-partager">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>3. Partager</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode match.</p></div></div>
+      <div class="spaced"><div><h2>Partage</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode spectateur.</p></div></div>
     </div>
     <div class="grid3 shareGrid">
       <div class="card shareCard">
@@ -105,16 +129,15 @@
         <button class="btn secondary" id="copyTextBtn">Copier texte</button>
       </div>
       <div class="card shareCard">
-        <h3>Mode match autonome</h3>
+        <h3>Mode spectateur autonome</h3>
         <p class="hint">Fichier HTML consultable sans l'éditeur principal.</p>
-        <button class="btn secondary" id="exportMatchBtn">Exporter mode match</button>
+        <button class="btn secondary" id="exportMatchBtn">Exporter spectateur</button>
       </div>
     </div>
-    <div class="stepActions noPrint"><a class="btn brandBtn" href="#match">Continuer</a></div>
   </section>
-  <section class="view" id="view-match">
-    <div class="card noPrint"><div class="spaced"><div><h2>4. Mode match</h2><p class="hint">Avance/recul par boutons, clavier ou swipe. L’équipe locale frappe en fin de manche.</p></div></div></div>
-    <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn secondary" id="lockHalfBtn">Barrer la demi-manche</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
+  <section class="view" id="view-spectateur">
+    <div class="card noPrint"><div class="spaced"><div><h2>Spectateur</h2><p class="hint">Vue simplifiée en lecture seule. L’équipe locale frappe en fin de manche.</p></div></div></div>
+    <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
 <div class="foot noPrint">Fait pour Rallye-Cap • Sauvegarde locale seulement</div>
 </main>
