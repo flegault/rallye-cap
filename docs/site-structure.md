@@ -153,8 +153,9 @@ Découpage potentiel:
 - Garder la possibilité de désactiver temporairement un joueur sans le supprimer.
 - Garder la possibilité d'ajuster l'ordre des frappeurs manuellement.
 - Les changements de vue doivent ramener l'utilisateur en haut de la page.
+- Le tableau de statut en haut de page affiche une ligne pleine largeur avec le nom de notre équipe et l'état du match, puis quatre cartes: joueurs actifs, manches, côté `Local` ou `Visiteur`, et équité.
 - `Charger un exemple` est dans l'en-tête de `Préparation` et ne change pas de vue.
-- Les statuts `Visiteur` / `Locale` sont affichés près des noms d'équipes; changer le statut d'une équipe inverse automatiquement celui de l'autre.
+- La préparation affiche les informations du match sur une ligne: notre équipe, son côté `Local` ou `Visiteur`, un bouton d'échange, le côté de l'adversaire, l'adversaire, la date et l'endroit.
 - L'action `Optimiser` remplace `Régénérer` et doit être près du tableau principal.
 - Le bouton `Optimiser` devient grisé après optimisation et se réactive dès qu'une modification manuelle est faite.
 - L'ajout et le retrait de manches sont des icônes `-` et `+` dans l'en-tête de la dernière manche.

@@ -34,6 +34,14 @@ La vue `Préparation` regroupe maintenant l'ancienne vue `Équipe` et l'ancienne
 - L'ordre des frappeurs se modifie directement dans le tableau principal en glissant les joueurs.
 - L'option `Frappe fixe` est un réglage de l'écran `Alignement`.
 - Les validations et l'équité suivent le tableau principal pour servir de rétroaction après l'ajustement.
+- Simplifier la densité de l'écran `Alignement`:
+  - garder une section `Validation` visible comme verdict rapide;
+  - afficher les règles obligatoires avec `check` ou `x`;
+  - afficher l'équité avec `check`, `warning` ou `x`;
+  - renommer `Problèmes et suggestions` en `Suggestions`;
+  - afficher `Suggestions` seulement quand il y a des actions concrètes à proposer;
+  - regrouper les cartes d'équité et le tableau détaillé dans une section `Statistiques et équité`;
+  - garder les cartes d'équité dans cette section, idéalement repliée par défaut.
 
 ## Publication optionnelle en ligne
 

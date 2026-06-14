@@ -28,9 +28,10 @@
     </div>
     <div class="card">
       <div class="mini">
+        <div class="miniTeam"><strong id="miniTeamName">Équipe</strong><span id="miniMatch">Match non débuté</span></div>
         <div class="metric"><div class="big" id="miniPlayers">0</div><div class="label">joueurs actifs</div></div>
         <div class="metric"><div class="big" id="miniInnings">4</div><div class="label">manches</div></div>
-        <div class="metric"><div class="big" id="miniSide">Vis.</div><div class="label">statut</div></div>
+        <div class="metric"><div class="big teamBig" id="miniSide">Visiteur</div><div class="label">côté</div></div>
         <div class="metric"><div class="big" id="miniScore">—</div><div class="label">équité</div></div>
       </div>
     </div>
@@ -44,9 +45,10 @@
   <section class="view" id="view-equipe">
     <div class="card">
       <div class="spaced"><div><h2>1. Préparation du match</h2><p class="hint">Les données restent seulement sur cet appareil.</p></div><button class="btn secondary" id="exampleBtn">Charger un exemple</button></div>
-      <div class="grid">
-        <div class="teamField"><label><span>Nom de l’équipe</span><input id="team" placeholder="Expos de Montréal" /></label><div class="segment" aria-label="Statut de l'équipe"><button data-side-target="team" data-side-value="visiteur">Visiteur</button><button data-side-target="team" data-side-value="locale">Locale</button></div></div>
-        <div class="teamField"><label><span>Adversaire</span><input id="opp" placeholder="Padres de San Diego" /></label><div class="segment" aria-label="Statut de l'adversaire"><button data-side-target="opp" data-side-value="visiteur">Visiteur</button><button data-side-target="opp" data-side-value="locale">Locale</button></div></div>
+      <div class="prepGrid">
+        <label><span>Nom de l’équipe</span><input id="team" placeholder="Expos de Montréal" /></label>
+        <div class="sideSwap" aria-label="Côtés du match"><span id="teamSideLabel">Visiteur</span><button class="icon soft swapBtn" id="swapSidesBtn" title="Inverser local et visiteur" aria-label="Inverser local et visiteur">⇄</button><span id="oppSideLabel">Local</span></div>
+        <label><span>Adversaire</span><input id="opp" placeholder="Padres de San Diego" /></label>
         <label><span>Date</span><input id="date" type="date" /></label>
         <label><span>Endroit</span><input id="place" placeholder="Parc, terrain" /></label>
       </div>
