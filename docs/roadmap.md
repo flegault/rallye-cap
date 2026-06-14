@@ -43,6 +43,7 @@
 - Ajouter une archive des matchs passés.
 - Importer et exporter une liste de joueurs.
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
+- Ajouter un champ de numéro de joueur dans les cartes joueurs. Le numéro ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour certains exports.
 - Dupliquer un match existant.
 - Ajouter un écran de résumé avant impression.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
@@ -189,6 +190,7 @@ Bogues majeurs à prioriser:
 - Retirer ou désactiver un joueur pendant un match peut laisser des manches futures avec moins de 6 positions assignées et rendre l'alignement difficile à corriger.
   - Première correction livrée: générer une suggestion pour insérer un joueur du banc dans une position manquante et permettre de cliquer une cellule `BANC` pour remplir automatiquement une position manquante.
   - À évaluer plus tard: ajouter une ligne ou zone `Positions non assignées` en bas du tableau.
+- En match débuté, permettre de modifier manuellement les positions des manches futures sans toucher aux demi-manches déjà complétées.
 - Remplacer un joueur pendant un match doit préserver l'historique du joueur remplacé dans les demi-manches barrées, ajouter une ligne pour le nouveau joueur, retirer l'ancien joueur de l'ordre futur et retirer l'ancien joueur des assignations défensives futures non barrées.
   - Première correction livrée: les joueurs inactifs qui ont de l'historique verrouillé restent visibles dans le tableau, les snapshots de frappe verrouillés peuvent afficher un ancien joueur, et le nouveau joueur apparaît sous le joueur remplacé pour les manches futures.
 - Remplacer un joueur avant le début du match doit mettre le nouveau joueur exactement à la place de l'ancien dans l'ordre et dans le tableau.
@@ -197,7 +199,13 @@ Bogues majeurs à prioriser:
 Irritants UX à corriger:
 
 - Le bouton d'échange `Local` / `Visiteur` ne devrait pas bouger quand on inverse les côtés.
+- Les cartes joueurs doivent être améliorées pour que les boutons d'action restent sur une seule ligne, surtout sur mobile.
+- Centrer l'icône gant dans les entêtes des colonnes défensives du tableau principal.
 - Il devrait être possible de désélectionner la sélection du tableau principal, par exemple en cliquant sur l'en-tête `Ordre`.
+
+Évolutions de règles / validations:
+
+- Au démarrage du match, afficher un avertissement si les règles ne sont pas respectées, mais permettre à l'entraîneur de continuer quand même après confirmation.
 
 Questions à trancher avant implémentation:
 

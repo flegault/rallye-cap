@@ -22,9 +22,9 @@ pre{white-space:pre-wrap;background:#f8fafc;padding:12px;border-radius:8px}
 const players=['p1','p2','p3','p4','p5','p6','p7','p8'];
 const validSchedule=[
   {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
-  {pos:{p2:'1B',p3:'2B',p4:'3B',p5:'AC',p7:'L1',p8:'L2'}},
-  {pos:{p3:'1B',p1:'2B',p5:'3B',p6:'AC',p2:'L1',p4:'L2'}},
-  {pos:{p4:'1B',p1:'3B',p6:'2B',p7:'AC',p3:'L1',p5:'L2'}}
+  {pos:{p2:'1B',p3:'2B',p4:'3B',p7:'AC',p8:'L1',p1:'L2'}},
+  {pos:{p3:'1B',p4:'2B',p7:'3B',p8:'AC',p5:'L1',p6:'L2'}},
+  {pos:{p5:'1B',p6:'2B',p7:'AC',p8:'3B',p1:'L1',p2:'L2'}}
 ];
 
 const tests=[
@@ -58,6 +58,48 @@ const tests=[
     run:()=>RallyeCapRules.validateSchedule([
       {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1'}}
     ],players).violations.some(v=>v.rule==='defense-count')
+  },
+  {
+    name:'résume les présences au banc consécutives',
+    run:()=>RallyeCapRules.scheduleRuleSummary([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
+      {pos:{p1:'2B',p2:'1B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}}
+    ],players).bench.some(v=>v.id==='p7'&&v.i===1)
+  },
+  {
+    name:'résume les joueurs 1B plus d’une fois',
+    run:()=>RallyeCapRules.scheduleRuleSummary([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
+      {pos:{p1:'1B',p3:'2B',p4:'3B',p5:'AC',p7:'L1',p8:'L2'}}
+    ],players).firstBase.some(v=>v.id==='p1'&&v.ins.length===2)
+  },
+  {
+    name:'résume les lanceurs deux manches consécutives',
+    run:()=>RallyeCapRules.scheduleRuleSummary([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
+      {pos:{p2:'1B',p3:'2B',p4:'3B',p5:'AC',p6:'L1',p7:'L2'}}
+    ],players).pitch.some(v=>v.id==='p6'&&v.i===1)
+  },
+  {
+    name:'nettoie les joueurs inconnus et positions invalides',
+    run:()=>{
+      const cleaned=RallyeCapRules.cleanPositions({p1:'1B',p2:'XX',ghost:'2B'},players);
+      return cleaned.p1==='1B'&&!('p2' in cleaned)&&!('ghost' in cleaned);
+    }
+  },
+  {
+    name:'bloque le démarrage avec moins de 6 joueurs actifs',
+    run:()=>!RallyeCapRules.startReadiness(validSchedule,players.slice(0,5)).ok
+  },
+  {
+    name:'bloque le démarrage avec une manche incomplète',
+    run:()=>!RallyeCapRules.startReadiness([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1'}}
+    ],players).ok
+  },
+  {
+    name:'autorise le démarrage quand l’alignement est prêt',
+    run:()=>RallyeCapRules.startReadiness(validSchedule,players).ok
   }
 ];
 

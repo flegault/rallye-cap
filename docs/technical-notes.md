@@ -133,7 +133,7 @@ Découpage actuel:
 - `index.html`: structure HTML et points de montage;
 - `styles.css`: styles de l'application;
 - `app.js`: état, moteur d'alignement, rendu, exports et interactions.
-- `rules.js`: validations pures des règles obligatoires;
+- `rules.js`: validations pures des règles obligatoires, nettoyage des positions, résumé des violations d'horaire et garde-fous métier simples comme la validation de démarrage;
 - `tests/rules.html`: tests navigateur simples pour les règles obligatoires.
 
 Découpage recommandé:
