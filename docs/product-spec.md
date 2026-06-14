@@ -27,6 +27,7 @@ L'application aide un entraîneur Rallye-Cap à préparer rapidement un aligneme
 - Chaque manche défensive doit avoir 6 défenseurs.
 - Les positions défensives sont `1B`, `2B`, `3B`, `AC`, `L1`, `L2`; les autres joueurs sont au banc.
 - En mode frappe fixe, il y a 6 frappeurs par manche et l'ordre continue à la manche suivante.
+- Quand la frappe fixe est désactivée, l'application garde l'ordre général des frappeurs, mais ne doit pas afficher de frappeurs par manche, de nombre de présences au bâton prévu, ni de rang `(#)` dans les cases du tableau. Ces informations dépendent alors des retraits réels pendant le match.
 
 ## Règles obligatoires de défensive
 
@@ -46,9 +47,12 @@ Hypothèse produit:
 
 Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas masquer les règles obligatoires.
 
-- Répartir le temps de jeu total le plus équitablement possible.
+- Répartir le temps de jeu le plus équitablement possible.
 - Répartir les présences défensives le plus équitablement possible.
 - Répartir les présences au bâton le plus équitablement possible en mode frappe fixe.
+- Les cartes d'équité sont harmonisées entre les modes: `Temps de jeu`, `Variété des positions` et `Indice global`. En mode frappe fixe, la carte `Présences au bâton` est ajoutée.
+- `Temps de jeu` inclut les présences au bâton et la défensive quand la frappe fixe est activée. Quand la frappe fixe est désactivée, `Temps de jeu` inclut seulement la défensive, parce que les présences au bâton dépendent des retraits réels.
+- Quand la frappe fixe est désactivée, les présences au bâton ne doivent pas influencer les scores d'équité. Les statistiques n'affichent alors pas les colonnes `AB` ni `Total`.
 - Varier les positions autant que possible après respect des règles obligatoires.
 
 ## Exigences de langue et d'encodage
@@ -69,10 +73,12 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Statistiques par joueur.
 - Mode match navigable par boutons, clavier ou geste tactile.
 - Exports: courriel HTML, impression/PDF, image parents, mode match HTML autonome.
+- L'export texte mini imprimante doit suivre le même ordre de demi-manches que le mode match: l'équipe visiteuse frappe en début de manche et l'équipe locale frappe en fin de manche.
 
 ## Mode match
 
-- En attaque, afficher seulement les frappeurs de la manche courante.
+- En attaque, afficher seulement les frappeurs de la manche courante quand la frappe fixe est activée.
+- Quand la frappe fixe est désactivée, afficher un rappel de suivre l'ordre au banc au lieu d'une liste de frappeurs par manche.
 - En attaque, afficher aussi les lanceurs de la prochaine manche défensive de notre équipe quand cette prochaine défense existe, pour préparer les casques.
 - En défense, afficher les positions défensives de la manche courante.
 - En défense, afficher aussi les deux premiers frappeurs de la prochaine manche offensive de notre équipe quand cette prochaine présence au bâton existe.

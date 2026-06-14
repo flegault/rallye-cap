@@ -14,9 +14,9 @@
 - Importer et exporter une liste de joueurs.
 - Dupliquer un match existant.
 - Ajouter un écran de résumé avant impression.
-- Ajouter une sortie texte très simple pour impression de dernière minute avec une mini imprimante via Funny Print.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
 - En mode défense, afficher les deux premiers frappeurs de la prochaine manche offensive si applicable.
+- Harmoniser le look du mode match avec le reste de l'application.
 
 ## Préparation
 
@@ -26,12 +26,13 @@ La vue `Préparation` regroupe maintenant l'ancienne vue `Équipe` et l'ancienne
 
 - activation / désactivation temporaire d'un joueur sans suppression;
 - suppression explicite d'un joueur;
-- ordre manuel par glisser-déposer;
-- mélange aléatoire.
+- action `Charger un exemple` placée dans l'en-tête de préparation.
 
-Idée potentielle:
+## Alignement
 
-- permettre de revenir au dernier ordre manuel après un mélange aléatoire.
+- L'ordre des frappeurs se modifie directement dans le tableau principal en glissant les joueurs.
+- L'option `Frappe fixe` est un réglage de l'écran `Alignement`.
+- Les validations et l'équité suivent le tableau principal pour servir de rétroaction après l'ajustement.
 
 ## Publication optionnelle en ligne
 
@@ -64,16 +65,16 @@ Points à définir avant implémentation:
 
 ## Sortie texte pour mini imprimante
 
-Ajouter un export texte minimal pour imprimer rapidement un alignement de dernière minute avec une petite imprimante et l'application Funny Print.
+Un export texte minimal est disponible dans `Partager` pour imprimer rapidement un alignement de dernière minute avec une petite imprimante et l'application Funny Print.
 
-Objectifs:
+Objectifs livrés:
 
 - format texte brut, sans HTML;
 - lisible sur papier étroit;
 - priorité aux informations utiles en match;
 - facile à copier dans une autre application.
 
-Contenu probable:
+Contenu actuel:
 
 - équipe, adversaire, date ou terrain si utile;
 - ordre des frappeurs;
@@ -144,3 +145,23 @@ Il n'est pas nécessaire de distinguer les raisons dans l'app. Un joueur prêté
 - Module `rules.js` pour valider les règles obligatoires.
 - Base de tests navigateur dans `tests/rules.html`.
 - Encodage UTF-8 documenté; les faux diagnostics causés par l'affichage PowerShell sont identifiés.
+- Actions rapides `Charger l'exemple` et `Voir l'alignement` retirées de l'en-tête principal.
+- Changements de vue qui ramènent l'utilisateur en haut de la page.
+- Action `Optimiser` placée près du tableau principal.
+- Boutons de navigation doublés retirés des sections `Alignement`, `Partager` et `Mode match`.
+- Boutons `Continuer` ajoutés en bas des étapes avant le mode match.
+- Bouton `Charger un exemple` déplacé dans la vue `Préparation`, avec un exemple basé sur des joueurs connus des Expos de 1994.
+- `Charger un exemple` ne change plus de vue.
+- Affichage `Visiteur` / `Locale` intégré près des noms d'équipes, avec inversion automatique entre l'équipe et l'adversaire.
+- Gestion séparée de l'ordre retirée de `Préparation`; l'ordre se modifie dans le tableau principal de l'alignement.
+- Option `Frappe fixe` déplacée au début de l'écran `Alignement`.
+- Validations et équité déplacées après le tableau principal.
+- Ajout/retrait de manches intégré à la dernière manche du tableau principal avec des icônes `-` et `+`.
+- Action `Régénérer` renommée `Optimiser`; le bouton devient grisé après optimisation et se réactive lors d'une modification manuelle.
+- Export texte brut compact ajouté pour mini imprimante / Funny Print.
+- Le texte mini imprimante suit maintenant l'ordre visiteur/local des demi-manches comme le mode match.
+- Le mode match autonome est intégré comme une carte normale dans `Partager`, avec un bouton secondaire.
+- En mode frappe variable, les rangs de frappe par manche et les listes de frappeurs par manche sont retirés du tableau, des exports et du mode match.
+- Les cartes d'équité sont harmonisées entre les modes avec `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` apparaît seulement en frappe fixe.
+- `Temps de jeu` inclut les présences au bâton en frappe fixe, mais seulement la défensive en frappe variable.
+- En mode frappe variable, les présences au bâton sont retirées des scores d'équité et les colonnes `AB` / `Total` sont retirées des statistiques.

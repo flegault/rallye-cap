@@ -25,7 +25,6 @@
     <div class="heroCard">
       <h2>Un alignement clair pour le banc… et beau pour les parents.</h2>
       <p>Crée l’équipe, ajuste l’ordre, génère les positions et partage un mode match autonome aux entraîneurs ou parents.</p>
-      <div class="row"><button class="btn brandBtn" id="exampleBtn">Charger l’exemple</button><button class="btn secondary" id="goAlignBtn">Voir l’alignement</button></div>
     </div>
     <div class="card">
       <div class="mini">
@@ -44,10 +43,10 @@
   </div>
   <section class="view" id="view-equipe">
     <div class="card">
-      <div class="spaced"><div><h2>1. Préparation du match</h2><p class="hint">Les données restent seulement sur cet appareil.</p></div><div class="segment" aria-label="Locale ou visiteur"><button data-side="visiteur">Visiteur</button><button data-side="locale">Locale</button></div></div>
+      <div class="spaced"><div><h2>1. Préparation du match</h2><p class="hint">Les données restent seulement sur cet appareil.</p></div><button class="btn secondary" id="exampleBtn">Charger un exemple</button></div>
       <div class="grid">
-        <label><span>Nom de l’équipe</span><input id="team" placeholder="Expos de Montréal" /></label>
-        <label><span>Adversaire</span><input id="opp" placeholder="Padres de San Diego" /></label>
+        <div class="teamField"><label><span>Nom de l’équipe</span><input id="team" placeholder="Expos de Montréal" /></label><div class="segment" aria-label="Statut de l'équipe"><button data-side-target="team" data-side-value="visiteur">Visiteur</button><button data-side-target="team" data-side-value="locale">Locale</button></div></div>
+        <div class="teamField"><label><span>Adversaire</span><input id="opp" placeholder="Padres de San Diego" /></label><div class="segment" aria-label="Statut de l'adversaire"><button data-side-target="opp" data-side-value="visiteur">Visiteur</button><button data-side-target="opp" data-side-value="locale">Locale</button></div></div>
         <label><span>Date</span><input id="date" type="date" /></label>
         <label><span>Endroit</span><input id="place" placeholder="Parc, terrain" /></label>
       </div>
@@ -60,58 +59,59 @@
       <h3>Ajouter ou coller des joueurs</h3>
       <div class="grid2"><label><span>Un nom par ligne, ou séparé par virgule</span><textarea id="names" placeholder="Émile, Julien, Noah"></textarea></label><button class="btn brandBtn" id="addNames">Ajouter</button></div>
     </div>
-    <div class="card">
-      <div class="spaced"><div><h3>Ordre des frappeurs</h3><p class="hint">Glisse les noms pour changer l’ordre. Le terrain reste associé aux joueurs actifs.</p></div><button class="btn iconOnly secondary" id="shuffleBtn" title="Mélanger l’ordre" aria-label="Mélanger l’ordre">↝</button></div>
-      <div class="switchLine"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div><b>Frappe fixe</b><div class="tiny">6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
-      <div class="alerts" id="orderAlerts"></div>
-      <div class="sortable" id="order"></div>
-      <div class="row" style="margin-top:16px"><a class="btn brandBtn" href="#alignement" id="toAlign">Continuer</a></div>
-    </div>
+    <div class="stepActions noPrint"><a class="btn brandBtn" href="#alignement" id="toAlign">Continuer</a></div>
   </section>
   <section class="view" id="view-alignement">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>2. Alignement</h2><p class="hint">Les cellules rouges indiquent uniquement les violations de règles. Glisse une cellule verticalement pour échanger seulement les positions.</p></div><div class="row"><button class="btn secondary" id="regenBtn">Régénérer</button><a class="btn brandBtn" href="#partager">Partager</a></div></div>
+      <div class="spaced"><div><h2>2. Alignement</h2><p class="hint">Glisse les joueurs dans la première colonne pour ajuster l’ordre. Glisse une cellule verticalement pour échanger seulement les positions.</p></div></div>
+      <div class="switchLine"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div><b>Frappe fixe</b><div class="tiny">6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
     </div>
-    <div class="card noPrint">
-      <div class="spaced"><div><h3>Manches</h3><p class="hint">Ajuste le nombre de manches si le contexte réel change pendant le match.</p></div><div class="row"><button class="btn secondary" id="removeInningBtn">Retirer une manche</button><span class="tag" id="inningCountTag">4 manches</span><button class="btn secondary" id="addInningBtn">Ajouter une manche</button></div></div>
-    </div>
-    <div class="card"><h3>Validations</h3><div class="alerts" id="validations"></div></div>
-    <div class="card scoresCard"><h3>Équité</h3><div class="scores" id="scores"></div></div>
     <div class="card">
-      <div class="spaced"><h3>Tableau principal</h3><span class="tiny">Légende dans les pastilles sous le tableau.</span></div>
+      <div class="spaced"><div><h3>Tableau principal</h3><span class="tiny">Légende dans les pastilles sous le tableau.</span></div><button class="btn secondary" id="regenBtn">Optimiser</button></div>
       <div class="tableWrap" id="lineup"></div>
       <div class="legend" id="legend"></div>
     </div>
+    <div class="card"><h3>Validations</h3><div class="alerts" id="validations"></div></div>
+    <div class="card scoresCard"><h3>Équité</h3><div class="scores" id="scores"></div></div>
     <div class="card suggestionsCard"><h3>Problèmes et suggestions</h3><div class="suggestions" id="suggestions"></div></div>
     <div class="card statsCard"><h3>Statistiques</h3><div class="tableWrap" id="stats"></div></div>
+    <div class="stepActions noPrint"><a class="btn brandBtn" href="#partager">Continuer</a></div>
   </section>
   <section class="view" id="view-partager">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>3. Partager</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode match.</p></div><a class="btn brandBtn" href="#match">Ouvrir le mode match</a></div>
+      <div class="spaced"><div><h2>3. Partager</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode match.</p></div></div>
     </div>
-    <div class="grid3">
-      <div class="card">
+    <div class="grid3 shareGrid">
+      <div class="card shareCard">
         <h3>Entraîneurs</h3>
         <p class="hint">Version imprimable de l'alignement complet.</p>
         <button class="btn secondary" id="printCoachBtn">PDF entraîneur</button>
       </div>
-      <div class="card">
+      <div class="card shareCard">
         <h3>Parents</h3>
         <p class="hint">Image simple à envoyer dans un groupe ou une conversation.</p>
         <button class="btn secondary" id="parentImageBtn">Image parents</button>
       </div>
-      <div class="card">
+      <div class="card shareCard">
         <h3>Courriel</h3>
         <p class="hint">Copie HTML prête à coller dans un courriel.</p>
         <button class="btn secondary" id="copyHtmlBtn">Copier courriel HTML</button>
       </div>
+      <div class="card shareCard">
+        <h3>Mini imprimante</h3>
+        <p class="hint">Texte brut compact pour Funny Print ou une petite imprimante.</p>
+        <button class="btn secondary" id="copyTextBtn">Copier texte</button>
+      </div>
+      <div class="card shareCard">
+        <h3>Mode match autonome</h3>
+        <p class="hint">Fichier HTML consultable sans l'éditeur principal.</p>
+        <button class="btn secondary" id="exportMatchBtn">Exporter mode match</button>
+      </div>
     </div>
-    <div class="card">
-      <div class="spaced"><div><h3>Mode match autonome</h3><p class="hint">Fichier HTML consultable sans l'éditeur principal.</p></div><button class="btn brandBtn" id="exportMatchBtn">Exporter mode match</button></div>
-    </div>
+    <div class="stepActions noPrint"><a class="btn brandBtn" href="#match">Continuer</a></div>
   </section>
   <section class="view" id="view-match">
-    <div class="card noPrint"><div class="spaced"><div><h2>4. Mode match</h2><p class="hint">Avance/recul par boutons, clavier ou swipe. L’équipe locale frappe en fin de manche.</p></div><div class="row"><a class="btn secondary" href="#partager">Partager</a></div></div></div>
+    <div class="card noPrint"><div class="spaced"><div><h2>4. Mode match</h2><p class="hint">Avance/recul par boutons, clavier ou swipe. L’équipe locale frappe en fin de manche.</p></div></div></div>
     <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
 <div class="foot noPrint">Fait pour Rallye-Cap • Sauvegarde locale seulement</div>
