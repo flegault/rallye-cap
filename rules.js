@@ -21,6 +21,63 @@ function cleanPositions(pos, playerIds){
   return cleaned;
 }
 
+function emptyStats(){
+  return {ab:0,def:0,total:0,bench:0,pos:{'1B':0,'2B':0,'3B':0,'AC':0,'L1':0,'L2':0}};
+}
+
+function collectStats(schedule, playerIds, batterCounts, fixed){
+  const ids=Array.isArray(playerIds)?playerIds.map(String):[];
+  const counts=batterCounts&&typeof batterCounts==='object'?batterCounts:{};
+  const stats={};
+
+  ids.forEach(id=>{
+    stats[id]=emptyStats();
+    stats[id].ab=Number(counts[id]||0);
+  });
+
+  (Array.isArray(schedule)?schedule:[]).forEach(inning=>{
+    const pos=(inning&&inning.pos&&typeof inning.pos==='object')?inning.pos:{};
+    ids.forEach(id=>{
+      const position=pos[id];
+      if(POSITIONS.includes(position)){
+        stats[id].def++;
+        stats[id].pos[position]=(stats[id].pos[position]||0)+1;
+      }else{
+        stats[id].bench++;
+      }
+    });
+  });
+
+  Object.values(stats).forEach(item=>{
+    item.total=fixed?item.ab+item.def:item.def;
+  });
+
+  return stats;
+}
+
+function fairness(stats, fixed){
+  const values=Object.values(stats||{});
+  if(!values.length)return{abGap:0,defGap:0,totalGap:0,posGap:0,overall:0,abScore:0,defScore:0,totalScore:0,posScore:0};
+
+  const gap=items=>Math.max(...items)-Math.min(...items);
+  const score=(gapValue,ideal)=>gapValue<=ideal?100:Math.max(0,Math.round(100-(gapValue-ideal)*18));
+  const abGap=fixed?gap(values.map(item=>item.ab)):0;
+  const defGap=gap(values.map(item=>item.def));
+  const totalGap=gap(values.map(item=>item.total));
+  const allPositions=[];
+
+  values.forEach(item=>POSITIONS.forEach(position=>allPositions.push(item.pos[position]||0)));
+
+  const posGap=gap(allPositions);
+  const abScore=fixed?score(abGap,1):0;
+  const defScore=score(defGap,2);
+  const totalScore=score(totalGap,1);
+  const posScore=score(posGap,3);
+  const overall=fixed?Math.round(abScore*.30+totalScore*.40+posScore*.30):Math.round(totalScore*.60+posScore*.40);
+
+  return {abGap,defGap,totalGap,posGap,overall,abScore,defScore,totalScore,posScore};
+}
+
 function scheduleRuleSummary(schedule, playerIds){
   const ids=Array.isArray(playerIds)?playerIds.map(String):[];
   const idSet=new Set(ids);
@@ -125,5 +182,5 @@ function startReadiness(schedule, playerIds){
   return {ok:true,text:''};
 }
 
-global.RallyeCapRules={POSITIONS,cleanPositions,validateSchedule,scheduleRuleSummary,startReadiness};
+global.RallyeCapRules={POSITIONS,cleanPositions,emptyStats,collectStats,fairness,validateSchedule,scheduleRuleSummary,startReadiness};
 })(window);

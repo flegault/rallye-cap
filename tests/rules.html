@@ -88,6 +88,28 @@ const tests=[
     }
   },
   {
+    name:'calcule les statistiques en frappe fixe',
+    run:()=>{
+      const stats=RallyeCapRules.collectStats(validSchedule,players,{p1:2,p2:2,p3:2,p4:1,p5:1,p6:1,p7:1,p8:1},true);
+      return stats.p1.ab===2&&stats.p1.def===3&&stats.p1.bench===1&&stats.p1.total===5&&stats.p1.pos['1B']===1;
+    }
+  },
+  {
+    name:'calcule les statistiques en frappe variable sans AB dans le total',
+    run:()=>{
+      const stats=RallyeCapRules.collectStats(validSchedule,players,{p1:2},false);
+      return stats.p1.ab===2&&stats.p1.def===3&&stats.p1.total===3;
+    }
+  },
+  {
+    name:'calcule un score d’équité',
+    run:()=>{
+      const stats=RallyeCapRules.collectStats(validSchedule,players,{p1:2,p2:2,p3:2,p4:1,p5:1,p6:1,p7:1,p8:1},true);
+      const fair=RallyeCapRules.fairness(stats,true);
+      return fair.overall>0&&fair.totalGap===1&&fair.abGap===1;
+    }
+  },
+  {
     name:'bloque le démarrage avec moins de 6 joueurs actifs',
     run:()=>!RallyeCapRules.startReadiness(validSchedule,players.slice(0,5)).ok
   },
