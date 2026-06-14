@@ -40,6 +40,8 @@ Alignement Rallye-Cap
 |   |   +-- Option frappe fixe
 |   +-- Tableau principal
 |   |   +-- Optimiser
+|   |   +-- Débuter le match
+|   |   +-- Cadenas de manche
 |   |   +-- Retirer une manche
 |   |   +-- Ajouter une manche
 |   |   +-- Réordonner les joueurs par glisser-déposer
@@ -70,6 +72,7 @@ Alignement Rallye-Cap
     |   +-- Attaque: rappel de suivre l'ordre au banc si la frappe fixe est désactivée
     |   +-- Défense: positions défensives
     +-- Navigation précédent / suivant
+    +-- Barrer / débarrer la demi-manche courante
     +-- Points de progression
 ```
 
@@ -166,6 +169,17 @@ Découpage potentiel:
 - Retirer la vue terrain de l'expérience principale.
 - L'ajout et le retrait de manche doivent rester possibles en cours de match, parce qu'une 5e manche peut être ajoutée si le temps le permet.
 - L'ajout/retrait de manche est accessible clairement dans l'écran d'alignement.
+- Le match est démarré par un bouton explicite `Débuter le match`.
+- Une fois le match débuté, ce bouton devient `Recommencer le match`; avec confirmation, il débarre toutes les demi-manches, réinitialise l'historique de frappe et réactive `Optimiser`.
+- Quand le match est débuté, `Optimiser` est désactivé.
+- Le tableau principal affiche chaque manche en deux colonnes de demie-manche: `Début` et `Fin`.
+- Les sous-en-têtes utilisent `🏏` pour l'attaque et `🧤` pour la défensive selon le statut visiteur/local.
+- Avant le début du match, glisser un joueur dans la première colonne change l'ordre et déplace la ligne complète.
+- Quand le match est débuté, les lignes du tableau principal restent stables par joueur. La première colonne affiche le rang courant dans l'ordre des frappeurs, tandis que les cellules d'attaque affichent les rangs prévus par demie-manche.
+- Les demi-manches peuvent être barrées dans le tableau avec un cadenas ouvert ou fermé placé dans le sous-en-tête `Début` ou `Fin`. Les demi-manches peuvent aussi être barrées dans le mode match.
+- Les demi-manches barrées doivent rester continues depuis le début du match. L'interface confirme les changements qui barrent ou débarrent plusieurs demi-manches.
+- Une manche peut être ouverte, partiellement barrée ou complètement barrée.
+- Les changements de joueurs pendant un match touchent seulement les manches non barrées et demandent confirmation quand ils ont un impact important.
 - Quand `Frappe fixe` est désactivé, le tableau et les exports ne doivent pas afficher de rang de frappe `(#)` ni de frappeurs par manche.
 - Les cartes d'équité utilisent les mêmes libellés dans les deux modes: `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` est ajouté seulement quand `Frappe fixe` est activé.
 - `Temps de jeu` inclut les présences au bâton seulement quand `Frappe fixe` est activé; sinon il reflète la défensive seulement.

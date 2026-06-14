@@ -67,7 +67,7 @@
       <div class="switchLine"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div><b>Frappe fixe</b><div class="tiny">6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
     </div>
     <div class="card">
-      <div class="spaced"><div><h3>Tableau principal</h3><span class="tiny">Légende dans les pastilles sous le tableau.</span></div><button class="btn secondary" id="regenBtn">Optimiser</button></div>
+      <div class="spaced"><div><h3>Tableau principal</h3><span class="tiny">Légende dans les pastilles sous le tableau.</span></div><div class="row"><button class="btn secondary" id="startMatchBtn">Débuter le match</button><button class="btn secondary" id="regenBtn">Optimiser</button></div></div>
       <div class="tableWrap" id="lineup"></div>
       <div class="legend" id="legend"></div>
     </div>
@@ -112,7 +112,7 @@
   </section>
   <section class="view" id="view-match">
     <div class="card noPrint"><div class="spaced"><div><h2>4. Mode match</h2><p class="hint">Avance/recul par boutons, clavier ou swipe. L’équipe locale frappe en fin de manche.</p></div></div></div>
-    <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
+    <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn secondary" id="lockHalfBtn">Barrer la demi-manche</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
 <div class="foot noPrint">Fait pour Rallye-Cap • Sauvegarde locale seulement</div>
 </main>

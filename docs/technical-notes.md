@@ -12,8 +12,18 @@ Champs principaux:
 - `innings`: nombre de manches
 - `players`: joueurs enregistrés
 - `order`: ordre des joueurs par identifiant
+- `battingOrders`: snapshots d'ordre au bâton par demie-manche offensive barrée, indexés sous la forme `inning:debut` ou `inning:fin`
 - `schedule`: positions par manche
+- `started`: match explicitement débuté
+- `locks.innings`: manches barrées depuis le tableau
+- `locks.halves`: demi-manches barrées depuis le mode match, indexées sous la forme `inning:debut` ou `inning:fin`
 - `route`: vue active
+
+Quand `started` est vrai, l'action `Optimiser` est désactivée. Le bouton de démarrage permet de recommencer le match avec confirmation, ce qui remet `started` à `false`, vide `locks` et vide `battingOrders`. Les manches barrées ne doivent pas être recalculées automatiquement. Les changements de joueurs pendant le match doivent viser les manches non barrées et laisser les corrections ambiguës à l'entraîneur.
+
+Le tableau principal rend les manches en deux demies-manches. Les assignations défensives restent stockées par manche dans `schedule`, mais l'édition défensive est bloquée quand la demie-manche défensive correspondante est barrée. Les cadenas de verrouillage vivent dans les sous-en-têtes `Début` et `Fin` et modifient `locks.halves`. Les rangs de frappe affichés pour une demie-manche offensive barrée utilisent `battingOrders` pour éviter de réécrire l'historique quand l'ordre futur change.
+
+Avant le début du match, les lignes du tableau suivent `order` et le glisser-déposer de la première colonne déplace la ligne complète. Quand le match est débuté, le rendu stabilise les lignes par joueur enregistré actif, et `order` sert seulement de rang courant. `generateAll()` remet `order` dans l'ordre des joueurs enregistrés avant de recalculer l'alignement.
 
 ## Moteur d'alignement
 
@@ -73,6 +83,12 @@ Tests navigateur prioritaires:
 - génération et régénération;
 - modification manuelle par glisser-déposer;
 - navigation mode match;
+- démarrage explicite du match;
+- verrouillage d'une manche complète;
+- verrouillage d'une demi-manche;
+- ajout d'un joueur en match débuté;
+- remplacement d'un joueur en match débuté;
+- retrait d'un joueur actif avec seulement 6 joueurs disponibles;
 - export HTML autonome.
 
 ## Direction d'architecture

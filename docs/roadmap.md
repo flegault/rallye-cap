@@ -2,6 +2,7 @@
 
 ## Maintenant
 
+- Stabiliser la première version expérimentale des changements de joueurs pendant un match: démarrage explicite, cadenas de manches, demi-manches barrées, ajout/remplacement/retrait de joueurs sur téléphone.
 - Vérifier que le moteur respecte les règles obligatoires avant les objectifs d'équité.
 - Extraire la logique métier de `app.js` dans des modules testables.
 
@@ -83,14 +84,26 @@ Contenu actuel:
 - banc par manche;
 - très peu de décoration.
 
-## Changement de joueurs: idée future
+## Changement de joueurs sur mobile: priorité
 
-L'application devrait éventuellement aider l'entraîneur à ajuster un match déjà préparé quand la liste réelle change juste avant ou pendant le match.
+L'application doit aider l'entraîneur à ajuster rapidement un match déjà préparé quand la liste réelle change juste avant ou pendant le match, surtout sur téléphone.
+
+Objectif UX:
+
+- permettre un changement en quelques gestes;
+- rester lisible et utilisable sur un petit écran, possiblement au banc ou près du terrain;
+- éviter de demander une raison détaillée;
+- montrer clairement l'impact sur les manches, le banc, l'ordre des frappeurs et l'équité;
+- préserver le plus possible les ajustements manuels déjà faits.
+- demander une confirmation avant les opérations qui peuvent modifier beaucoup l'alignement, comme recalculer plusieurs manches ou remplacer plusieurs assignations manuelles.
+- expliquer brièvement ce qui sera conservé, ce qui sera recalculé et quelles manches sont touchées avant de confirmer un gros changement.
 
 Cas à couvrir:
 
 - absence de dernière minute d'un joueur prévu;
+- retard d'un joueur prévu;
 - ajout de dernière minute d'un joueur disponible;
+- substitution ou remplacement temporaire;
 - joueur qui quitte ou se blesse en cours de match;
 - joueur présent qui n'était pas prévu au départ.
 
@@ -105,11 +118,29 @@ Comportement souhaité:
 Statuts possibles:
 
 - actif;
+- retardé ou pas encore disponible;
 - absent ou retiré du match;
 - ajouté au match;
 - inactif hors match.
 
-Il n'est pas nécessaire de distinguer les raisons dans l'app. Un joueur prêté à l'autre équipe est traité comme absent ou retiré pour notre match. Un joueur emprunté ou présent sans être prévu est traité comme ajouté au match.
+Il n'est pas nécessaire de distinguer les raisons dans l'app. Une absence, un retard, une blessure, un départ, un joueur prêté à l'autre équipe ou une autre indisponibilité peuvent être traités comme un changement de disponibilité. Un joueur emprunté ou présent sans être prévu est traité comme ajouté au match.
+
+Première tranche expérimentale:
+
+- bouton explicite `Débuter le match`;
+- bouton `Recommencer le match` après le début, avec confirmation, pour débarrer toutes les demi-manches et réactiver `Optimiser`;
+- tableau principal séparé en demies-manches `Début` / `Fin` avec icônes `🏏` attaque et `🧤` défensive selon visiteur/local;
+- glisser-déposer de l'ordre qui déplace les lignes complètes avant le début du match;
+- lignes du tableau principal stables par joueur après le début du match, avec rang courant dans la première colonne;
+- snapshots d'ordre au bâton pour les demies-manches offensives barrées afin de préserver l'historique;
+- cadenas ouvert ou fermé dans les sous-en-têtes `Début` et `Fin` pour barrer les demi-manches;
+- verrouillage continu: barrer une manche future propose de barrer les manches précédentes, et débarrer une manche propose de débarrer les suivantes;
+- bouton pour barrer ou débarrer la demi-manche courante dans le mode match;
+- `Optimiser` désactivé quand le match est débuté;
+- ajout d'un joueur en match débuté avec choix `Ajouter`, `Remplacer` ou `Inactif`;
+- remplacement qui substitue les joueurs dans l'ordre et les assignations non barrées;
+- retrait d'un joueur actif avec avertissement, sans toucher aux manches barrées;
+- obligation de remplacer un joueur si seulement 6 joueurs sont actifs.
 
 ## Bugs et dettes connues
 

@@ -77,6 +77,18 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 
 ## Mode match
 
+- Le match ne devient pas `débuté` automatiquement; l'entraîneur doit utiliser une action explicite `Débuter le match`.
+- Quand le match est débuté, l'action `Optimiser` est désactivée. Le bouton de démarrage devient `Recommencer le match`; avec confirmation, il débarre toutes les demi-manches, réinitialise l'historique des rangs au bâton et rend `Optimiser` disponible de nouveau.
+- Le tableau principal sépare chaque manche en deux demies-manches `Début` et `Fin`.
+- L'en-tête de chaque demie-manche indique le type de jeu pour notre équipe: `🏏` pour l'attaque et `🧤` pour la défensive. L'ordre dépend du statut visiteur/local.
+- Les lignes du tableau principal restent associées aux joueurs. En attaque, les cellules affichent seulement le rang de frappe prévu (`#1`, `#2`, etc.) quand la frappe fixe est activée. En défensive, les cellules affichent les positions.
+- Chaque demie-manche peut être barrée ou débarrée depuis son sous-en-tête `Début` ou `Fin` avec un cadenas ouvert ou fermé.
+- Les manches barrées doivent former une progression continue depuis le début du match. Barrer une manche future doit proposer de barrer les manches précédentes manquantes avec confirmation. Débarrer une manche doit aussi débarrer les manches suivantes déjà barrées, avec confirmation.
+- Les demi-manches barrées doivent former une progression continue depuis le début du match. Barrer une demie-manche future doit proposer de barrer les demies-manches précédentes manquantes avec confirmation. Débarrer une demie-manche doit aussi débarrer les demies-manches suivantes déjà barrées, avec confirmation.
+- Une demi-manche peut aussi être barrée depuis le mode match. Une manche peut donc être ouverte, partiellement barrée ou complètement barrée.
+- Quand une demie-manche offensive est barrée, l'ordre au bâton utilisé pour cette demie-manche est figé afin que les changements futurs ne modifient pas l'historique.
+- Avant le début du match, l'ordre des frappeurs peut être modifié en glissant les joueurs dans la première colonne; le déplacement réordonne les lignes complètes. Une fois le match débuté, ce glisser-déposer d'ordre est désactivé.
+- Avant le début du match, `Optimiser` remet l'ordre des frappeurs dans l'ordre normal des joueurs enregistrés avant de recalculer l'alignement.
 - En attaque, afficher seulement les frappeurs de la manche courante quand la frappe fixe est activée.
 - Quand la frappe fixe est désactivée, afficher un rappel de suivre l'ordre au banc au lieu d'une liste de frappeurs par manche.
 - En attaque, afficher aussi les lanceurs de la prochaine manche défensive de notre équipe quand cette prochaine défense existe, pour préparer les casques.
@@ -85,6 +97,16 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Permettre l'ajout ou le retrait d'une manche en cours de match quand le contexte réel change, par exemple quand il reste assez de temps pour une 5e manche.
 - Ne pas afficher d'aperçu de frappeurs après la dernière présence offensive possible du match.
 - Ne pas afficher d'aperçu des lanceurs après la dernière manche défensive possible du match.
+
+## Changements de joueurs pendant un match
+
+- Les changements rapides sur téléphone sont prioritaires, mais les opérations qui changent beaucoup l'alignement doivent demander confirmation.
+- Quand un joueur est ajouté pendant un match débuté, l'entraîneur doit choisir entre `Ajouter`, `Remplacer` ou `Inactif`.
+- `Ajouter`: le joueur est ajouté à la fin de l'ordre au bâton et reste sans assignation défensive automatique dans les manches non barrées.
+- `Remplacer`: le nouveau joueur prend la place du joueur remplacé dans l'ordre et dans les assignations des manches non barrées.
+- `Inactif`: le joueur est enregistré sans participer au match courant.
+- Quand un joueur actif est retiré pendant un match débuté, les manches barrées ne sont pas modifiées. Les assignations non barrées du joueur sont retirées et l'entraîneur doit corriger manuellement.
+- Si seulement 6 joueurs sont actifs, retirer un joueur exige un remplacement.
 
 ## Questions ouvertes
 
