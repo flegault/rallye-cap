@@ -19,6 +19,8 @@ La navigation est disponible dans:
 - le menu `Autres`;
 - certains boutons de continuité entre les vues.
 
+Le menu `Autres` regroupe les actions secondaires. L'action destructive globale devrait être libellée `Recommencer` plutôt que `Réinitialiser`.
+
 ## Sitemap actuel
 
 ```text
@@ -84,6 +86,11 @@ Match -> Joueurs -> Alignement
 
 Ce flux prépare le match et garde la gestion active dans `Alignement` après le début.
 
+À explorer:
+
+- placer `Joueurs` avant `Match`, puisque la liste des joueurs est souvent réutilisée et peut être la première chose que l'entraîneur veut préparer;
+- conserver `Match` en premier si la date, le terrain et les équipes restent le contexte naturel du match courant.
+
 ## Workflow de référence
 
 Le workflow cible suit la réalité d'un match et évite de devoir revenir dans les étapes de préparation après le début.
@@ -146,9 +153,11 @@ Alignement Rallye-Cap
 ## Frictions connues
 
 - L'écran `Alignement` contient beaucoup de sections et peut paraître dense.
+- La fin de match n'offre pas encore un chemin clair pour garder les mêmes joueurs et préparer le match suivant.
 - La vue spectateur pourrait mieux anticiper la prochaine action utile:
   - en attaque: prochains lanceurs à préparer si applicable;
   - en défense: deux premiers frappeurs de la prochaine présence offensive si applicable.
+- La vue spectateur devrait afficher les deux lanceurs sur deux lignes séparées pour présenter 6 éléments défensifs, comme les 6 frappeurs en attaque.
 - Les suggestions et validations pourraient être rapprochées du tableau quand l'utilisateur corrige manuellement.
 - Le flux ne distingue pas encore clairement préparation avant-match, ajustement, et consultation pendant le match.
 
@@ -193,6 +202,8 @@ Découpage potentiel:
 ## Questions UX à explorer
 
 - Est-ce que les statistiques avancées devraient être repliées par défaut?
+- Est-ce que l'application devrait proposer de mélanger l'ordre au bâton la première fois qu'on ouvre `Alignement`?
+- Est-ce que `Joueurs` devrait devenir la première étape du flux?
 - Est-ce que le réglage des manches devrait aussi être disponible dans la vue spectateur, en plus de l'écran d'alignement?
 - Est-ce que les sous-en-têtes du tableau doivent garder les textes `Début` et `Fin`, ou seulement les icônes et cadenas puisque la colonne gauche est toujours le début et la colonne droite est toujours la fin?
 - Quel patron d'interaction est le plus rapide sur téléphone pour corriger une position défensive manquante après un retrait de joueur: clic sur `BANC`, zone `Positions non assignées`, ou menu d'action par manche?
@@ -247,6 +258,8 @@ Découpage potentiel:
 - L'étape `Joueurs` permet de renommer directement un joueur et utilise un bouton explicite `Présent` / `Absent` pour la disponibilité.
 - Le bloc `Ajouter des joueurs` se replie quand l'équipe a déjà le minimum de joueurs et peut être rouvert avec un bouton explicite.
 - Le menu du haut garde les étapes principales visibles et regroupe `Partager`, `Spectateur`, `Charger un exemple` et `Réinitialiser` dans `Autres`.
+- Le libellé `Réinitialiser` devrait être remplacé par `Recommencer`.
+- Les textes d'accueil devraient être resserrés autour de: `Clair et équitable pour le banc, facile pour les entraîneurs et beau pour les parents.` et `Prépare un match et crée un alignement équitable qui respecte les règles Rallye-Cap.`
 - Les entêtes de demi-manche du tableau principal affichent seulement les icônes bâton et gant; `Début` est toujours la colonne de gauche et `Fin` la colonne de droite.
 - Le démarrage de la progression du match est bloqué tant que l'alignement n'a pas 6 à 12 joueurs actifs et 6 positions défensives assignées par manche.
 - Cliquer sur l'en-tête `Ordre` devrait permettre de désélectionner la sélection courante du tableau principal.
@@ -273,6 +286,12 @@ La section `Partager` regroupe:
 - export du spectateur autonome.
 
 Le texte mini imprimante doit suivre l'ordre réel des demi-manches comme la vue spectateur: attaque en début de manche si notre équipe est visiteuse, défense en début de manche si notre équipe est locale.
+
+Améliorations UX à prévoir:
+
+- afficher le texte mini imprimante dans une zone éditable avant de le copier;
+- adapter l'image/PDF parents aux longues listes et aux noms longs;
+- générer des noms de fichiers avec la date et les équipes.
 
 À venir:
 

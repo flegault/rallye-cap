@@ -4,6 +4,12 @@
 
 L'application aide un entraîneur Rallye-Cap à préparer rapidement un alignement clair pour un match: ordre des frappeurs, défensive par manche, équité de temps de jeu et supports partageables.
 
+Promesse UX:
+
+- clair et équitable pour le banc;
+- facile pour les entraîneurs;
+- beau et lisible pour les parents.
+
 ## Public cible
 
 - Entraîneurs qui préparent l'alignement avant le match.
@@ -21,6 +27,10 @@ Le workflow cible suit la réalité du match et limite les retours en arrière u
 
 Le mode spectateur est une vue simplifiée en lecture seule accessible par le menu. Il n'est plus une étape du workflow principal.
 
+Observation UX à explorer:
+
+- L'étape `Joueurs` pourrait devenir la première étape si la réutilisation de la liste de joueurs devient plus importante que la saisie des informations du match.
+
 ## Règles métier actuelles
 
 - Les règles Rallye-Cap sont considérées uniformes par défaut. Il ne faut pas ajouter de profils par association ou catégorie sans nouvelle décision produit.
@@ -29,6 +39,7 @@ Le mode spectateur est une vue simplifiée en lecture seule accessible par le me
 - Chaque manche défensive doit avoir 6 défenseurs.
 - Les positions défensives sont `1B`, `2B`, `3B`, `AC`, `L1`, `L2`; les autres joueurs sont au banc.
 - En mode frappe fixe, il y a 6 frappeurs par manche et l'ordre continue à la manche suivante.
+- La frappe fixe est normalement activée en Rallye-Cap; l'interface doit l'indiquer clairement.
 - Quand la frappe fixe est désactivée, l'application garde l'ordre général des frappeurs, mais ne doit pas afficher de frappeurs par manche, de nombre de présences au bâton prévu, ni de rang `(#)` dans les cases du tableau. Ces informations dépendent alors des retraits réels pendant le match.
 
 ## Règles obligatoires de défensive
@@ -77,11 +88,19 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Exports: courriel HTML, impression/PDF, image parents, spectateur HTML autonome.
 - L'export texte mini imprimante doit suivre le même ordre de demi-manches que la vue spectateur: l'équipe visiteuse frappe en début de manche et l'équipe locale frappe en fin de manche.
 
+## Préparation de match
+
+- Un nouveau match devrait être initialisé avec la date du jour.
+- L'action destructive globale devrait être libellée `Recommencer` plutôt que `Réinitialiser`.
+- Recommencer doit être confirmé clairement et expliquer si les joueurs enregistrés sont conservés ou supprimés.
+- Terminer un match doit permettre de conserver la liste des joueurs pour préparer un nouveau match.
+
 ## Progression du match dans l'alignement
 
 - La gestion du match se fait dans `Alignement`. L'onglet `Jouer` est retiré du workflow principal.
 - `Alignement` affiche l'état courant du match au-dessus ou près du tableau: `Match non commencé`, `À jouer: début 1re`, `À jouer: fin 1re`, etc.
 - Un seul bouton principal fait avancer la progression par demi-manche: `Commencer le match`, puis `Terminer début 1re`, `Terminer fin 1re`, etc.
+- Après la dernière demi-manche, l'application doit permettre de terminer le match et de sortir de l'état bloqué tout en gardant les mêmes joueurs en mémoire.
 - L'interface principale ne permet pas de revenir à une demi-manche précédente. Une correction de progression, si nécessaire, doit être une action avancée future avec confirmation forte.
 - Commencer le match ou appliquer un changement à partir d'une demi-manche verrouille les demi-manches précédentes comme jouées.
 - Quand une demi-manche est jouée, elle devient de l'historique non modifiable. Les demi-manches futures restent modifiables selon les actions permises.
@@ -126,6 +145,13 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Les suggestions proposées en cas de problème doivent viser seulement les demi-manches non jouées.
 - Le match ne doit pas pouvoir être débuté si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs, au moins une manche préparée et 6 positions défensives assignées pour chaque manche prévue.
 - Charger un exemple pendant un match débuté est interdit; l'entraîneur doit réinitialiser ou recommencer le match avant de remplacer les données.
+
+## Exports et partage
+
+- Les exports parents doivent rester lisibles avec beaucoup de joueurs et avec des noms longs. La mise en page doit s'adapter au contenu au lieu de couper ou de superposer les textes.
+- Les noms de fichiers d'exports parents devraient inclure la date et les noms des équipes.
+- Dans la vue spectateur, les deux lanceurs doivent être affichés sur deux lignes séparées afin que la défensive présente 6 éléments visuels, comme l'ordre de frappe.
+- L'export mini imprimante doit afficher le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
 
 ## Questions ouvertes
 

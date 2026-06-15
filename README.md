@@ -6,6 +6,14 @@ Application SPA statique pour préparer l'alignement d'une équipe de baseball R
 
 Ouvrir `index.html` dans un navigateur moderne. Les données restent sauvegardées localement sur l'appareil.
 
+Flux principal actuel:
+
+1. `Match`: informations du match.
+2. `Joueurs`: liste des joueurs.
+3. `Alignement`: génération, progression du match, validations, suggestions et changements de joueurs.
+
+`Partager` et `Spectateur` sont accessibles dans le menu. L'app doit rester utilisable hors ligne et conserver le français du Québec en UTF-8.
+
 ## Documentation
 
 - `AGENTS.md`: consignes de maintenance pour agents.

@@ -21,6 +21,8 @@ Champs principaux:
 
 Quand le match est commencé, l'action `Optimiser` est désactivée. Les demi-manches complétées ne doivent pas être recalculées automatiquement. Les changements de joueurs pendant le match doivent viser les demi-manches futures et laisser les corrections ambiguës à l'entraîneur.
 
+Dette fonctionnelle connue: quand toutes les demi-manches sont complétées, l'état actuel peut laisser l'entraîneur bloqué sans action claire pour terminer le match et préparer un nouveau match avec les mêmes joueurs. Une prochaine itération devrait distinguer `match terminé`, `nouveau match avec joueurs conservés` et `recommencer en supprimant les données`.
+
 Le tableau principal rend les manches en deux demi-manches. Les assignations défensives restent stockées par manche dans `schedule`, mais l'édition défensive est bloquée quand la demi-manche défensive correspondante est complétée. Les rangs de frappe affichés pour une demi-manche offensive complétée utilisent `battingOrders` pour éviter de réécrire l'historique quand l'ordre futur change.
 
 Avant le début du match, les lignes du tableau suivent `order` et le glisser-déposer de la première colonne déplace la ligne complète. Quand le match est débuté, le rendu stabilise les lignes par joueur enregistré actif, et `order` sert seulement de rang courant. `generateAll()` remet `order` dans l'ordre des joueurs enregistrés avant de recalculer l'alignement.
@@ -38,6 +40,8 @@ Le workflow cible remplace l'ancien onglet `Jouer` par une gestion directe dans 
 `#alignement` démarre le match avec confirmation si la progression est encore au début. Le démarrage est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs, au moins une manche préparée et 6 positions défensives assignées pour chaque manche prévue. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
 
 Le menu du haut garde seulement les étapes principales visibles. `Partager`, `Spectateur`, `Charger un exemple` et `Réinitialiser` sont regroupés dans `Autres`. `Charger un exemple` est bloqué pendant un match débuté.
+
+Le libellé durable souhaité pour l'action destructive globale est `Recommencer`, pas `Réinitialiser`. L'implémentation doit préciser si les joueurs sont conservés ou effacés.
 
 État transitoire: l'onglet `Jouer` n'est plus visible et l'ancienne route `#jouer` est redirigée vers `#alignement`. Le modèle interne utilise encore `started` et `locks.halves`; il devrait éventuellement être remplacé par un index monotone de demi-manche complétée ou courante, par exemple `currentHalfIndex` ou `completedHalfCount`. Les demi-manches passées deviendraient alors de l'historique non modifiable, la demi-manche courante serait mise en évidence, et les demi-manches futures resteraient modifiables dans `Alignement`.
 
@@ -107,6 +111,7 @@ Tests unitaires prioritaires:
 Tests navigateur prioritaires:
 
 - chargement de l'exemple;
+- date du jour initialisée pour un nouveau match;
 - ajout de joueurs;
 - génération et régénération;
 - modification manuelle par glisser-déposer;
@@ -119,6 +124,10 @@ Tests navigateur prioritaires:
 - remplacement d'un joueur en match débuté;
 - retrait d'un joueur actif avec seulement 6 joueurs disponibles;
 - export HTML autonome.
+- fin de match et nouveau match avec les mêmes joueurs;
+- export parents avec beaucoup de joueurs et noms longs;
+- aperçu modifiable de l'export mini imprimante;
+- vue spectateur avec lanceurs affichés sur deux lignes.
 
 ## Direction d'architecture
 

@@ -2,8 +2,10 @@
 
 ## Maintenant
 
+- Permettre de terminer un match et de revenir à une préparation qui garde les mêmes joueurs en mémoire. Le comportement actuel bloque trop l'entraîneur après la fin du match.
 - Stabiliser les changements de joueurs en cours de match: retrait, remplacement, ajout imprévu, choix de la demi-manche d'effet et historique des demi-manches déjà jouées.
 - Raffiner la gestion des positions futures incomplètes après un retrait ou remplacement pendant le match.
+- Améliorer les exports et partages: image/PDF parents responsive, nom de fichier avec date et équipes, aperçu modifiable pour mini imprimante.
 - Extraire la logique métier de `app.js` dans des modules testables.
 - Ajouter des tests pour la génération, la progression par demi-manche et les cas limites des changements de joueurs.
 
@@ -45,16 +47,17 @@
 ## Prochaines fonctionnalités candidates
 
 - Explorer Firebase/Firestore pour publier optionnellement un match avec un lien ou un QR code toujours à jour.
-- Gérer les changements de dernière minute: absence, retrait en cours de match, ajout imprévu.
 - Sauvegarder plusieurs matchs.
 - Ajouter une archive des matchs passés.
+- Terminer un match avec action explicite, puis offrir `Nouveau match avec les mêmes joueurs` ou `Recommencer ce match`. Les archives restent verrouillées quand elles seront disponibles.
 - Importer et exporter une liste de joueurs.
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
-- Ajouter un champ de numéro de joueur dans les cartes joueurs. Le numéro ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour certains exports.
+- Ajouter un champ de numéro de joueur dans les cartes joueurs. Le numéro ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour les exports.
 - Optimiser automatiquement l'alignement la première fois qu'on arrive sur `Alignement` après des changements de joueurs, parce que les ajouts/retraits ne sont pas toujours bien reflétés avant optimisation.
   - Livré: ajout, suppression et présence/absence avant match déclenchent une optimisation automatique à l'arrivée sur `Alignement`. Le remplacement direct conserve la place et les assignations du joueur remplacé.
 - À la première arrivée sur `Alignement`, demander si l'entraîneur veut rendre l'ordre au bâton aléatoire.
 - Ajouter une action à la demande pour mélanger l'ordre au bâton, idéalement avec une icône shuffle dans l'en-tête `Ordre`.
+- Évaluer si l'étape `Joueurs` devrait précéder `Match`, parce que la liste des joueurs est souvent la première donnée réutilisable d'un match à l'autre.
 - Évaluer plus tard une correction de progression avancée. L'interface principale doit d'abord avancer seulement d'une demi-manche à la fois.
 - Pour `Spectateur`, explorer plus tard un suivi en direct du déroulement du match basé sur la progression courante.
 - Dupliquer un match existant.
@@ -72,6 +75,8 @@ Le découpage actuel sépare la préparation en deux étapes:
 
 À stabiliser:
 
+- initialiser les nouveaux matchs avec la date du jour;
+- renommer `Réinitialiser` en `Recommencer` dans le menu et les confirmations, parce que l'action sert surtout à repartir proprement;
 - normaliser automatiquement la casse des noms de joueurs à l'ajout;
 - garder les actions de modification clairement bloquées quand le match est débuté.
 
@@ -79,6 +84,7 @@ Le découpage actuel sépare la préparation en deux étapes:
 
 - L'ordre des frappeurs se modifie directement dans le tableau principal en glissant les joueurs.
 - L'option `Frappe fixe` est un réglage de l'écran `Alignement`.
+- L'interface doit indiquer que `Frappe fixe` est normalement activée en Rallye-Cap.
 - Les validations et l'équité suivent le tableau principal pour servir de rétroaction après l'ajustement.
 - Simplifier la densité de l'écran `Alignement`:
   - garder une section `Validation` visible comme verdict rapide;
@@ -129,6 +135,11 @@ Objectifs livrés:
 - lisible sur papier étroit;
 - priorité aux informations utiles en match;
 - facile à copier dans une autre application.
+
+À améliorer:
+
+- Afficher le texte généré dans un champ éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans l'état du match.
+- Séparer la génération du texte et l'action `Copier`, afin de permettre une correction rapide avant d'envoyer vers Funny Print.
 
 Contenu actuel:
 
@@ -201,6 +212,7 @@ Première tranche expérimentale livrée:
 
 Bogues majeurs à prioriser:
 
+- Quand toutes les demi-manches sont terminées, l'application doit permettre de terminer le match et de préparer un nouveau match avec les mêmes joueurs. Présentement, l'entraîneur peut se retrouver bloqué dans un état de match terminé.
 - Après ajout ou retrait de joueurs, l'alignement peut rester dans un état mal ajusté tant que l'utilisateur ne clique pas manuellement sur `Optimiser`.
 - Retirer ou désactiver un joueur pendant un match peut laisser des manches futures avec moins de 6 positions assignées et rendre l'alignement difficile à corriger.
   - Première correction livrée: générer une suggestion pour insérer un joueur du banc dans une position manquante et permettre de cliquer une cellule `BANC` pour remplir automatiquement une position manquante.
@@ -219,7 +231,9 @@ Bogues majeurs à prioriser:
 
 Irritants UX à corriger:
 
+- Le texte d'introduction devrait mieux nommer la promesse produit: un alignement clair et équitable pour le banc, facile pour les entraîneurs et beau pour les parents.
 - Rendre la demi-manche courante plus évidente dans `Alignement`.
+- Dans `Spectateur`, afficher les deux lanceurs sur deux lignes séparées pour obtenir 6 éléments visuels comme l'ordre de frappe.
 - Livré: le bouton d'échange `Local` / `Visiteur` reste stable quand on inverse les côtés.
 - Livré: les actions des cartes joueurs restent sur une seule ligne.
 - Livré: le curseur de glisser-déposer des joueurs utilise une main.
@@ -245,6 +259,8 @@ Questions à trancher avant implémentation:
 
 - Pas encore de suite automatisée CLI. La couverture actuelle est une page de tests navigateur dans `tests/rules.html`.
 - Les exports peuvent diverger de l'affichage principal parce qu'ils reconstruisent leur propre HTML.
+- L'image/PDF parents doit mieux s'adapter quand il y a beaucoup de joueurs ou des noms longs.
+- Le nom des fichiers d'export parents devrait inclure la date et les noms des équipes, par exemple `2026-06-15_expos-vs-padres`.
 - Les comportements de presse-papiers et de fenêtres surgissantes varient selon le navigateur.
 - `app.js` contient encore trop de responsabilités: état, moteur d'alignement, rendu, exports et interactions.
 
@@ -305,3 +321,4 @@ Questions à trancher avant implémentation:
 - Le bloc `Ajouter des joueurs` se replie quand le minimum de joueurs est atteint et peut être rouvert au besoin.
 - `Charger un exemple` est bloqué pendant un match débuté.
 - Le démarrage de la progression du match est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs et 6 positions défensives assignées par manche.
+- Le refactor du workflow a retiré l'onglet `Jouer`; `Alignement` porte maintenant la progression du match, les validations, les suggestions et les changements de joueurs.
