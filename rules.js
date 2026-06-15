@@ -163,13 +163,18 @@ function validateSchedule(schedule, playerIds){
 function startReadiness(schedule, playerIds){
   const ids=Array.isArray(playerIds)?playerIds.map(String):[];
   const idSet=new Set(ids);
+  const innings=Array.isArray(schedule)?schedule:[];
 
   if(ids.length<6||ids.length>12){
     return {ok:false,text:'Active entre 6 et 12 joueurs avant de commencer.'};
   }
 
-  for(let index=0;index<(Array.isArray(schedule)?schedule.length:0);index++){
-    const inning=schedule[index]||{};
+  if(!innings.length){
+    return {ok:false,text:'Prépare l’alignement avant de commencer.'};
+  }
+
+  for(let index=0;index<innings.length;index++){
+    const inning=innings[index]||{};
     const pos=(inning.pos&&typeof inning.pos==='object')?inning.pos:{};
     const assigned=Object.entries(pos).filter(([id,value])=>idSet.has(String(id))&&POSITIONS.includes(String(value)));
     const uniquePositions=new Set(assigned.map(([,value])=>String(value)));

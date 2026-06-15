@@ -60,6 +60,18 @@ const tests=[
     ],players).violations.some(v=>v.rule==='defense-count')
   },
   {
+    name:'détecte une position défensive dupliquée',
+    run:()=>RallyeCapRules.validateSchedule([
+      {pos:{p1:'1B',p2:'1B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}}
+    ],players).violations.some(v=>v.rule==='position-unique')
+  },
+  {
+    name:'détecte une position défensive inconnue',
+    run:()=>RallyeCapRules.validateSchedule([
+      {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'XX'}}
+    ],players).violations.some(v=>v.rule==='known-position')
+  },
+  {
     name:'résume les présences au banc consécutives',
     run:()=>RallyeCapRules.scheduleRuleSummary([
       {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}},
@@ -114,9 +126,19 @@ const tests=[
     run:()=>!RallyeCapRules.startReadiness(validSchedule,players.slice(0,5)).ok
   },
   {
+    name:'bloque le démarrage sans manche préparée',
+    run:()=>!RallyeCapRules.startReadiness([],players).ok
+  },
+  {
     name:'bloque le démarrage avec une manche incomplète',
     run:()=>!RallyeCapRules.startReadiness([
       {pos:{p1:'1B',p2:'2B',p3:'3B',p4:'AC',p5:'L1'}}
+    ],players).ok
+  },
+  {
+    name:'bloque le démarrage avec une position dupliquée',
+    run:()=>!RallyeCapRules.startReadiness([
+      {pos:{p1:'1B',p2:'1B',p3:'3B',p4:'AC',p5:'L1',p6:'L2'}}
     ],players).ok
   },
   {

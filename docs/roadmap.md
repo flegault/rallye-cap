@@ -3,9 +3,8 @@
 ## Maintenant
 
 - Stabiliser les changements de joueurs en cours de match: retrait, remplacement, ajout imprévu et historique des manches déjà jouées.
-- Vérifier que le moteur respecte les règles obligatoires avant les objectifs d'équité.
 - Extraire la logique métier de `app.js` dans des modules testables.
-- Ajouter des tests pour la génération, les validations et les cas limites du mode `Jouer`.
+- Ajouter des tests pour la génération et les cas limites du mode `Jouer`.
 
 ## Workflow cible: découpage de livraison
 
@@ -206,6 +205,8 @@ Bogues majeurs à prioriser:
   - Livré: une carte `Changements de joueurs` permet `Retirer`, `Remplacer` et `Ajouter` après une demi-manche complétée. Les actions sont désactivées avant le premier passage de demi-manche et après la fin du match.
 - Remplacer un joueur avant le début du match doit mettre le nouveau joueur exactement à la place de l'ancien dans l'ordre et dans le tableau.
   - Première correction livrée: l'action `Remplacer` crée le nouveau joueur, reprend les assignations non barrées de l'ancien et rend l'ancien joueur inactif.
+- Vérifier que le moteur respecte les règles obligatoires avant les objectifs d'équité.
+  - Livré: `tests/rules.html` couvre les règles obligatoires, les positions défensives dupliquées ou inconnues, le blocage du démarrage sans manche préparée et le blocage du démarrage avec une manche incomplète.
 
 Irritants UX à corriger:
 
@@ -233,7 +234,7 @@ Questions à trancher avant implémentation:
 
 ## Bugs et dettes connues
 
-- Aucun test automatisé.
+- Pas encore de suite automatisée CLI. La couverture actuelle est une page de tests navigateur dans `tests/rules.html`.
 - Les exports peuvent diverger de l'affichage principal parce qu'ils reconstruisent leur propre HTML.
 - Les comportements de presse-papiers et de fenêtres surgissantes varient selon le navigateur.
 - `app.js` contient encore trop de responsabilités: état, moteur d'alignement, rendu, exports et interactions.

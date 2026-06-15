@@ -36,7 +36,7 @@ La première tranche du workflow cible est livrée dans la SPA statique. Les rou
 - `#spectateur`: vue en lecture seule dérivée du même état;
 - `#partager`: exports et liens, sans être une étape numérotée du workflow.
 
-`#jouer` démarre le match avec confirmation si `started` est faux. Le démarrage est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs et 6 positions défensives assignées pour chaque manche prévue. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués dans les vues de préparation.
+`#jouer` démarre le match avec confirmation si `started` est faux. Le démarrage est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs, au moins une manche préparée et 6 positions défensives assignées pour chaque manche prévue. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués dans les vues de préparation.
 
 Le menu du haut garde seulement les étapes principales visibles. `Partager`, `Spectateur`, `Charger un exemple` et `Réinitialiser` sont regroupés dans `Autres`. `Charger un exemple` est bloqué pendant un match débuté.
 
@@ -135,7 +135,7 @@ Découpage actuel:
 - `index.html`: structure HTML et points de montage;
 - `styles.css`: styles de l'application;
 - `app.js`: état, moteur d'alignement, rendu, exports et interactions.
-- `rules.js`: validations pures des règles obligatoires, nettoyage des positions, résumé des violations d'horaire, statistiques/équité et garde-fous métier simples comme la validation de démarrage;
+- `rules.js`: validations pures des règles obligatoires, nettoyage des positions, résumé des violations d'horaire, statistiques/équité et garde-fous métier simples comme la validation de démarrage. `startReadiness()` refuse aussi un horaire vide pour éviter de débuter un match sans alignement réel;
 - `tests/rules.html`: tests navigateur simples pour les règles obligatoires.
 
 Découpage recommandé:
