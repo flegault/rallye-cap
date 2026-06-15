@@ -44,6 +44,10 @@
 - Importer et exporter une liste de joueurs.
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
 - Ajouter un champ de numéro de joueur dans les cartes joueurs. Le numéro ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour certains exports.
+- Optimiser automatiquement l'alignement la première fois qu'on arrive sur `Alignement partant` après des changements de joueurs, parce que les ajouts/retraits ne sont pas toujours bien reflétés avant optimisation.
+- À la première arrivée sur `Alignement partant`, demander si l'entraîneur veut rendre l'ordre au bâton aléatoire.
+- Ajouter une action à la demande pour mélanger l'ordre au bâton, idéalement avec une icône shuffle dans l'en-tête `Ordre`.
+- Dans `Jouer`, permettre d'avancer rapidement à une demi-manche future sans passer une par une toutes les demi-manches. Options à évaluer: bouton fast-forward avec liste déroulante des demi-manches futures, ou mode de sélection où chaque demi-manche future devient cliquable. Les demi-manches précédentes seraient alors marquées comme jouées.
 - Dupliquer un match existant.
 - Ajouter un écran de résumé avant impression.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
@@ -187,12 +191,16 @@ Première tranche expérimentale livrée:
 
 Bogues majeurs à prioriser:
 
+- Après ajout ou retrait de joueurs, l'alignement peut rester dans un état mal ajusté tant que l'utilisateur ne clique pas manuellement sur `Optimiser`.
 - Retirer ou désactiver un joueur pendant un match peut laisser des manches futures avec moins de 6 positions assignées et rendre l'alignement difficile à corriger.
   - Première correction livrée: générer une suggestion pour insérer un joueur du banc dans une position manquante et permettre de cliquer une cellule `BANC` pour remplir automatiquement une position manquante.
   - À évaluer plus tard: ajouter une ligne ou zone `Positions non assignées` en bas du tableau.
 - En match débuté, permettre de modifier manuellement les positions des manches futures sans toucher aux demi-manches déjà complétées.
+  - Livré: le tableau de `Jouer` est maintenant interactif pour les demi-manches futures; les demi-manches complétées restent grisées et non modifiables.
 - Remplacer un joueur pendant un match doit préserver l'historique du joueur remplacé dans les demi-manches barrées, ajouter une ligne pour le nouveau joueur, retirer l'ancien joueur de l'ordre futur et retirer l'ancien joueur des assignations défensives futures non barrées.
   - Première correction livrée: les joueurs inactifs qui ont de l'historique verrouillé restent visibles dans le tableau, les snapshots de frappe verrouillés peuvent afficher un ancien joueur, et le nouveau joueur apparaît sous le joueur remplacé pour les manches futures.
+- Exposer les changements de joueurs directement dans `Jouer`, sans retourner dans `Joueurs`.
+  - Livré: une carte `Changements de joueurs` permet `Retirer`, `Remplacer` et `Ajouter` après une demi-manche complétée. Les actions sont désactivées avant le premier passage de demi-manche et après la fin du match.
 - Remplacer un joueur avant le début du match doit mettre le nouveau joueur exactement à la place de l'ancien dans l'ordre et dans le tableau.
   - Première correction livrée: l'action `Remplacer` crée le nouveau joueur, reprend les assignations non barrées de l'ancien et rend l'ancien joueur inactif.
 
@@ -200,12 +208,21 @@ Irritants UX à corriger:
 
 - Le bouton d'échange `Local` / `Visiteur` ne devrait pas bouger quand on inverse les côtés.
 - Les cartes joueurs doivent être améliorées pour que les boutons d'action restent sur une seule ligne, surtout sur mobile.
+- Clarifier le curseur du tableau principal: glisser une position affiche une main, mais glisser un joueur affiche un doigt. Préférence actuelle: utiliser la main pour le drag. Si le doigt sert à la sélection, réserver la sélection au nom du joueur et le drag à la pastille du numéro d'ordre.
 - Centrer l'icône gant dans les entêtes des colonnes défensives du tableau principal.
+- Rendre la demi-manche courante plus évidente dans la page `Jouer`.
 - Il devrait être possible de désélectionner la sélection du tableau principal, par exemple en cliquant sur l'en-tête `Ordre`.
 
 Évolutions de règles / validations:
 
 - Au démarrage du match, afficher un avertissement si les règles ne sont pas respectées, mais permettre à l'entraîneur de continuer quand même après confirmation.
+
+Bugs de sélection du tableau:
+
+- Dans `Alignement` et `Jouer`, sélectionner un joueur devrait surligner toute sa ligne, pas seulement la cellule du nom.
+- Sélectionner une cellule devrait surligner toute la ligne du joueur et seulement la colonne de la demi-manche concernée.
+- Cliquer l'en-tête d'une manche complète peut sélectionner toute la manche; le comportement doit être clarifié ou limité à une demi-manche.
+- Cliquer sur `Ordre` doit désélectionner toute sélection active.
 
 Questions à trancher avant implémentation:
 

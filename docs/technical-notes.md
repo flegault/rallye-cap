@@ -53,6 +53,8 @@ Pour limiter la complexité, les actions en cours de match devraient être des c
 - remplacer un joueur pour le futur;
 - ajouter un joueur pour le futur.
 
+Dans la première implémentation stable, ces commandes sont exposées dans `Jouer` seulement après au moins une demi-manche complétée et avant la fin du match. Le tableau affiché dans `Jouer` est rendu comme un vrai tableau interactif, pas comme une copie HTML de l'alignement partant, afin que les échanges manuels de positions restent possibles pour les demi-manches non complétées.
+
 ## Moteur d'alignement
 
 Le moteur actuel choisit 6 défenseurs par manche, puis assigne les positions. Il pénalise notamment:

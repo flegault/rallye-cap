@@ -25,6 +25,7 @@ label{display:grid;gap:7px}label span{font-size:13px;font-weight:900;color:var(-
 .shareCard{display:flex;flex-direction:column;gap:10px}
 .shareCard h3,.shareCard p{margin:0}
 .shareCard .btn{margin-top:auto;align-self:flex-start}
+.modal .choiceList{display:grid;grid-template-columns:1fr;gap:9px;align-items:stretch;justify-content:stretch}.modal .choiceList .btn{width:100%;justify-content:space-between;text-align:left}.btn.playerChoice{background:#fff;color:var(--ink);border-color:var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 6px 16px rgba(15,23,42,.04)}.btn.playerChoice:after{content:"›";color:var(--muted);font-size:20px;line-height:1}.btn.playerChoice.addChoice{border-style:dashed;background:#f8fafc;color:var(--accent)}.btn.modalCancel{margin-top:8px;background:var(--danger-bg);color:var(--danger);border-color:#efb8b8;border-radius:16px}.modal .choiceList .modalCancel{justify-content:center}
 .lockedHead,.lockedCol{background:#f1f5f9!important}
 .lockedCell{opacity:.72;cursor:not-allowed!important}
 .activeLock{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}

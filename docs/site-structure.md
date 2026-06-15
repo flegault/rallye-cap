@@ -126,7 +126,9 @@ Alignement Rallye-Cap
 |   +-- Manches passées grisées
 |   +-- Passer à la prochaine demi-manche
 |   +-- Revenir à la demi-manche précédente avec confirmation
-|   +-- Enlever / remplacer / ajouter un joueur pour le futur
+|   +-- Carte `Changements de joueurs`
+|   |   +-- Enlever / remplacer / ajouter un joueur pour le futur
+|   |   +-- Actions actives seulement après une demi-manche complétée et avant la fin du match
 +-- Partage
 |   +-- Exports disponibles seulement si le match respecte les règles de base
 |   +-- Lien ou export vers Spectateur toujours disponible
