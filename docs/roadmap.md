@@ -2,34 +2,41 @@
 
 ## Maintenant
 
-- Stabiliser les changements de joueurs en cours de match: retrait, remplacement, ajout imprévu et historique des manches déjà jouées.
+- Stabiliser les changements de joueurs en cours de match: retrait, remplacement, ajout imprévu, choix de la demi-manche d'effet et historique des demi-manches déjà jouées.
+- Raffiner la gestion des positions futures incomplètes après un retrait ou remplacement pendant le match.
 - Extraire la logique métier de `app.js` dans des modules testables.
-- Ajouter des tests pour la génération et les cas limites du mode `Jouer`.
+- Ajouter des tests pour la génération, la progression par demi-manche et les cas limites des changements de joueurs.
 
 ## Workflow cible: découpage de livraison
 
 1. Navigation et libellés:
-   - créer les vues `Match`, `Joueurs`, `Alignement partant`, `Jouer`, `Partage`, `Spectateur`;
+   - cible révisée: garder les vues `Match`, `Joueurs`, `Alignement`, `Partage`, `Spectateur`;
+   - retirer l'onglet `Jouer` du workflow principal;
+   - renommer `Alignement partant` en `Alignement`;
    - déplacer `Charger un exemple` dans le menu avec confirmation destructive;
    - retirer `Partager` et `Spectateur` des étapes numérotées.
-   - Livré en première tranche: navigation, étapes numérotées, vues séparées, alias de l'ancienne route `#equipe` vers `#match`.
+   - Livré: navigation révisée, étapes numérotées `Match`, `Joueurs`, `Alignement`, retrait de `Jouer` du workflow principal, alias de l'ancienne route `#equipe` vers `#match` et redirection de `#jouer` vers `#alignement`.
 2. Verrouillage par phase:
    - empêcher la modification des informations de match, joueurs et alignement partant après le début;
    - masquer les actions non disponibles plutôt que les afficher désactivées quand elles n'ont plus de sens.
    - Livré en première tranche: champs de match, joueurs, ajout de joueurs, frappe fixe et optimisation sont verrouillés ou masqués après le début.
-3. Vue `Jouer`:
-   - remplacer les cadenas par `Passer à la prochaine demi-manche`;
+3. Progression dans `Alignement`:
+   - remplacer l'onglet `Jouer` par une barre de progression dans `Alignement`;
+   - bouton unique `Commencer le match`, puis `Terminer début 1re`, `Terminer fin 1re`, etc.;
+   - avancer seulement par demi-manche, sans action de recul dans l'interface principale;
    - afficher clairement la demi-manche courante;
    - griser les demi-manches passées;
    - synchroniser le défilement horizontal du tableau avec la demi-manche courante sur mobile.
-   - Livré en première tranche: entrer dans `Jouer` démarre le match avec confirmation, affiche la demi-manche courante et permet d'avancer ou de revenir avec confirmation.
-   - Livré: la demi-manche `À jouer` est mise en évidence dans le tableau et le tableau se décale automatiquement vers elle dans `Jouer`.
+   - Livré: l'ancienne vue `Jouer` a été absorbée par `Alignement`; la progression avance seulement vers l'avant par demi-manche.
 4. Changements en cours de match:
+   - exposer un seul bouton `Changement de joueurs` dans `Alignement`;
+   - demander la demi-manche précise à partir de laquelle appliquer l'action;
    - enlever un joueur seulement s'il reste plus de 6 joueurs actifs;
    - remplacer un joueur par un joueur inactif ou un nouveau nom;
    - ajouter un joueur si moins de 12 joueurs sont actifs;
-   - garder l'historique et appliquer les changements seulement aux demi-manches futures.
-   - Partiellement livré: ajout, retrait et remplacement existent en première version, avec historique conservé pour les demi-manches passées. Reste à stabiliser les cas qui laissent des positions futures incomplètes.
+   - garder l'historique et appliquer les changements seulement aux demi-manches futures;
+   - filtrer les suggestions pour viser seulement les demi-manches non jouées.
+   - Livré: un bouton unique `Changement de joueurs` dans `Alignement` demande la demi-manche d'effet avant `Retirer`, `Remplacer` ou `Ajouter`. Reste à stabiliser les cas qui laissent des positions futures incomplètes.
 5. Partage:
    - rendre les exports disponibles seulement si le match respecte les règles de base;
    - garder l'accès au mode `Spectateur` même si les exports sont bloqués.
@@ -44,16 +51,17 @@
 - Importer et exporter une liste de joueurs.
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
 - Ajouter un champ de numéro de joueur dans les cartes joueurs. Le numéro ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour certains exports.
-- Optimiser automatiquement l'alignement la première fois qu'on arrive sur `Alignement partant` après des changements de joueurs, parce que les ajouts/retraits ne sont pas toujours bien reflétés avant optimisation.
-  - Livré: ajout, suppression et présence/absence avant match déclenchent une optimisation automatique à l'arrivée sur `Alignement partant`. Le remplacement direct conserve la place et les assignations du joueur remplacé.
-- À la première arrivée sur `Alignement partant`, demander si l'entraîneur veut rendre l'ordre au bâton aléatoire.
+- Optimiser automatiquement l'alignement la première fois qu'on arrive sur `Alignement` après des changements de joueurs, parce que les ajouts/retraits ne sont pas toujours bien reflétés avant optimisation.
+  - Livré: ajout, suppression et présence/absence avant match déclenchent une optimisation automatique à l'arrivée sur `Alignement`. Le remplacement direct conserve la place et les assignations du joueur remplacé.
+- À la première arrivée sur `Alignement`, demander si l'entraîneur veut rendre l'ordre au bâton aléatoire.
 - Ajouter une action à la demande pour mélanger l'ordre au bâton, idéalement avec une icône shuffle dans l'en-tête `Ordre`.
-- Dans `Jouer`, permettre d'avancer rapidement à une demi-manche future sans passer une par une toutes les demi-manches. Options à évaluer: bouton fast-forward avec liste déroulante des demi-manches futures, ou mode de sélection où chaque demi-manche future devient cliquable. Les demi-manches précédentes seraient alors marquées comme jouées.
+- Évaluer plus tard une correction de progression avancée. L'interface principale doit d'abord avancer seulement d'une demi-manche à la fois.
+- Pour `Spectateur`, explorer plus tard un suivi en direct du déroulement du match basé sur la progression courante.
 - Dupliquer un match existant.
 - Ajouter un écran de résumé avant impression.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
 - En mode défense, afficher les deux premiers frappeurs de la prochaine manche offensive si applicable.
-- Harmoniser le look du mode match avec le reste de l'application.
+- Harmoniser le look de la vue spectateur avec le reste de l'application.
 
 ## Match et joueurs
 
@@ -180,10 +188,10 @@ Première tranche expérimentale livrée:
 - glisser-déposer de l'ordre qui déplace les lignes complètes avant le début du match;
 - lignes du tableau principal stables par joueur après le début du match, avec rang courant dans la première colonne;
 - snapshots d'ordre au bâton pour les demies-manches offensives barrées afin de préserver l'historique;
-- progression de match par demi-manche courante dans `Jouer`, sans demander à l'entraîneur de gérer des cadenas manuels;
-- actions pour avancer ou revenir d'une demi-manche, avec confirmation quand on revient;
+- progression de match par demi-manche courante dans `Alignement`;
+- action simple pour avancer d'une demi-manche, sans retour arrière dans l'interface principale;
 - `Optimiser` désactivé quand le match est débuté;
-- ajout d'un joueur en match débuté avec choix `Ajouter`, `Remplacer` ou `Inactif`;
+- ajout direct d'un joueur en match débuté après choix de la demi-manche d'effet; le remplacement reste une action séparée;
 - remplacement qui substitue les joueurs dans l'ordre et les assignations non barrées;
 - action directe `Remplacer` sur un joueur actif de la liste;
 - retrait d'un joueur actif avec avertissement, sans toucher aux manches barrées;
@@ -196,14 +204,14 @@ Bogues majeurs à prioriser:
 - Après ajout ou retrait de joueurs, l'alignement peut rester dans un état mal ajusté tant que l'utilisateur ne clique pas manuellement sur `Optimiser`.
 - Retirer ou désactiver un joueur pendant un match peut laisser des manches futures avec moins de 6 positions assignées et rendre l'alignement difficile à corriger.
   - Première correction livrée: générer une suggestion pour insérer un joueur du banc dans une position manquante et permettre de cliquer une cellule `BANC` pour remplir automatiquement une position manquante.
-  - Livré: dans `Jouer`, une alerte apparaît au-dessus du tableau quand des manches défensives futures sont incomplètes. Elle nomme les manches touchées et offre `Remplir les positions possibles` quand un joueur au banc peut être assigné.
+  - Livré: une alerte apparaît dans `Alignement` au-dessus du tableau quand des manches défensives futures sont incomplètes. Elle nomme les manches touchées et offre `Remplir les positions possibles` quand un joueur au banc peut être assigné.
   - À évaluer plus tard: ajouter une ligne ou zone `Positions non assignées` en bas du tableau.
 - En match débuté, permettre de modifier manuellement les positions des manches futures sans toucher aux demi-manches déjà complétées.
-  - Livré: le tableau de `Jouer` est maintenant interactif pour les demi-manches futures; les demi-manches complétées restent grisées et non modifiables.
+  - Livré: le tableau d'`Alignement` reste interactif pour les demi-manches futures; les demi-manches complétées restent grisées et non modifiables.
 - Remplacer un joueur pendant un match doit préserver l'historique du joueur remplacé dans les demi-manches barrées, ajouter une ligne pour le nouveau joueur, retirer l'ancien joueur de l'ordre futur et retirer l'ancien joueur des assignations défensives futures non barrées.
   - Première correction livrée: les joueurs inactifs qui ont de l'historique verrouillé restent visibles dans le tableau, les snapshots de frappe verrouillés peuvent afficher un ancien joueur, et le nouveau joueur apparaît sous le joueur remplacé pour les manches futures.
-- Exposer les changements de joueurs directement dans `Jouer`, sans retourner dans `Joueurs`.
-  - Livré: une carte `Changements de joueurs` permet `Retirer`, `Remplacer` et `Ajouter` après une demi-manche complétée. Les actions sont désactivées avant le premier passage de demi-manche et après la fin du match.
+- Exposer les changements de joueurs directement dans `Alignement`, sans retourner dans `Joueurs`.
+  - Livré: un bouton unique dans `Alignement` ouvre `Retirer`, `Remplacer` ou `Ajouter`, puis demande la demi-manche d'effet.
 - Remplacer un joueur avant le début du match doit mettre le nouveau joueur exactement à la place de l'ancien dans l'ordre et dans le tableau.
   - Première correction livrée: l'action `Remplacer` crée le nouveau joueur, reprend les assignations non barrées de l'ancien et rend l'ancien joueur inactif.
 - Vérifier que le moteur respecte les règles obligatoires avant les objectifs d'équité.
@@ -211,7 +219,7 @@ Bogues majeurs à prioriser:
 
 Irritants UX à corriger:
 
-- Rendre la demi-manche courante plus évidente dans la page `Jouer`.
+- Rendre la demi-manche courante plus évidente dans `Alignement`.
 - Livré: le bouton d'échange `Local` / `Visiteur` reste stable quand on inverse les côtés.
 - Livré: les actions des cartes joueurs restent sur une seule ligne.
 - Livré: le curseur de glisser-déposer des joueurs utilise une main.
@@ -224,7 +232,7 @@ Irritants UX à corriger:
 
 Bugs de sélection du tableau:
 
-- Livré: sélectionner un joueur surligne toute sa ligne dans `Alignement` et `Jouer`.
+- Livré: sélectionner un joueur surligne toute sa ligne dans `Alignement` et dans l'ancienne vue `Jouer`.
 - Livré: sélectionner une cellule surligne la ligne du joueur et seulement la colonne de la demi-manche concernée.
 - Livré: les entêtes de demi-manche sélectionnent seulement leur demi-manche; l'entête de manche complète ne sélectionne plus les deux colonnes.
 - Livré: cliquer sur `Ordre` désélectionne toute sélection active.
@@ -269,8 +277,8 @@ Questions à trancher avant implémentation:
 - Actions rapides `Charger l'exemple` et `Voir l'alignement` retirées de l'en-tête principal.
 - Changements de vue qui ramènent l'utilisateur en haut de la page.
 - Action `Optimiser` placée près du tableau principal.
-- Boutons de navigation doublés retirés des sections `Alignement`, `Partager` et `Mode match`.
-- Boutons `Continuer` ajoutés en bas des étapes avant le mode match.
+- Boutons de navigation doublés retirés des sections `Alignement`, `Partager` et `Spectateur`.
+- Boutons `Continuer` ajoutés en bas des étapes du flux principal.
 - Affichage `Visiteur` / `Locale` intégré près des noms d'équipes, avec inversion automatique entre l'équipe et l'adversaire.
 - Gestion séparée de l'ordre retirée; l'ordre se modifie dans le tableau principal de l'alignement.
 - Option `Frappe fixe` déplacée au début de l'écran `Alignement`.
@@ -278,18 +286,17 @@ Questions à trancher avant implémentation:
 - Ajout/retrait de manches intégré à la dernière manche du tableau principal avec des icônes `-` et `+`.
 - Action `Régénérer` renommée `Optimiser`; le bouton devient grisé après optimisation et se réactive lors d'une modification manuelle.
 - Export texte brut compact ajouté pour mini imprimante / Funny Print.
-- Le texte mini imprimante suit maintenant l'ordre visiteur/local des demi-manches comme le mode match.
-- Le mode match autonome est intégré comme une carte normale dans `Partager`, avec un bouton secondaire.
-- En mode frappe variable, les rangs de frappe par manche et les listes de frappeurs par manche sont retirés du tableau, des exports et du mode match.
+- Le texte mini imprimante suit maintenant l'ordre visiteur/local des demi-manches comme la vue spectateur.
+- Le spectateur autonome est intégré comme une carte normale dans `Partager`, avec un bouton secondaire.
+- En mode frappe variable, les rangs de frappe par manche et les listes de frappeurs par manche sont retirés du tableau, des exports et du spectateur.
 - Les cartes d'équité sont harmonisées entre les modes avec `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` apparaît seulement en frappe fixe.
 - `Temps de jeu` inclut les présences au bâton en frappe fixe, mais seulement la défensive en frappe variable.
 - En mode frappe variable, les présences au bâton sont retirées des scores d'équité et les colonnes `AB` / `Total` sont retirées des statistiques.
-- Le workflow cible `Match`, `Joueurs`, `Alignement partant`, `Jouer`, `Partage`, `Spectateur` est documenté et livré en première version.
-- Les étapes numérotées suivent maintenant `Match`, `Joueurs`, `Alignement partant`, `Jouer`.
+- Workflow simplifié livré: `Match`, `Joueurs`, `Alignement`; `Partage` et `Spectateur` restent hors étapes numérotées.
 - `Partager` et `Spectateur` sont sortis des étapes numérotées.
 - `Charger un exemple` est déplacé dans le menu et demande une confirmation parce qu'il réinitialise les données locales.
-- Naviguer vers `Jouer` démarre le match avec confirmation.
-- `Jouer` affiche la demi-manche courante et permet d'avancer ou de revenir avec confirmation.
+- L'ancienne route `#jouer` redirige vers `#alignement`.
+- `Alignement` affiche la demi-manche courante et permet d'avancer seulement vers la prochaine demi-manche.
 - Les informations de match, la liste des joueurs et l'alignement partant sont verrouillés après le début du match.
 - L'étape `Joueurs` permet de renommer directement un joueur et d'utiliser un bouton explicite `Présent` / `Absent`.
 - L'action `Remplacer` est disponible sur un joueur actif et conserve l'historique des demi-manches déjà jouées.
@@ -297,4 +304,4 @@ Questions à trancher avant implémentation:
 - Les entêtes de demi-manche du tableau principal gardent seulement les icônes bâton et gant.
 - Le bloc `Ajouter des joueurs` se replie quand le minimum de joueurs est atteint et peut être rouvert au besoin.
 - `Charger un exemple` est bloqué pendant un match débuté.
-- Le démarrage de `Jouer` est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs et 6 positions défensives assignées par manche.
+- Le démarrage de la progression du match est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs et 6 positions défensives assignées par manche.

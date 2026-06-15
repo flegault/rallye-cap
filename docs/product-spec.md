@@ -16,9 +16,8 @@ Le workflow cible suit la réalité du match et limite les retours en arrière u
 
 1. `📅 Match`: entrer les informations du match: équipe, adversaire, date, endroit, local ou visiteur.
 2. `👨‍👩‍👦‍👦 Joueurs`: ajouter, renommer, activer ou désactiver les joueurs avant le début du match.
-3. `📋 Alignement partant`: choisir la frappe fixe, optimiser, ajuster manuellement et appliquer les suggestions.
-4. `⚾ Jouer`: démarrer le match, suivre la demi-manche courante et gérer seulement les changements réels qui arrivent après une demi-manche complétée.
-5. `Partager`: page non numérotée accessible par une icône standard de partage.
+3. `📋 Alignement`: choisir la frappe fixe, optimiser, ajuster manuellement, suivre la progression du match, appliquer les suggestions et gérer les changements de joueurs.
+4. `Partager`: page non numérotée accessible par une icône standard de partage.
 
 Le mode spectateur est une vue simplifiée en lecture seule accessible par le menu. Il n'est plus une étape du workflow principal.
 
@@ -74,27 +73,29 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Ajustement manuel des positions par glisser-déposer dans une manche.
 - Validations et suggestions.
 - Statistiques par joueur.
-- Mode match navigable par boutons, clavier ou geste tactile.
-- Exports: courriel HTML, impression/PDF, image parents, mode match HTML autonome.
-- L'export texte mini imprimante doit suivre le même ordre de demi-manches que le mode match: l'équipe visiteuse frappe en début de manche et l'équipe locale frappe en fin de manche.
+- Vue spectateur navigable par boutons, clavier ou geste tactile.
+- Exports: courriel HTML, impression/PDF, image parents, spectateur HTML autonome.
+- L'export texte mini imprimante doit suivre le même ordre de demi-manches que la vue spectateur: l'équipe visiteuse frappe en début de manche et l'équipe locale frappe en fin de manche.
 
-## Mode match
+## Progression du match dans l'alignement
 
-- Le concept cible est maintenant séparé en deux vues: `Jouer` pour l'entraîneur pendant le match et `Spectateur` pour la consultation en lecture seule.
-- Naviguer vers `Jouer` démarre le match avec confirmation si le match n'est pas déjà débuté, mais seulement si l'alignement est minimalement prêt.
-- Quand le match est débuté, les vues `Match`, `Joueurs` et `Alignement partant` deviennent non modifiables.
-- L'action `Optimiser` existe seulement avant le début du match dans `Alignement partant`.
-- Le bouton principal de `Jouer` permet de passer à la prochaine demi-manche. Revenir à la demi-manche précédente demande confirmation.
-- Revenir avant la première demi-manche ramène à l'alignement de départ, réinitialise le match comme non débuté et demande une confirmation claire.
+- La gestion du match se fait dans `Alignement`. L'onglet `Jouer` est retiré du workflow principal.
+- `Alignement` affiche l'état courant du match au-dessus ou près du tableau: `Match non commencé`, `À jouer: début 1re`, `À jouer: fin 1re`, etc.
+- Un seul bouton principal fait avancer la progression par demi-manche: `Commencer le match`, puis `Terminer début 1re`, `Terminer fin 1re`, etc.
+- L'interface principale ne permet pas de revenir à une demi-manche précédente. Une correction de progression, si nécessaire, doit être une action avancée future avec confirmation forte.
+- Commencer le match ou appliquer un changement à partir d'une demi-manche verrouille les demi-manches précédentes comme jouées.
+- Quand une demi-manche est jouée, elle devient de l'historique non modifiable. Les demi-manches futures restent modifiables selon les actions permises.
+- Quand le match est commencé, les vues `Match` et `Joueurs` deviennent non modifiables.
+- L'action `Optimiser` existe seulement avant le début réel du match dans `Alignement`.
 - Le tableau principal sépare chaque manche en deux demi-manches: la colonne gauche est toujours le début et la colonne droite est toujours la fin.
 - L'en-tête de chaque demi-manche indique seulement le type de jeu pour notre équipe: `🏏` pour l'attaque et `🧤` pour la défensive. L'ordre dépend du statut visiteur/local.
 - Les lignes du tableau principal restent associées aux joueurs. En attaque, les cellules affichent seulement le rang de frappe prévu (`#1`, `#2`, etc.) quand la frappe fixe est activée. En défensive, les cellules affichent les positions.
 - Le concept de cadenas est remplacé par une progression de match: les demi-manches passées sont grisées et la demi-manche `À jouer` est indiquée clairement.
-- Sur mobile, le tableau principal de `Jouer` doit faire défiler horizontalement automatiquement vers la demi-manche `À jouer`.
+- Sur mobile, le tableau principal de `Alignement` doit faire défiler horizontalement automatiquement vers la demi-manche `À jouer` quand le match est commencé.
 - Quand une demie-manche offensive est barrée, l'ordre au bâton utilisé pour cette demie-manche est figé afin que les changements futurs ne modifient pas l'historique.
 - Avant le début du match, l'ordre des frappeurs peut être modifié en glissant les joueurs dans la première colonne; le déplacement réordonne les lignes complètes. Une fois le match débuté, ce glisser-déposer d'ordre est désactivé.
 - Avant le début du match, `Optimiser` remet l'ordre des frappeurs dans l'ordre normal des joueurs enregistrés avant de recalculer l'alignement.
-- Avant le début du match, la première arrivée sur `Alignement partant` après un ajout, une suppression ou un changement de présence des joueurs optimise automatiquement l'alignement si 6 à 12 joueurs sont actifs. Un remplacement direct avant match conserve plutôt la place et les assignations du joueur remplacé.
+- Avant le début du match, la première arrivée sur `Alignement` après un ajout, une suppression ou un changement de présence des joueurs optimise automatiquement l'alignement si 6 à 12 joueurs sont actifs. Un remplacement direct avant match conserve plutôt la place et les assignations du joueur remplacé.
 - En attaque, afficher seulement les frappeurs de la manche courante quand la frappe fixe est activée.
 - Quand la frappe fixe est désactivée, afficher un rappel de suivre l'ordre au banc au lieu d'une liste de frappeurs par manche.
 - En attaque, afficher aussi les lanceurs de la prochaine manche défensive de notre équipe quand cette prochaine défense existe, pour préparer les casques.
@@ -107,10 +108,13 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 ## Changements de joueurs pendant un match
 
 - Les changements rapides sur téléphone sont prioritaires, mais les opérations qui changent beaucoup l'alignement doivent demander confirmation.
-- Les changements de joueurs en cours de match sont permis seulement dans `Jouer`, une fois une demi-manche complétée.
+- Les changements de joueurs en cours de match sont accessibles depuis `Alignement` par un seul bouton de changement de joueurs.
+- Le changement demande toujours la demi-manche précise à partir de laquelle l'action s'applique, par exemple `Début 3e` ou `Fin 3e`.
+- Les demi-manches précédentes sont alors considérées jouées et ne doivent plus être modifiées par ce changement ni par les suggestions automatiques.
+- Une fois qu'une demi-manche est jouée, aucun changement futur ne peut être appliqué dans une demi-manche précédente.
 - `Enlever`: si plus de 6 joueurs sont actifs, le joueur est retiré des demi-manches futures. Son historique demeure visible.
 - `Remplacer`: le nouveau joueur peut être un joueur inactif existant ou un nouveau nom. L'historique du joueur remplacé demeure, une nouvelle ligne est ajoutée sous lui, et le nouveau joueur reprend ses assignations futures.
-- `Ajouter`: si moins de 12 joueurs sont actifs, le joueur peut être un joueur inactif existant ou un nouveau nom. Il est ajouté en bas de la liste, devient dernier frappeur et ne reçoit aucune assignation défensive automatique.
+- `Ajouter`: si moins de 12 joueurs sont actifs, le nouveau joueur est ajouté directement au match en cours. Il est placé en bas de la liste, devient dernier frappeur et ne reçoit aucune assignation défensive automatique. Le remplacement d'un joueur doit passer par l'action séparée `Remplacer`.
 - `Inactif`: le joueur est enregistré sans participer au match courant.
 - Un joueur actif peut aussi être remplacé directement depuis la liste des joueurs enregistrés avant le début du match.
 - Quand un joueur actif est retiré pendant un match débuté, les demi-manches passées ne sont pas modifiées. Les assignations futures du joueur sont retirées et l'entraîneur doit corriger manuellement.
@@ -118,7 +122,8 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Quand un remplacement se fait pendant un match débuté, le tableau doit préserver l'historique du joueur remplacé dans les demi-manches passées, ajouter une ligne pour le nouveau joueur sous le joueur remplacé, retirer l'ancien joueur de l'ordre futur et retirer l'ancien joueur des assignations défensives futures.
 - Quand un remplacement se fait avant le début du match, le nouveau joueur doit prendre la place exacte du joueur retiré dans l'ordre, dans le tableau et dans les assignations défensives. Le joueur remplacé devient inactif.
 - Si un retrait ou une désactivation crée une manche future avec moins de 6 positions assignées, l'application doit offrir un chemin clair pour corriger l'alignement. Les corrections possibles incluent une suggestion automatique pour insérer un joueur du banc, une action manuelle rapide depuis une cellule `BANC`, ou une ligne/zone indiquant les positions non assignées.
-- Dans `Jouer`, les manches défensives futures incomplètes doivent être signalées directement au-dessus du tableau. L'entraîneur peut cliquer une cellule `BANC` mise en évidence pour assigner une position manquante, ou utiliser une action globale qui remplit automatiquement les positions possibles sans toucher aux demi-manches déjà complétées.
+- Dans `Alignement`, les manches défensives futures incomplètes doivent être signalées directement au-dessus du tableau. L'entraîneur peut cliquer une cellule `BANC` mise en évidence pour assigner une position manquante, ou utiliser une action globale qui remplit automatiquement les positions possibles sans toucher aux demi-manches déjà complétées.
+- Les suggestions proposées en cas de problème doivent viser seulement les demi-manches non jouées.
 - Le match ne doit pas pouvoir être débuté si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs, au moins une manche préparée et 6 positions défensives assignées pour chaque manche prévue.
 - Charger un exemple pendant un match débuté est interdit; l'entraîneur doit réinitialiser ou recommencer le match avant de remplacer les données.
 
