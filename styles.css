@@ -34,6 +34,7 @@ label{display:grid;gap:7px}label span{font-size:13px;font-weight:900;color:var(-
 .activeLock{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}
 .dot.lockedDot{background:#64748b}
 .lineupTable{min-width:1080px}
+.lineupTable thead th{position:relative;z-index:1}.lineupTable th[data-clear-selection],.lineupTable td.playerCell{position:sticky;left:0;background:#fff!important;background-clip:padding-box;box-shadow:1px 0 0 var(--line),8px 0 14px rgba(15,23,42,.06)}.lineupTable th[data-clear-selection]{z-index:8;background:#f8fafc!important}.lineupTable td.playerCell{z-index:5}.lineupTable tr.rowSelected td.playerCell{background:var(--sel)!important}.lineupTable td.playerCell.inactiveRow{opacity:1;color:var(--muted)}.lineupTable td.playerCell.inactiveRow .pin{opacity:.72}
 .halfHead{min-width:72px}.halfHead span{display:grid;place-items:center;min-height:20px}
 .battingCell{background:#fff7ed;color:#9a3412;border-color:#fed7aa;min-width:54px}
 .missingBench{background:var(--warn-bg)!important;border-color:#ead48b!important;color:#6f4c00!important}.inactiveRow{opacity:.72}
