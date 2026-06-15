@@ -80,6 +80,7 @@ Le découpage actuel sépare la préparation en deux étapes:
   - afficher `Suggestions` seulement quand il y a des actions concrètes à proposer;
   - regrouper les cartes d'équité et le tableau détaillé dans une section `Statistiques et équité`;
   - garder les cartes d'équité dans cette section, idéalement repliée par défaut.
+  - Livré partiellement: `Suggestions` est renommé et masqué quand il n'y a rien d'actionnable; les cartes d'équité et le tableau sont regroupés dans `Statistiques et équité`.
 
 ## Publication optionnelle en ligne
 
@@ -210,12 +211,12 @@ Bogues majeurs à prioriser:
 
 Irritants UX à corriger:
 
-- Le bouton d'échange `Local` / `Visiteur` ne devrait pas bouger quand on inverse les côtés.
-- Les cartes joueurs doivent être améliorées pour que les boutons d'action restent sur une seule ligne, surtout sur mobile.
-- Clarifier le curseur du tableau principal: glisser une position affiche une main, mais glisser un joueur affiche un doigt. Préférence actuelle: utiliser la main pour le drag. Si le doigt sert à la sélection, réserver la sélection au nom du joueur et le drag à la pastille du numéro d'ordre.
-- Centrer l'icône gant dans les entêtes des colonnes défensives du tableau principal.
 - Rendre la demi-manche courante plus évidente dans la page `Jouer`.
-- Il devrait être possible de désélectionner la sélection du tableau principal, par exemple en cliquant sur l'en-tête `Ordre`.
+- Livré: le bouton d'échange `Local` / `Visiteur` reste stable quand on inverse les côtés.
+- Livré: les actions des cartes joueurs restent sur une seule ligne.
+- Livré: le curseur de glisser-déposer des joueurs utilise une main.
+- Livré: les icônes de demi-manche sont centrées dans les entêtes du tableau principal.
+- Livré: cliquer sur l'en-tête `Ordre` désélectionne le tableau principal.
 
 Évolutions de règles / validations:
 
@@ -223,10 +224,10 @@ Irritants UX à corriger:
 
 Bugs de sélection du tableau:
 
-- Dans `Alignement` et `Jouer`, sélectionner un joueur devrait surligner toute sa ligne, pas seulement la cellule du nom.
-- Sélectionner une cellule devrait surligner toute la ligne du joueur et seulement la colonne de la demi-manche concernée.
-- Cliquer l'en-tête d'une manche complète peut sélectionner toute la manche; le comportement doit être clarifié ou limité à une demi-manche.
-- Cliquer sur `Ordre` doit désélectionner toute sélection active.
+- Livré: sélectionner un joueur surligne toute sa ligne dans `Alignement` et `Jouer`.
+- Livré: sélectionner une cellule surligne la ligne du joueur et seulement la colonne de la demi-manche concernée.
+- Livré: les entêtes de demi-manche sélectionnent seulement leur demi-manche; l'entête de manche complète ne sélectionne plus les deux colonnes.
+- Livré: cliquer sur `Ordre` désélectionne toute sélection active.
 
 Questions à trancher avant implémentation:
 

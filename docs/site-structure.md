@@ -51,10 +51,9 @@ Alignement Rallye-Cap
 |   |   +-- Sélection de joueur ou de manche
 |   |   +-- Échange manuel de positions par glisser-déposer
 |   +-- Légende des positions
-|   +-- Validations
-|   +-- Équité
-|   +-- Problèmes et suggestions
-|   +-- Statistiques
+|   +-- Validation
+|   +-- Suggestions, seulement quand une action est proposée
+|   +-- Statistiques et équité
 |   +-- Continuer vers Partager
 +-- Partager (#partager)
 |   +-- Entraîneurs
@@ -116,8 +115,8 @@ Alignement Rallye-Cap
 |   +-- Frappe fixe
 |   +-- Optimiser
 |   +-- Tableau principal modifiable
-|   +-- Validations
-|   +-- Suggestions
+|   +-- Validation
+|   +-- Suggestions, seulement quand une action est proposée
 |   +-- Statistiques et équité
 +-- Jouer
 |   +-- Démarrer le match avec confirmation
