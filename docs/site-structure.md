@@ -123,12 +123,16 @@ Alignement Rallye-Cap
 |   +-- Démarrer le match avec confirmation
 |   +-- Demi-manche courante visible
 |   +-- Tableau principal centré sur la demi-manche courante
+|   +-- Colonne de la demi-manche `À jouer` mise en évidence
 |   +-- Manches passées grisées
 |   +-- Passer à la prochaine demi-manche
 |   +-- Revenir à la demi-manche précédente avec confirmation
 |   +-- Carte `Changements de joueurs`
 |   |   +-- Enlever / remplacer / ajouter un joueur pour le futur
 |   |   +-- Actions actives seulement après une demi-manche complétée et avant la fin du match
+|   +-- Alerte de positions défensives futures incomplètes
+|   |   +-- Clic sur cellule `BANC` en surbrillance
+|   |   +-- Action `Remplir les positions possibles`
 +-- Partage
 |   +-- Exports disponibles seulement si le match respecte les règles de base
 |   +-- Lien ou export vers Spectateur toujours disponible
@@ -220,6 +224,7 @@ Découpage potentiel:
 - Le bouton d'échange `Local` / `Visiteur` doit rester stable visuellement quand les côtés changent.
 - L'action `Optimiser` remplace `Régénérer` et doit être près du tableau principal.
 - Le bouton `Optimiser` devient grisé après optimisation et se réactive dès qu'une modification manuelle est faite.
+- Avant le début du match, l'arrivée sur `Alignement partant` optimise automatiquement après ajout, suppression ou changement de présence des joueurs. Cette auto-optimisation ne se déclenche pas après un remplacement direct, afin de conserver la place du joueur remplacé.
 - L'ajout et le retrait de manches sont des icônes `-` et `+` dans l'en-tête de la dernière manche.
 - Les validations et l'équité doivent être affichées après le tableau principal.
 - L'écran `Alignement` ne doit pas avoir de bouton `Partager` si la navigation principale donne déjà accès à `Partager`.

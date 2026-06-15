@@ -24,6 +24,7 @@
    - griser les demi-manches passées;
    - synchroniser le défilement horizontal du tableau avec la demi-manche courante sur mobile.
    - Livré en première tranche: entrer dans `Jouer` démarre le match avec confirmation, affiche la demi-manche courante et permet d'avancer ou de revenir avec confirmation.
+   - Livré: la demi-manche `À jouer` est mise en évidence dans le tableau et le tableau se décale automatiquement vers elle dans `Jouer`.
 4. Changements en cours de match:
    - enlever un joueur seulement s'il reste plus de 6 joueurs actifs;
    - remplacer un joueur par un joueur inactif ou un nouveau nom;
@@ -45,6 +46,7 @@
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
 - Ajouter un champ de numéro de joueur dans les cartes joueurs. Le numéro ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour certains exports.
 - Optimiser automatiquement l'alignement la première fois qu'on arrive sur `Alignement partant` après des changements de joueurs, parce que les ajouts/retraits ne sont pas toujours bien reflétés avant optimisation.
+  - Livré: ajout, suppression et présence/absence avant match déclenchent une optimisation automatique à l'arrivée sur `Alignement partant`. Le remplacement direct conserve la place et les assignations du joueur remplacé.
 - À la première arrivée sur `Alignement partant`, demander si l'entraîneur veut rendre l'ordre au bâton aléatoire.
 - Ajouter une action à la demande pour mélanger l'ordre au bâton, idéalement avec une icône shuffle dans l'en-tête `Ordre`.
 - Dans `Jouer`, permettre d'avancer rapidement à une demi-manche future sans passer une par une toutes les demi-manches. Options à évaluer: bouton fast-forward avec liste déroulante des demi-manches futures, ou mode de sélection où chaque demi-manche future devient cliquable. Les demi-manches précédentes seraient alors marquées comme jouées.
@@ -194,6 +196,7 @@ Bogues majeurs à prioriser:
 - Après ajout ou retrait de joueurs, l'alignement peut rester dans un état mal ajusté tant que l'utilisateur ne clique pas manuellement sur `Optimiser`.
 - Retirer ou désactiver un joueur pendant un match peut laisser des manches futures avec moins de 6 positions assignées et rendre l'alignement difficile à corriger.
   - Première correction livrée: générer une suggestion pour insérer un joueur du banc dans une position manquante et permettre de cliquer une cellule `BANC` pour remplir automatiquement une position manquante.
+  - Livré: dans `Jouer`, une alerte apparaît au-dessus du tableau quand des manches défensives futures sont incomplètes. Elle nomme les manches touchées et offre `Remplir les positions possibles` quand un joueur au banc peut être assigné.
   - À évaluer plus tard: ajouter une ligne ou zone `Positions non assignées` en bas du tableau.
 - En match débuté, permettre de modifier manuellement les positions des manches futures sans toucher aux demi-manches déjà complétées.
   - Livré: le tableau de `Jouer` est maintenant interactif pour les demi-manches futures; les demi-manches complétées restent grisées et non modifiables.
