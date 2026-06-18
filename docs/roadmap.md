@@ -81,7 +81,7 @@ Match -> Joueurs -> Alignement
   - Livré: l'accueil affiche le nombre d'archives locales et ouvre la page `Archives`.
 - Importer et exporter une liste de joueurs.
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
-- Ajouter un champ optionnel de numéro de chandail dans les cartes joueurs de `Équipe`. Le numéro est éditable seulement hors match, comme le nom du joueur. Il ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour `Programme`, `Banc`, `Texte` et les futurs partages parents/fans.
+- Livré: ajouter un champ optionnel de numéro de chandail à 2 chiffres dans les cartes joueurs de `Équipe`. Le numéro est éditable seulement hors match, comme le nom du joueur. Il apparaît en pastille dans l'alignement et reste disponible pour `Programme`, `Banc`, `Texte`, `Spectateur` et les futurs partages parents/fans.
 - Optimiser automatiquement l'alignement la première fois qu'on arrive sur `Alignement` après des changements de joueurs, parce que les ajouts/retraits ne sont pas toujours bien reflétés avant optimisation.
   - Livré: ajout, suppression et présence/absence avant match déclenchent une optimisation automatique à l'arrivée sur `Alignement`.
 - À la première arrivée sur `Alignement`, offrir de mélanger l'ordre au bâton avant d'afficher l'alignement, idéalement avec l'option aléatoire comme choix simple et réversible avant le début du match.
@@ -136,7 +136,7 @@ Améliorations UX à prévoir:
 
 Améliorations UX à prévoir:
 
-- ajouter le numéro de chandail optionnel dans `Équipe`, éditable seulement avant match;
+- Livré: ajouter le numéro de chandail optionnel dans `Équipe`, éditable seulement avant match;
 - Livré: `Équipe` affiche un compteur de joueurs dans l'en-tête.
 - Livré: l'action `Créer une équipe exemple` est placée sous la liste des joueurs et son avertissement précise que l'équipe, les matchs et les archives locales sont remplacés.
 - dans l'étape `Joueurs`, garder des cartes de même taille pour les joueurs présents et absents;
@@ -163,9 +163,9 @@ Améliorations UX à prévoir:
   - regrouper les cartes d'équité et le tableau détaillé dans une section `Statistiques et équité`;
   - garder les cartes d'équité dans cette section, idéalement repliée par défaut.
   - Livré partiellement: `Suggestions` est renommé et masqué quand il n'y a rien d'actionnable; les cartes d'équité et le tableau sont regroupés dans `Statistiques et équité`.
-- Stabiliser la taille des boutons `Commencer le match` / `Terminer ...` afin que l'interface ne bouge pas selon le texte.
-- Remplacer l'icône seule de shuffle par le libellé texte `Mélanger`.
-- Explorer un mode local `Préparer` / `Jouer` au-dessus du tableau d'alignement, sans recréer une route `Jouer`:
+- Livré: stabiliser la taille des boutons `Mélanger`, `Optimiser`, `Commencer` / `Terminer...`, `Changement de joueurs` et des boutons `+` / `-` de manches afin que l'interface ne bouge pas selon le texte.
+- Livré: remplacer l'icône seule de shuffle par le libellé texte `Mélanger`.
+- Livré: mode local `Préparer` / `Jouer` au-dessus du tableau d'alignement, sans recréer une route `Jouer`:
   - avant match, `Préparer` contient `Mélanger` et `Optimiser`;
   - quand l'entraîneur veut commencer, il passe à `Jouer`;
   - `Jouer` contient `Commencer le match` puis la progression de demi-manche, ainsi que `Changement de joueurs`;

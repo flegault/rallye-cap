@@ -121,7 +121,7 @@
       </div>
       <div class="matchOptionsGrid">
         <label><span>Manches</span><input id="innings" type="number" min="4" max="9" step="1" /></label>
-        <div class="switchLine matchSwitch"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div><b>Frappe fixe</b><div class="tiny">Normalement activé en Rallye-Cap: 6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
+        <div class="fixedField"><span>Frappe fixe</span><div class="switchLine matchSwitch"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div class="tiny">Normalement activé en Rallye-Cap: 6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
       </div>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#joueurs">Continuer</a></div>
@@ -136,11 +136,19 @@
   <section class="view" id="view-alignement">
     <div class="card">
       <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Prépare l’alignement, suis la progression du match et ajuste les changements au besoin.</p></div></div>
+      <div class="segment lineupModeTabs noPrint" role="tablist" aria-label="Mode d'alignement">
+        <button id="lineupPrepareTab" type="button" data-lineup-mode="preparer">Préparer</button>
+        <button id="lineupPlayTab" type="button" data-lineup-mode="jouer">Jouer</button>
+      </div>
       <div class="row lineupActions noPrint">
-        <button class="icon soft" id="shuffleOrderBtn" title="Mélanger l’ordre au bâton" aria-label="Mélanger l’ordre au bâton">🔀</button>
-        <button class="btn secondary" id="regenBtn">Optimiser</button>
-        <button class="btn brandBtn" id="advanceHalfBtn">Commencer le match</button>
-        <button class="btn secondary" id="lineupChangeBtn">Changement de joueurs</button>
+        <div class="row prepareActions" id="prepareActions">
+          <button class="btn secondary" id="shuffleOrderBtn" title="Mélanger l’ordre au bâton">Mélanger</button>
+          <button class="btn secondary" id="regenBtn">Optimiser</button>
+        </div>
+        <div class="row playActions" id="playActions">
+          <button class="btn brandBtn" id="advanceHalfBtn">Commencer</button>
+          <button class="btn secondary" id="lineupChangeBtn">Changement de joueurs</button>
+        </div>
       </div>
       <div class="suggestions playWarnings hide" id="playWarnings"></div>
       <div class="tableWrap" id="lineup"></div>

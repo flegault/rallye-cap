@@ -31,7 +31,7 @@ Le mode spectateur est une vue simplifiée en lecture seule accessible par le me
 
 Le hero de présentation et les cartes de contexte apparaissent seulement sur `Accueil`. Ces cartes indiquent séparément le nom de l'équipe, le statut du match, le nombre de joueurs enregistrés et le nombre de matchs archivés; elles servent aussi de raccourcis vers `Équipe`, `Match` et `Archives`. L'accueil doit afficher un seul bouton d'action principal selon l'état courant.
 
-La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs. Le numéro de chandail est optionnel et se modifie dans `Équipe`, avant le match, comme le nom du joueur.
+La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs. Le numéro de chandail est optionnel, limité à 2 chiffres, et se modifie dans `Équipe`, avant le match, comme le nom du joueur. Quand il est défini, il est affiché près du nom dans l'alignement et inclus dans les exports.
 
 Observations UX à explorer:
 
@@ -117,8 +117,9 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Quand une demi-manche est jouée, elle devient de l'historique non modifiable. Les demi-manches futures restent modifiables selon les actions permises.
 - Quand le match est commencé, les vues `Match` et `Joueurs` deviennent non modifiables.
 - L'action `Optimiser` existe seulement avant le début réel du match dans `Alignement`.
-- Les actions principales de `Alignement` (`mélanger`, `Optimiser`, `Commencer/terminer la demi-manche`, `Changement de joueurs`) sont regroupées au-dessus du tableau principal.
-- Une variante UX à explorer est de séparer localement `Alignement` en modes `Préparer` et `Jouer`, sans ajouter de route. `Préparer` contient les actions d'ajustement avant match; `Jouer` contient le démarrage, la progression et les changements de joueurs. Quand le match est commencé, le mode `Jouer` est forcé.
+- `Alignement` contient deux modes locaux sans nouvelle route: `Préparer` et `Jouer`.
+- Avant match, `Préparer` affiche les actions d'ajustement de l'alignement (`Mélanger`, `Optimiser`) et `Jouer` affiche l'action de démarrage.
+- Quand le match est commencé, le mode `Jouer` est forcé et contient la progression de demi-manche ainsi que `Changement de joueurs`.
 - Le tableau principal sépare chaque manche en deux demi-manches: la colonne gauche est toujours le début et la colonne droite est toujours la fin.
 - L'en-tête de chaque demi-manche indique seulement le type de jeu pour notre équipe: `🏏` pour l'attaque et `🧤` pour la défensive. L'ordre dépend du statut visiteur/local.
 - Les lignes du tableau principal restent associées aux joueurs. En attaque, les cellules affichent seulement le rang de frappe prévu (`#1`, `#2`, etc.) quand la frappe fixe est activée. En défensive, les cellules affichent les positions.
@@ -176,7 +177,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - La vue spectateur doit utiliser la même palette visuelle que le reste du site.
 - Le partage externe du mode spectateur cible un futur lien en ligne en lecture seule avec informations limitées, plutôt qu'un fichier HTML autonome.
 - L'export `Texte` doit afficher le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
-- Les numéros de chandail, quand ils existent, peuvent être utilisés dans les exports parents ou entraîneur, mais ne doivent pas surcharger le tableau principal de l'alignement.
+- Les numéros de chandail, quand ils existent, sont affichés dans l'alignement avec une pastille près du nom et inclus dans `Programme`, `Banc`, `Texte`, `Spectateur` et les exports régénérés depuis les archives.
 - Une évolution du `Programme` pourrait ajouter une première page style poster avec équipes, date, heure, joueurs présents, numéros et visuel baseball. Si cette évolution dépasse une page image fiable, un export PDF multi-page pourrait être plus approprié.
 - Une future vue fan joueur pourrait montrer, pour un seul joueur, les manches où il frappe, défend ou encourage. Cette vue est probablement destinée au partage en ligne ou à une extension de `Spectateur`.
 

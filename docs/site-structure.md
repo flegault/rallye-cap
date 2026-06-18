@@ -58,11 +58,10 @@ Alignement Rallye-Cap
 |   +-- Continuer vers Alignement
 +-- Alignement (#alignement)
 |   +-- Alignement
-|   |   +-- Mode local Préparer / Jouer à explorer
-|   |   +-- Mélanger l'ordre au bâton
-|   |   +-- Optimiser
-|   |   +-- Commencer le match / terminer la demi-manche courante
-|   |   +-- Changement de joueurs
+|   |   +-- Modes locaux Préparer / Jouer
+|   |   +-- Préparer: mélanger l'ordre au bâton, optimiser
+|   |   +-- Jouer: commencer le match / terminer la demi-manche courante
+|   |   +-- Jouer: changement de joueurs quand le match est commencé
 |   |   +-- Réordonner les joueurs par glisser-déposer
 |   |   +-- Positions par joueur et par manche
 |   |   +-- Sélection de joueur ou de manche
@@ -284,7 +283,7 @@ Découpage potentiel:
 - Quand la dernière demi-manche est terminée, un modal propose `Archiver et retourner à l'accueil` ou `Ne pas archiver`. Les deux choix ferment le match courant, conservent l'équipe et les joueurs, puis retournent à `Accueil`.
 - L'interface principale ne propose pas de retour à la demi-manche précédente. Une action de correction de progression pourra être évaluée plus tard comme outil avancé avec confirmation forte.
 - Quand le match est débuté, `Optimiser` est désactivé.
-- Dans `Alignement`, un mode local `Préparer` / `Jouer` peut réduire la densité sans recréer une route `Jouer`. Quand le match est commencé, le mode `Jouer` est forcé.
+- Dans `Alignement`, les modes locaux `Préparer` / `Jouer` réduisent la densité sans recréer une route `Jouer`. Quand le match est commencé, le mode `Jouer` est forcé.
 - Le tableau principal affiche chaque manche en deux colonnes de demie-manche: `Début` et `Fin`.
 - Les sous-en-têtes utilisent `🏏` pour l'attaque et `🧤` pour la défensive selon le statut visiteur/local.
 - Avant le début du match, glisser un joueur dans la première colonne change l'ordre et déplace la ligne complète.
