@@ -20,16 +20,25 @@ Promesse UX:
 
 Le workflow cible suit la réalité du match et limite les retours en arrière une fois la partie commencée:
 
-1. `📅 Match`: entrer les informations du match: équipe, adversaire, date, endroit, local ou visiteur.
-2. `👨‍👩‍👦‍👦 Joueurs`: ajouter, renommer, activer ou désactiver les joueurs avant le début du match.
-3. `📋 Alignement`: choisir la frappe fixe, optimiser, ajuster manuellement, suivre la progression du match, appliquer les suggestions et gérer les changements de joueurs.
+1. `📅 Match`: entrer les informations du match: adversaire, date, heure, endroit, local ou visiteur.
+2. `👨‍👩‍👦‍👦 Joueurs`: indiquer quels joueurs du bassin permanent sont présents ou absents pour ce match.
+3. `📋 Alignement`: optimiser, ajuster manuellement, suivre la progression du match, appliquer les suggestions et gérer les changements de joueurs.
 4. `Partager`: page non numérotée accessible par une icône standard de partage.
 
 Le mode spectateur est une vue simplifiée en lecture seule accessible par le menu. Il n'est plus une étape du workflow principal.
 
-Observation UX à explorer:
+`Accueil` est une porte d'entrée contextuelle hors workflow. Si aucune équipe n'est définie, l'accueil dirige vers la création de l'équipe. Sinon, il permet de reprendre le match courant ou de créer un nouveau match.
 
-- L'étape `Joueurs` pourrait devenir la première étape si la réutilisation de la liste de joueurs devient plus importante que la saisie des informations du match.
+Le hero de présentation et les cartes de contexte apparaissent seulement sur `Accueil`. Ces cartes indiquent séparément le nom de l'équipe, le statut du match, le nombre de joueurs enregistrés et le nombre de matchs archivés; elles servent aussi de raccourcis vers `Équipe`, `Match` et, plus tard, vers les archives. L'accueil doit afficher un seul bouton d'action principal selon l'état courant.
+
+La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs.
+
+Observations UX à explorer:
+
+- Les archives devront être ajoutées à l'accueil quand la gestion multi-match sera disponible.
+- À la fin de la dernière demi-manche, l'application demande si le match doit être archivé. Dans les deux cas, l'entraîneur revient à `Accueil` et l'équipe ainsi que le bassin de joueurs restent en mémoire pour le prochain match.
+- L'archive actuelle est locale et sommaire: elle conserve un résumé du match terminé pour consultation future, sans édition rétroactive.
+- L'étape `Joueurs` pourrait devenir la première étape du workflow si la présence des joueurs devient le point de départ naturel avant les informations du match.
 
 ## Règles métier actuelles
 
@@ -39,7 +48,7 @@ Observation UX à explorer:
 - Chaque manche défensive doit avoir 6 défenseurs.
 - Les positions défensives sont `1B`, `2B`, `3B`, `AC`, `L1`, `L2`; les autres joueurs sont au banc.
 - En mode frappe fixe, il y a 6 frappeurs par manche et l'ordre continue à la manche suivante.
-- La frappe fixe est normalement activée en Rallye-Cap; l'interface doit l'indiquer clairement.
+- La frappe fixe est normalement activée en Rallye-Cap; l'interface doit l'indiquer clairement dans l'étape `Joueurs`, en même temps que la présence/absence des joueurs du match.
 - Quand la frappe fixe est désactivée, l'application garde l'ordre général des frappeurs, mais ne doit pas afficher de frappeurs par manche, de nombre de présences au bâton prévu, ni de rang `(#)` dans les cases du tableau. Ces informations dépendent alors des retraits réels pendant le match.
 
 ## Règles obligatoires de défensive
@@ -85,12 +94,13 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Validations et suggestions.
 - Statistiques par joueur.
 - Vue spectateur navigable par boutons, clavier ou geste tactile.
-- Exports: courriel HTML, impression/PDF, image parents, spectateur HTML autonome.
-- L'export texte mini imprimante doit suivre le même ordre de demi-manches que la vue spectateur: l'équipe visiteuse frappe en début de manche et l'équipe locale frappe en fin de manche.
+- Exports: `Programme`, `Banc` et `Texte`. L'ancien export courriel HTML et l'ancien export spectateur HTML autonome sont retirés.
+- L'export `Texte` doit suivre le même ordre de demi-manches que la vue spectateur: l'équipe visiteuse frappe en début de manche et l'équipe locale frappe en fin de manche.
 
 ## Préparation de match
 
 - Un nouveau match devrait être initialisé avec la date du jour.
+- L'étape `Match` contient l'adversaire, la date, l'heure, l'endroit et le côté local/visiteur. Le nom de notre équipe se gère dans `Équipe`.
 - L'action destructive globale devrait être libellée `Recommencer` plutôt que `Réinitialiser`.
 - Recommencer doit être confirmé clairement et expliquer si les joueurs enregistrés sont conservés ou supprimés.
 - Terminer un match doit permettre de conserver la liste des joueurs pour préparer un nouveau match.
@@ -98,7 +108,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 ## Progression du match dans l'alignement
 
 - La gestion du match se fait dans `Alignement`. L'onglet `Jouer` est retiré du workflow principal.
-- `Alignement` affiche l'état courant du match au-dessus ou près du tableau: `Match non commencé`, `À jouer: début 1re`, `À jouer: fin 1re`, etc.
+- `Alignement` porte l'état courant du match par le bouton de progression, le tableau et les demi-manches grisées ou mises en évidence. L'écran ne doit pas dupliquer cet état dans un pill séparé.
 - Un seul bouton principal fait avancer la progression par demi-manche: `Commencer le match`, puis `Terminer début 1re`, `Terminer fin 1re`, etc.
 - Après la dernière demi-manche, l'application doit permettre de terminer le match et de sortir de l'état bloqué tout en gardant les mêmes joueurs en mémoire.
 - L'interface principale ne permet pas de revenir à une demi-manche précédente. Une correction de progression, si nécessaire, doit être une action avancée future avec confirmation forte.
@@ -106,6 +116,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Quand une demi-manche est jouée, elle devient de l'historique non modifiable. Les demi-manches futures restent modifiables selon les actions permises.
 - Quand le match est commencé, les vues `Match` et `Joueurs` deviennent non modifiables.
 - L'action `Optimiser` existe seulement avant le début réel du match dans `Alignement`.
+- Les actions principales de `Alignement` (`mélanger`, `Optimiser`, `Commencer/terminer la demi-manche`, `Changement de joueurs`) sont regroupées au-dessus du tableau principal.
 - Le tableau principal sépare chaque manche en deux demi-manches: la colonne gauche est toujours le début et la colonne droite est toujours la fin.
 - L'en-tête de chaque demi-manche indique seulement le type de jeu pour notre équipe: `🏏` pour l'attaque et `🧤` pour la défensive. L'ordre dépend du statut visiteur/local.
 - Les lignes du tableau principal restent associées aux joueurs. En attaque, les cellules affichent seulement le rang de frappe prévu (`#1`, `#2`, etc.) quand la frappe fixe est activée. En défensive, les cellules affichent les positions.
@@ -115,7 +126,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Avant le début du match, l'ordre des frappeurs peut être modifié en glissant les joueurs dans la première colonne; le déplacement réordonne les lignes complètes. Une fois le match débuté, ce glisser-déposer d'ordre est désactivé.
 - Avant le début du match, `Optimiser` recalcule les positions défensives en respectant l'ordre de frappe courant.
 - Avant le début du match, une action de mélange aléatoire peut modifier l'ordre de frappe des joueurs actifs. Cette action demande confirmation, mélange l'ordre, puis optimise automatiquement les positions défensives.
-- Avant le début du match, la première arrivée sur `Alignement` après un ajout, une suppression ou un changement de présence des joueurs optimise automatiquement l'alignement si 6 à 12 joueurs sont actifs. Un remplacement direct avant match conserve plutôt la place et les assignations du joueur remplacé.
+- Avant le début du match, la première arrivée sur `Alignement` après un ajout, une suppression ou un changement de présence des joueurs optimise automatiquement l'alignement si 6 à 12 joueurs sont actifs.
 - En attaque, afficher seulement les frappeurs de la manche courante quand la frappe fixe est activée.
 - Quand la frappe fixe est désactivée, afficher un rappel de suivre l'ordre au banc au lieu d'une liste de frappeurs par manche.
 - En attaque, afficher aussi les lanceurs de la prochaine manche défensive de notre équipe quand cette prochaine défense existe, pour préparer les casques.
@@ -136,23 +147,32 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - `Remplacer`: le nouveau joueur peut être un joueur inactif existant ou un nouveau nom. L'historique du joueur remplacé demeure, une nouvelle ligne est ajoutée sous lui, et le nouveau joueur reprend ses assignations futures.
 - `Ajouter`: si moins de 12 joueurs sont actifs, le nouveau joueur est ajouté directement au match en cours. Il est placé en bas de la liste, devient dernier frappeur et ne reçoit aucune assignation défensive automatique. Le remplacement d'un joueur doit passer par l'action séparée `Remplacer`.
 - `Inactif`: le joueur est enregistré sans participer au match courant.
-- Un joueur actif peut aussi être remplacé directement depuis la liste des joueurs enregistrés avant le début du match.
+- Le remplacement direct avant le début du match est retiré de l'étape `Joueurs`. Avant match, un changement de composition devrait passer par la présence/absence ou par la gestion hors workflow du bassin permanent.
 - Quand un joueur actif est retiré pendant un match débuté, les demi-manches passées ne sont pas modifiées. Les assignations futures du joueur sont retirées et l'entraîneur doit corriger manuellement.
 - Si seulement 6 joueurs sont actifs, retirer un joueur exige un remplacement.
 - Quand un remplacement se fait pendant un match débuté, le tableau doit préserver l'historique du joueur remplacé dans les demi-manches passées, ajouter une ligne pour le nouveau joueur sous le joueur remplacé, retirer l'ancien joueur de l'ordre futur et retirer l'ancien joueur des assignations défensives futures.
-- Quand un remplacement se fait avant le début du match, le nouveau joueur doit prendre la place exacte du joueur retiré dans l'ordre, dans le tableau et dans les assignations défensives. Le joueur remplacé devient inactif.
 - Si un retrait ou une désactivation crée une manche future avec moins de 6 positions assignées, l'application doit offrir un chemin clair pour corriger l'alignement. Les corrections possibles incluent une suggestion automatique pour insérer un joueur du banc, une action manuelle rapide depuis une cellule `BANC`, ou une ligne/zone indiquant les positions non assignées.
 - Dans `Alignement`, les manches défensives futures incomplètes doivent être signalées directement au-dessus du tableau. L'entraîneur peut cliquer une cellule `BANC` mise en évidence pour assigner une position manquante, ou utiliser une action globale qui remplit automatiquement les positions possibles sans toucher aux demi-manches déjà complétées.
 - Les suggestions proposées en cas de problème doivent viser seulement les demi-manches non jouées.
 - Le match ne doit pas pouvoir être débuté si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs, au moins une manche préparée et 6 positions défensives assignées pour chaque manche prévue.
-- Charger un exemple pendant un match débuté est interdit; l'entraîneur doit réinitialiser ou recommencer le match avant de remplacer les données.
+- Créer une équipe exemple pendant un match débuté est interdit; l'entraîneur doit réinitialiser ou recommencer le match avant de remplacer les données d'équipe.
 
 ## Exports et partage
 
 - Les exports parents doivent rester lisibles avec beaucoup de joueurs et avec des noms longs. La mise en page doit s'adapter au contenu au lieu de couper ou de superposer les textes.
-- Les noms de fichiers d'exports parents devraient inclure la date et les noms des équipes.
+- Le partage `Programme` correspond à l'image parents.
+- Le partage `Banc` est un tableau imprimable simple avec une ligne par joueur et deux sous-colonnes par manche: `🏏` pour le rang de frappe local `1` à `6`, et `🧤` pour la position défensive. Les présences au banc y sont affichées avec `👏 Applaudi`, `🎉 Encourage` ou `🎵 Chante` au lieu du mot `BANC`. Quand la frappe fixe est désactivée, les cellules `🏏` restent vides pour annotation manuscrite.
+- Le partage `Texte` est un format brut compact. En frappe fixe, il n'affiche pas l'ordre général et liste les frappeurs de chaque demi-manche offensive un par un. En frappe variable, il garde l'ordre général, mais n'ajoute pas de rappel `Suivre l'ordre au banc`.
+- L'image parents affiche la date, l'heure en format 24h et le lieu dans l'en-tête.
+- L'image parents est organisée chronologiquement par manche et doit viser une impression lisible sur une page lettre. Chaque carte de manche affiche les deux demi-manches dans l'ordre réel du match avec une colonne d'icône seulement: `🏏` pour l'attaque et `🧤` pour la défense.
+- En mode `Frappe fixe`, l'image parents affiche les frappeurs dans la demi-manche offensive avec une numérotation locale `1` à `6` pour chaque manche, sans afficher l'ordre général séparé.
+- Quand `Frappe fixe` est désactivé, l'image parents affiche l'ordre général des frappeurs sur deux colonnes, puis chaque carte de manche indique seulement la demi-manche offensive sans liste de frappeurs.
+- La demi-manche défensive affiche les 6 positions avec une grille compacte dans l'ordre `L1`, `L2`, `AC`, puis `1B`, `2B`, `3B`; `L1` et `L2` gardent le casque à côté du nom du lanceur.
+- Les noms de fichiers d'exports parents utilisent le format `YYYY-MM-DD_equipe_adversaire.png`. Si la date manque, le préfixe est `match`; si l'adversaire manque, le nom contient seulement la date et notre équipe.
 - Dans la vue spectateur, les deux lanceurs doivent être affichés sur deux lignes séparées afin que la défensive présente 6 éléments visuels, comme l'ordre de frappe.
-- L'export mini imprimante doit afficher le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
+- La vue spectateur doit utiliser la même palette visuelle que le reste du site.
+- Le partage externe du mode spectateur cible un futur lien en ligne en lecture seule avec informations limitées, plutôt qu'un fichier HTML autonome.
+- L'export `Texte` doit afficher le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
 
 ## Questions ouvertes
 

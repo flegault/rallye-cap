@@ -4,8 +4,10 @@ Ce document décrit la structure actuelle de l'application et sert de base pour 
 
 ## Navigation actuelle
 
-L'application est une SPA avec cinq vues accessibles par hash URL:
+L'application est une SPA avec sept vues accessibles par hash URL:
 
+- `#accueil`
+- `#equipe`
 - `#match`
 - `#joueurs`
 - `#alignement`
@@ -25,32 +27,38 @@ Le menu `Autres` regroupe les actions secondaires. L'action destructive globale 
 
 ```text
 Alignement Rallye-Cap
++-- Accueil (#accueil)
+|   +-- Si aucune équipe: appel à créer l'équipe
+|   +-- Si équipe créée: créer un nouveau match ou reprendre la préparation
+|   +-- Si match commencé: continuer le match
+|   +-- Hero de présentation
+|   +-- Cartes cliquables: nom de l'équipe, statut du match, joueurs enregistrés, matchs archivés
+|   +-- Un seul bouton d'action principal selon l'état
++-- Équipe (#equipe), hors workflow
+|   +-- Nom de notre équipe
+|   +-- Joueurs du bassin permanent
+|   |   +-- Ajouter un joueur
+|   |   +-- Renommer un joueur
+|   |   +-- Supprimer un joueur
+|   +-- Créer une équipe exemple
 +-- Match (#match)
-|   +-- Nom de l'équipe
 |   +-- Local / visiteur
 |   +-- Adversaire
 |   +-- Date
+|   +-- Heure
 |   +-- Endroit
 |   +-- Indication que l'exemple se charge depuis le menu
 +-- Joueurs (#joueurs)
 |   +-- Joueurs enregistrés
 |   |   +-- Activer / désactiver un joueur
-|   |   +-- Renommer un joueur
-|   |   +-- Remplacer un joueur
-|   |   +-- Supprimer un joueur
-|   +-- Ajouter des joueurs
+|   +-- Option frappe fixe
 |   +-- Continuer vers Alignement
 +-- Alignement (#alignement)
-|   +-- Réglages
-|   |   +-- Option frappe fixe
-|   +-- Progression du match
-|   |   +-- État courant
+|   +-- Alignement
+|   |   +-- Mélanger l'ordre au bâton
+|   |   +-- Optimiser
 |   |   +-- Commencer le match / terminer la demi-manche courante
 |   |   +-- Changement de joueurs
-|   +-- Tableau principal
-|   |   +-- Optimiser
-|   |   +-- Retirer une manche
-|   |   +-- Ajouter une manche
 |   |   +-- Réordonner les joueurs par glisser-déposer
 |   |   +-- Positions par joueur et par manche
 |   |   +-- Sélection de joueur ou de manche
@@ -61,13 +69,11 @@ Alignement Rallye-Cap
 |   +-- Statistiques et équité
 |   +-- Continuer vers Partager
 +-- Partager (#partager)
-|   +-- Entraîneurs
-|   |   +-- PDF entraîneur
-|   +-- Parents
-|   |   +-- Image parents
-|   +-- Courriel
-|   |   +-- Copier courriel HTML
-|   +-- Mini imprimante
+|   +-- Banc
+|   |   +-- Imprimer le banc
+|   +-- Programme
+|   |   +-- Générer le programme
+|   +-- Texte
 |   |   +-- Copier texte brut
 +-- Spectateur (#spectateur)
     +-- Carte de manche courante
@@ -84,7 +90,7 @@ Alignement Rallye-Cap
 Match -> Joueurs -> Alignement
 ```
 
-Ce flux prépare le match et garde la gestion active dans `Alignement` après le début.
+Ce flux prépare le match et garde la gestion active dans `Alignement` après le début. `Accueil` et `Équipe` sont hors workflow.
 
 À explorer:
 
@@ -101,28 +107,37 @@ Le workflow cible suit la réalité d'un match et évite de devoir revenir dans 
 
 `Partager` est une page non numérotée accessible dans le menu. `Spectateur` est une vue simplifiée en lecture seule accessible par le menu.
 
+La gestion durable de notre équipe et de son bassin de joueurs est séparée du workflow de match sans devenir une étape numérotée. Elle vit dans `Équipe` et sert à définir le nom de notre équipe ainsi que les joueurs disponibles pour les matchs futurs. Le workflow `Joueurs` sert seulement à indiquer qui est présent ou absent pour le match courant.
+
 Sitemap cible:
 
 ```text
 Alignement Rallye-Cap
++-- Accueil
+|   +-- Équipe à créer si aucune équipe n'est définie
+|   +-- Reprendre le match en cours ou créer un nouveau match
+|   +-- Archives à ajouter plus tard
++-- Équipe, hors workflow
+|   +-- Nom de notre équipe
+|   +-- Joueurs du bassin permanent
+|   +-- Ajouter / renommer / supprimer un joueur pour les matchs futurs
+|   +-- Champ de numéro de joueur à prévoir pour certains exports
 +-- Match
-|   +-- Nom de l'équipe
 |   +-- Local / visiteur
 |   +-- Adversaire
 |   +-- Date
+|   +-- Heure
 |   +-- Endroit
 |   +-- Indication que l'exemple se charge depuis le menu
 +-- Joueurs
-|   +-- Joueurs enregistrés
-|   +-- Ajouter un joueur
-|   +-- Renommer un joueur
-|   +-- Activer / désactiver un joueur avant le match
+|   +-- Joueurs du bassin permanent
+|   +-- Indiquer présent / absent pour le match courant
+|   +-- Option `Frappe fixe`
+|   +-- Sans suppression de joueur dans cette étape
 +-- Alignement
-|   +-- Frappe fixe
+|   +-- Mélanger l'ordre au bâton
 |   +-- Optimiser
-|   +-- Progression du match
-|   |   +-- État courant: non commencé, demi-manche à jouer ou match terminé
-|   |   +-- Bouton unique pour avancer à la prochaine demi-manche
+|   +-- Bouton unique pour commencer le match ou avancer à la prochaine demi-manche
 |   +-- Bouton unique `Changement de joueurs`
 |   |   +-- Enlever / remplacer / ajouter un joueur
 |   |   +-- Choix obligatoire de la demi-manche d'effet
@@ -135,7 +150,7 @@ Alignement Rallye-Cap
 |   |   +-- Action `Remplir les positions possibles`
 +-- Partage
 |   +-- Exports disponibles seulement si le match respecte les règles de base
-|   +-- Lien ou export vers Spectateur toujours disponible
+|   +-- Accès au Spectateur local toujours disponible
 +-- Spectateur
     +-- Vue simplifiée en lecture seule
     +-- Suivi en direct du déroulement à explorer plus tard
@@ -153,11 +168,13 @@ Alignement Rallye-Cap
 ## Frictions connues
 
 - L'écran `Alignement` contient beaucoup de sections et peut paraître dense.
-- La fin de match n'offre pas encore un chemin clair pour garder les mêmes joueurs et préparer le match suivant.
+- La fin de match offre une sortie de base, mais la gestion complète des archives et des nouveaux matchs reste à simplifier.
 - La vue spectateur pourrait mieux anticiper la prochaine action utile:
   - en attaque: prochains lanceurs à préparer si applicable;
   - en défense: deux premiers frappeurs de la prochaine présence offensive si applicable.
-- La vue spectateur devrait afficher les deux lanceurs sur deux lignes séparées pour présenter 6 éléments défensifs, comme les 6 frappeurs en attaque.
+- La vue spectateur affiche les deux lanceurs sur deux lignes séparées pour présenter 6 éléments défensifs, comme les 6 frappeurs en attaque.
+- La route `#spectateur` masque l'en-tête global et le workflow numéroté pour donner une vue plein écran simplifiée.
+- La vue spectateur locale indique `En cours`, `Terminée` et `À venir`, et offre un bouton `Manche en cours`.
 - Les suggestions et validations pourraient être rapprochées du tableau quand l'utilisateur corrige manuellement.
 - Le flux ne distingue pas encore clairement préparation avant-match, ajustement, et consultation pendant le match.
 
@@ -190,9 +207,9 @@ Découpage potentiel:
   - suggestions;
   - statistiques avancées optionnelles.
 - Partage
-  - PDF / impression;
-  - image parents;
-  - texte mini imprimante;
+  - Banc;
+  - Programme;
+  - Texte;
   - publication en ligne future.
 - Match
   - vue simplifiée;
@@ -211,6 +228,11 @@ Découpage potentiel:
 ## Décisions UX prises
 
 - Le workflow cible est `Match`, `Joueurs`, `Alignement`; `Partager` et `Spectateur` ne sont pas des étapes numérotées.
+- `Accueil` est la porte d'entrée contextuelle: configuration de l'équipe si elle manque, reprise du match en cours ou création d'un nouveau match.
+- Le hero de présentation apparaît seulement dans `Accueil`.
+- Les cartes de contexte de l'accueil indiquent clairement le nom de l'équipe, le statut du match, le nombre de joueurs enregistrés et le nombre de matchs archivés localement. Les cartes `Équipe` et `Joueurs` mènent à `Équipe`; la carte de statut mène à `Match`; la carte archives affiche un résumé temporaire en attendant une future page dédiée.
+- L'accueil affiche un seul bouton d'action principal selon l'état courant.
+- `Équipe` est hors workflow et gère le nom de notre équipe ainsi que le bassin permanent de joueurs.
 - Une fois le match commencé, les étapes `Match` et `Joueurs` ne sont plus modifiables.
 - `Alignement` devient la vue de gestion active pendant la partie. L'onglet `Jouer` est retiré du workflow principal.
 - Le concept de cadenas est retiré du modèle cible. La progression de match détermine les demi-manches passées, courantes et futures.
@@ -218,20 +240,20 @@ Découpage potentiel:
 - Les changements de joueurs pendant la partie sont accessibles dans `Alignement` par un bouton unique. L'entraîneur choisit la demi-manche précise à partir de laquelle appliquer l'action.
 - Les suggestions d'action ne doivent viser que les demi-manches non jouées.
 - Le mode match actuel devient `Spectateur`, une vue simplifiée en lecture seule accessible par le menu.
-- `Charger un exemple` vit seulement dans le menu et demande confirmation parce qu'il réinitialise toutes les données locales.
-- Les vues `Équipe` et `Ordre` sont fusionnées en une seule vue de préparation.
-- La préparation se limite aux informations du match et aux joueurs.
+- `Spectateur` n'affiche pas l'en-tête global ni le workflow numéroté. Les contrôles visibles sont limités à la navigation précédente/suivante et au retour vers la manche en cours.
+- L'exemple vit seulement dans `Équipe` sous forme de création d'équipe exemple. Il ne doit pas apparaître dans `Accueil` ni dans le menu principal.
+- La gestion de notre équipe et du bassin permanent de joueurs doit être séparée du workflow de match, mais ne doit pas devenir une étape numérotée.
+- La préparation du match se limite aux informations du match courant, aux présences et à l'alignement.
 - L'ordre des frappeurs se modifie dans le tableau principal de l'alignement, en glissant les joueurs dans la première colonne.
 - Garder la possibilité de désactiver temporairement un joueur sans le supprimer.
 - Garder la possibilité d'ajuster l'ordre des frappeurs manuellement.
 - Les changements de vue doivent ramener l'utilisateur en haut de la page.
-- Le tableau de statut en haut de page affiche une ligne pleine largeur avec le nom de notre équipe et l'état du match, puis quatre cartes: joueurs actifs, manches, côté `Local` ou `Visiteur`, et équité.
-- `Charger un exemple` est dans l'en-tête de `Préparation` et ne change pas de vue.
-- La préparation affiche les informations du match sur une ligne: notre équipe, son côté `Local` ou `Visiteur`, un bouton d'échange, le côté de l'adversaire, l'adversaire, la date et l'endroit.
+- Le tableau de contexte de l'accueil affiche l'état de l'équipe, les joueurs enregistrés et les matchs archivés; il ne doit pas afficher les manches, le côté local/visiteur ou l'équité.
+- La préparation du match est séparée en deux groupes avec entêtes: `Équipes` pour notre équipe/côtés/adversaire, puis `Détails` pour date/heure/endroit. `Notre équipe` ressemble à un champ de formulaire et reste cliquable vers `Équipe`.
 - Le bouton d'échange `Local` / `Visiteur` doit rester stable visuellement quand les côtés changent.
 - L'action `Optimiser` remplace `Régénérer` et doit être près du tableau principal.
 - Le bouton `Optimiser` devient grisé après optimisation et se réactive dès qu'une modification manuelle est faite.
-- Avant le début du match, l'arrivée sur `Alignement` optimise automatiquement après ajout, suppression ou changement de présence des joueurs. Cette auto-optimisation ne se déclenche pas après un remplacement direct, afin de conserver la place du joueur remplacé.
+- Avant le début du match, l'arrivée sur `Alignement` optimise automatiquement après ajout, suppression ou changement de présence des joueurs.
 - L'ajout et le retrait de manches sont des icônes `-` et `+` dans l'en-tête de la dernière manche.
 - Les validations et l'équité doivent être affichées après le tableau principal.
 - L'écran `Alignement` ne doit pas avoir de bouton `Partager` si la navigation principale donne déjà accès à `Partager`.
@@ -240,11 +262,12 @@ Découpage potentiel:
 - Chaque étape du flux principal doit avoir un bouton `Continuer` en bas pour soutenir le flux guidé.
 - Regrouper les exports et publications dans une section séparée `Partager`.
 - La section `Partager` doit utiliser des conventions UI faciles à reconnaître: impression/PDF, copier, image, texte, lien, QR code.
-- Les exports de la section `Partager`, incluant le spectateur autonome, sont présentés comme des cartes de même niveau visuel. Le bouton du spectateur autonome n'est pas primaire.
+- Les exports de la section `Partager` sont présentés comme des cartes de même niveau visuel. L'ancien export spectateur autonome est retiré; le partage spectateur externe cible un futur lien en ligne.
 - Retirer la vue terrain de l'expérience principale.
 - L'ajout et le retrait de manche doivent rester possibles en cours de match, parce qu'une 5e manche peut être ajoutée si le temps le permet.
 - L'ajout/retrait de manche est accessible clairement dans l'écran d'alignement.
 - Le match est démarré par un bouton explicite dans `Alignement`. Une fois commencé, ce bouton devient l'action pour terminer la demi-manche courante et passer à la suivante.
+- Quand la dernière demi-manche est terminée, un modal propose `Archiver et retourner à l'accueil` ou `Ne pas archiver`. Les deux choix ferment le match courant, conservent l'équipe et les joueurs, puis retournent à `Accueil`.
 - L'interface principale ne propose pas de retour à la demi-manche précédente. Une action de correction de progression pourra être évaluée plus tard comme outil avancé avec confirmation forte.
 - Quand le match est débuté, `Optimiser` est désactivé.
 - Le tableau principal affiche chaque manche en deux colonnes de demie-manche: `Début` et `Fin`.
@@ -254,10 +277,10 @@ Découpage potentiel:
 - Les demi-manches jouées doivent rester continues depuis le début du match.
 - Une manche peut être ouverte, partiellement jouée ou complètement jouée.
 - Les changements de joueurs pendant un match touchent seulement les demi-manches non jouées à partir de la demi-manche d'effet choisie et demandent confirmation quand ils ont un impact important.
-- L'action `Remplacer` est disponible sur un joueur actif dans la liste des joueurs. Avant le match, le nouveau joueur prend la place et les assignations de l'ancien. Pendant un match débuté, les demi-manches barrées gardent l'ancien joueur, et le nouveau joueur apparaît sous lui pour les manches futures.
-- L'étape `Joueurs` permet de renommer directement un joueur et utilise un bouton explicite `Présent` / `Absent` pour la disponibilité.
-- Le bloc `Ajouter des joueurs` se replie quand l'équipe a déjà le minimum de joueurs et peut être rouvert avec un bouton explicite.
-- Le menu du haut garde les étapes principales visibles et regroupe `Partager`, `Spectateur`, `Charger un exemple` et `Réinitialiser` dans `Autres`.
+- L'action `Remplacer` ne fait plus partie de l'étape `Joueurs` avant match. Le remplacement reste une action de changement en cours de match dans `Alignement`, où l'historique déjà joué doit être conservé.
+- Dans l'étape `Joueurs`, cliquer une carte joueur bascule sa disponibilité `Présent` / `Absent` pour le match courant.
+- L'ajout, le renommage et la suppression des joueurs se font dans `Équipe`, hors workflow.
+- Le menu du haut garde les étapes principales visibles et regroupe `Équipe`, `Partager`, `Spectateur` et `Réinitialiser` dans `Autres`.
 - Le libellé `Réinitialiser` devrait être remplacé par `Recommencer`.
 - Les textes d'accueil devraient être resserrés autour de: `Clair et équitable pour le banc, facile pour les entraîneurs et beau pour les parents.` et `Prépare un match et crée un alignement équitable qui respecte les règles Rallye-Cap.`
 - Les entêtes de demi-manche du tableau principal affichent seulement les icônes bâton et gant; `Début` est toujours la colonne de gauche et `Fin` la colonne de droite.
@@ -279,17 +302,16 @@ Découpage potentiel:
 
 La section `Partager` regroupe:
 
-- PDF / impression entraîneur;
-- image parents;
-- copie courriel HTML;
-- texte brut mini imprimante;
-- export du spectateur autonome.
+- `Banc`: tableau imprimable par joueur avec sous-colonnes de manche `🏏` et `🧤`;
+- `Programme`: image parents;
+- `Texte`: texte brut compact;
+- futur lien en ligne vers une vue spectateur en lecture seule.
 
-Le texte mini imprimante doit suivre l'ordre réel des demi-manches comme la vue spectateur: attaque en début de manche si notre équipe est visiteuse, défense en début de manche si notre équipe est locale.
+Le partage `Texte` doit suivre l'ordre réel des demi-manches comme la vue spectateur: attaque en début de manche si notre équipe est visiteuse, défense en début de manche si notre équipe est locale.
 
 Améliorations UX à prévoir:
 
-- afficher le texte mini imprimante dans une zone éditable avant de le copier;
+- afficher le partage `Texte` dans une zone éditable avant de le copier;
 - adapter l'image/PDF parents aux longues listes et aux noms longs;
 - générer des noms de fichiers avec la date et les équipes.
 
