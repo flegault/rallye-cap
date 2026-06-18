@@ -20,35 +20,35 @@ Promesse UX:
 
 Le workflow cible suit la réalité du match et limite les retours en arrière une fois la partie commencée:
 
-1. `📅 Match`: entrer les informations du match: adversaire, date, heure, endroit, local ou visiteur.
+1. `📅 Match`: entrer les informations du match: adversaire, date, heure, endroit, nombre de manches initial, frappe fixe, local ou visiteur.
 2. `👨‍👩‍👦‍👦 Joueurs`: indiquer quels joueurs du bassin permanent sont présents ou absents pour ce match.
 3. `📋 Alignement`: optimiser, ajuster manuellement, suivre la progression du match, appliquer les suggestions et gérer les changements de joueurs.
 4. `Partager`: page non numérotée accessible par une icône standard de partage.
 
 Le mode spectateur est une vue simplifiée en lecture seule accessible par le menu. Il n'est plus une étape du workflow principal.
 
-`Accueil` est une porte d'entrée contextuelle hors workflow. Si aucune équipe n'est définie, l'accueil dirige vers la création de l'équipe. Sinon, il permet de reprendre le match courant ou de créer un nouveau match.
+`Accueil` est une porte d'entrée contextuelle hors workflow. Si aucune équipe n'est définie, l'accueil dirige vers la création de l'équipe. Sinon, il permet de reprendre le match courant ou de créer un nouveau match. Les états affichés doivent être formulés comme `Aucun match prévu`, `En préparation` et `En cours`, avec la demi-manche courante quand un match est commencé.
 
-Le hero de présentation et les cartes de contexte apparaissent seulement sur `Accueil`. Ces cartes indiquent séparément le nom de l'équipe, le statut du match, le nombre de joueurs enregistrés et le nombre de matchs archivés; elles servent aussi de raccourcis vers `Équipe`, `Match` et, plus tard, vers les archives. L'accueil doit afficher un seul bouton d'action principal selon l'état courant.
+Le hero de présentation et les cartes de contexte apparaissent seulement sur `Accueil`. Ces cartes indiquent séparément le nom de l'équipe, le statut du match, le nombre de joueurs enregistrés et le nombre de matchs archivés; elles servent aussi de raccourcis vers `Équipe`, `Match` et `Archives`. L'accueil doit afficher un seul bouton d'action principal selon l'état courant.
 
-La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs.
+La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs. Le numéro de chandail est optionnel et se modifie dans `Équipe`, avant le match, comme le nom du joueur.
 
 Observations UX à explorer:
 
-- Les archives devront être ajoutées à l'accueil quand la gestion multi-match sera disponible.
 - À la fin de la dernière demi-manche, l'application demande si le match doit être archivé. Dans les deux cas, l'entraîneur revient à `Accueil` et l'équipe ainsi que le bassin de joueurs restent en mémoire pour le prochain match.
-- L'archive actuelle est locale et sommaire: elle conserve un résumé du match terminé pour consultation future, sans édition rétroactive.
-- L'étape `Joueurs` pourrait devenir la première étape du workflow si la présence des joueurs devient le point de départ naturel avant les informations du match.
+- Les archives sont locales et en lecture seule. Une archive conserve un snapshot complet du match terminé; les changements futurs à l'équipe et au bassin permanent de joueurs ne modifient pas l'archive.
+- Décision actuelle: `Match` reste avant `Joueurs`, parce que la présence des joueurs est liée à un match daté et que l'équipe permanente est gérée séparément hors workflow.
 
 ## Règles métier actuelles
 
 - Les règles Rallye-Cap sont considérées uniformes par défaut. Il ne faut pas ajouter de profils par association ou catégorie sans nouvelle décision produit.
 - Le nombre de joueurs actifs doit être entre 6 et 12.
+- Le bassin permanent peut contenir plus de 12 joueurs. Pour un match, seuls 12 joueurs peuvent être `présents`; les joueurs excédentaires restent visibles comme `absents` et ne doivent pas être perdus.
 - Le nombre de manches doit être entre 4 et 9.
 - Chaque manche défensive doit avoir 6 défenseurs.
 - Les positions défensives sont `1B`, `2B`, `3B`, `AC`, `L1`, `L2`; les autres joueurs sont au banc.
 - En mode frappe fixe, il y a 6 frappeurs par manche et l'ordre continue à la manche suivante.
-- La frappe fixe est normalement activée en Rallye-Cap; l'interface doit l'indiquer clairement dans l'étape `Joueurs`, en même temps que la présence/absence des joueurs du match.
+- La frappe fixe est normalement activée en Rallye-Cap; l'interface doit l'indiquer clairement dans l'étape `Match`, avec les autres paramètres du match courant.
 - Quand la frappe fixe est désactivée, l'application garde l'ordre général des frappeurs, mais ne doit pas afficher de frappeurs par manche, de nombre de présences au bâton prévu, ni de rang `(#)` dans les cases du tableau. Ces informations dépendent alors des retraits réels pendant le match.
 
 ## Règles obligatoires de défensive
@@ -99,8 +99,9 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 
 ## Préparation de match
 
-- Un nouveau match devrait être initialisé avec la date du jour.
-- L'étape `Match` contient l'adversaire, la date, l'heure, l'endroit et le côté local/visiteur. Le nom de notre équipe se gère dans `Équipe`.
+- Un nouveau match est initialisé avec la date du jour et l'heure par défaut `18:30`.
+- L'étape `Match` contient l'adversaire, la date, l'heure en format 24h, l'endroit, le côté local/visiteur, le nombre de manches initial et le réglage `Frappe fixe`. Le nom de notre équipe se gère dans `Équipe`.
+- Le champ d'heure devrait proposer des intervalles de 5 minutes.
 - L'action destructive globale devrait être libellée `Recommencer` plutôt que `Réinitialiser`.
 - Recommencer doit être confirmé clairement et expliquer si les joueurs enregistrés sont conservés ou supprimés.
 - Terminer un match doit permettre de conserver la liste des joueurs pour préparer un nouveau match.
@@ -117,6 +118,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Quand le match est commencé, les vues `Match` et `Joueurs` deviennent non modifiables.
 - L'action `Optimiser` existe seulement avant le début réel du match dans `Alignement`.
 - Les actions principales de `Alignement` (`mélanger`, `Optimiser`, `Commencer/terminer la demi-manche`, `Changement de joueurs`) sont regroupées au-dessus du tableau principal.
+- Une variante UX à explorer est de séparer localement `Alignement` en modes `Préparer` et `Jouer`, sans ajouter de route. `Préparer` contient les actions d'ajustement avant match; `Jouer` contient le démarrage, la progression et les changements de joueurs. Quand le match est commencé, le mode `Jouer` est forcé.
 - Le tableau principal sépare chaque manche en deux demi-manches: la colonne gauche est toujours le début et la colonne droite est toujours la fin.
 - L'en-tête de chaque demi-manche indique seulement le type de jeu pour notre équipe: `🏏` pour l'attaque et `🧤` pour la défensive. L'ordre dépend du statut visiteur/local.
 - Les lignes du tableau principal restent associées aux joueurs. En attaque, les cellules affichent seulement le rang de frappe prévu (`#1`, `#2`, etc.) quand la frappe fixe est activée. En défensive, les cellules affichent les positions.
@@ -126,6 +128,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Avant le début du match, l'ordre des frappeurs peut être modifié en glissant les joueurs dans la première colonne; le déplacement réordonne les lignes complètes. Une fois le match débuté, ce glisser-déposer d'ordre est désactivé.
 - Avant le début du match, `Optimiser` recalcule les positions défensives en respectant l'ordre de frappe courant.
 - Avant le début du match, une action de mélange aléatoire peut modifier l'ordre de frappe des joueurs actifs. Cette action demande confirmation, mélange l'ordre, puis optimise automatiquement les positions défensives.
+- Au premier affichage de `Alignement` pour un nouveau match, l'application devrait offrir de mélanger l'ordre de frappe avant de montrer l'alignement généré.
 - Avant le début du match, la première arrivée sur `Alignement` après un ajout, une suppression ou un changement de présence des joueurs optimise automatiquement l'alignement si 6 à 12 joueurs sont actifs.
 - En attaque, afficher seulement les frappeurs de la manche courante quand la frappe fixe est activée.
 - Quand la frappe fixe est désactivée, afficher un rappel de suivre l'ordre au banc au lieu d'une liste de frappeurs par manche.
@@ -154,7 +157,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Si un retrait ou une désactivation crée une manche future avec moins de 6 positions assignées, l'application doit offrir un chemin clair pour corriger l'alignement. Les corrections possibles incluent une suggestion automatique pour insérer un joueur du banc, une action manuelle rapide depuis une cellule `BANC`, ou une ligne/zone indiquant les positions non assignées.
 - Dans `Alignement`, les manches défensives futures incomplètes doivent être signalées directement au-dessus du tableau. L'entraîneur peut cliquer une cellule `BANC` mise en évidence pour assigner une position manquante, ou utiliser une action globale qui remplit automatiquement les positions possibles sans toucher aux demi-manches déjà complétées.
 - Les suggestions proposées en cas de problème doivent viser seulement les demi-manches non jouées.
-- Le match ne doit pas pouvoir être débuté si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs, au moins une manche préparée et 6 positions défensives assignées pour chaque manche prévue.
+- Au démarrage du match, l'application bloque si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que l'alignement est incomplet ou que des règles ne sont pas respectées, l'application doit avertir clairement et permettre à l'entraîneur de continuer après confirmation.
 - Créer une équipe exemple pendant un match débuté est interdit; l'entraîneur doit réinitialiser ou recommencer le match avant de remplacer les données d'équipe.
 
 ## Exports et partage
@@ -173,7 +176,18 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - La vue spectateur doit utiliser la même palette visuelle que le reste du site.
 - Le partage externe du mode spectateur cible un futur lien en ligne en lecture seule avec informations limitées, plutôt qu'un fichier HTML autonome.
 - L'export `Texte` doit afficher le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
+- Les numéros de chandail, quand ils existent, peuvent être utilisés dans les exports parents ou entraîneur, mais ne doivent pas surcharger le tableau principal de l'alignement.
+- Une évolution du `Programme` pourrait ajouter une première page style poster avec équipes, date, heure, joueurs présents, numéros et visuel baseball. Si cette évolution dépasse une page image fiable, un export PDF multi-page pourrait être plus approprié.
+- Une future vue fan joueur pourrait montrer, pour un seul joueur, les manches où il frappe, défend ou encourage. Cette vue est probablement destinée au partage en ligne ou à une extension de `Spectateur`.
+
+## Archives
+
+- La page `Archives` liste les matchs archivés du plus récent au plus ancien.
+- Chaque archive est en lecture seule et peut être consultée, refermée ou supprimée manuellement avec confirmation. Les détails ne devraient pas être ouverts par défaut.
+- Les archives complètes conservent les métadonnées du match, les joueurs figés, l'ordre, la frappe fixe, les manches, les positions, les snapshots de frappe et les demi-manches complétées.
+- Les exports `Programme`, `Banc` et `Texte` peuvent être régénérés depuis une archive complète, mais les fichiers ou rendus d'export ne sont pas stockés dans l'archive.
+- Les anciennes archives sommaires restent consultables comme résumé, sans exports complets.
 
 ## Questions ouvertes
 
-- La gestion multi-match doit-elle être limitée aux matchs à venir ou inclure une archive complète des anciens matchs?
+- Firestore devra-t-il publier seulement une projection publique limitée ou aussi une archive privée complète synchronisée?

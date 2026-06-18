@@ -4,10 +4,11 @@ Ce document décrit la structure actuelle de l'application et sert de base pour 
 
 ## Navigation actuelle
 
-L'application est une SPA avec sept vues accessibles par hash URL:
+L'application est une SPA avec huit vues accessibles par hash URL:
 
 - `#accueil`
 - `#equipe`
+- `#archives`
 - `#match`
 - `#joueurs`
 - `#alignement`
@@ -33,6 +34,7 @@ Alignement Rallye-Cap
 |   +-- Si match commencé: continuer le match
 |   +-- Hero de présentation
 |   +-- Cartes cliquables: nom de l'équipe, statut du match, joueurs enregistrés, matchs archivés
+|   +-- Statuts: Aucun match prévu, En préparation, En cours avec demi-manche
 |   +-- Un seul bouton d'action principal selon l'état
 +-- Équipe (#equipe), hors workflow
 |   +-- Nom de notre équipe
@@ -45,16 +47,18 @@ Alignement Rallye-Cap
 |   +-- Local / visiteur
 |   +-- Adversaire
 |   +-- Date
-|   +-- Heure
+|   +-- Heure 24h
 |   +-- Endroit
+|   +-- Nombre de manches initial
+|   +-- Frappe fixe
 |   +-- Indication que l'exemple se charge depuis le menu
 +-- Joueurs (#joueurs)
 |   +-- Joueurs enregistrés
 |   |   +-- Activer / désactiver un joueur
-|   +-- Option frappe fixe
 |   +-- Continuer vers Alignement
 +-- Alignement (#alignement)
 |   +-- Alignement
+|   |   +-- Mode local Préparer / Jouer à explorer
 |   |   +-- Mélanger l'ordre au bâton
 |   |   +-- Optimiser
 |   |   +-- Commencer le match / terminer la demi-manche courante
@@ -68,6 +72,11 @@ Alignement Rallye-Cap
 |   +-- Suggestions, seulement quand une action est proposée
 |   +-- Statistiques et équité
 |   +-- Continuer vers Partager
++-- Archives (#archives)
+|   +-- Liste des matchs archivés
+|   +-- Consultation en lecture seule, fermée par défaut
+|   +-- Exports régénérés depuis le snapshot
+|   +-- Suppression manuelle avec confirmation
 +-- Partager (#partager)
 |   +-- Banc
 |   |   +-- Imprimer le banc
@@ -92,10 +101,9 @@ Match -> Joueurs -> Alignement
 
 Ce flux prépare le match et garde la gestion active dans `Alignement` après le début. `Accueil` et `Équipe` sont hors workflow.
 
-À explorer:
+Décision:
 
-- placer `Joueurs` avant `Match`, puisque la liste des joueurs est souvent réutilisée et peut être la première chose que l'entraîneur veut préparer;
-- conserver `Match` en premier si la date, le terrain et les équipes restent le contexte naturel du match courant.
+- conserver `Match` avant `Joueurs`, parce que la date, le terrain et les équipes donnent le contexte naturel des présences et absences du match courant.
 
 ## Workflow de référence
 
@@ -105,7 +113,7 @@ Le workflow cible suit la réalité d'un match et évite de devoir revenir dans 
 📅 Match -> 👨‍👩‍👦‍👦 Joueurs -> 📋 Alignement
 ```
 
-`Partager` est une page non numérotée accessible dans le menu. `Spectateur` est une vue simplifiée en lecture seule accessible par le menu.
+`Archives`, `Partager` et `Spectateur` sont des pages non numérotées accessibles dans le menu. `Spectateur` est une vue simplifiée en lecture seule.
 
 La gestion durable de notre équipe et de son bassin de joueurs est séparée du workflow de match sans devenir une étape numérotée. Elle vit dans `Équipe` et sert à définir le nom de notre équipe ainsi que les joueurs disponibles pour les matchs futurs. Le workflow `Joueurs` sert seulement à indiquer qui est présent ou absent pour le match courant.
 
@@ -168,7 +176,7 @@ Alignement Rallye-Cap
 ## Frictions connues
 
 - L'écran `Alignement` contient beaucoup de sections et peut paraître dense.
-- La fin de match offre une sortie de base, mais la gestion complète des archives et des nouveaux matchs reste à simplifier.
+- La fin de match offre une sortie de base avec archive complète en lecture seule, mais les actions avancées de reprise/recommencement restent à simplifier.
 - La vue spectateur pourrait mieux anticiper la prochaine action utile:
   - en attaque: prochains lanceurs à préparer si applicable;
   - en défense: deux premiers frappeurs de la prochaine présence offensive si applicable.
@@ -219,8 +227,7 @@ Découpage potentiel:
 ## Questions UX à explorer
 
 - Est-ce que les statistiques avancées devraient être repliées par défaut?
-- Est-ce que l'application devrait proposer de mélanger l'ordre au bâton la première fois qu'on ouvre `Alignement`?
-- Est-ce que `Joueurs` devrait devenir la première étape du flux?
+- Comment proposer le mélange aléatoire au premier affichage de `Alignement` sans alourdir le flux?
 - Est-ce que le réglage des manches devrait aussi être disponible dans la vue spectateur, en plus de l'écran d'alignement?
 - Est-ce que les sous-en-têtes du tableau doivent garder les textes `Début` et `Fin`, ou seulement les icônes et cadenas puisque la colonne gauche est toujours le début et la colonne droite est toujours la fin?
 - Quel patron d'interaction est le plus rapide sur téléphone pour corriger une position défensive manquante après un retrait de joueur: clic sur `BANC`, zone `Positions non assignées`, ou menu d'action par manche?
@@ -228,9 +235,10 @@ Découpage potentiel:
 ## Décisions UX prises
 
 - Le workflow cible est `Match`, `Joueurs`, `Alignement`; `Partager` et `Spectateur` ne sont pas des étapes numérotées.
+- `Match` reste avant `Joueurs`, parce que les présences et absences sont confirmées dans le contexte d'un match daté.
 - `Accueil` est la porte d'entrée contextuelle: configuration de l'équipe si elle manque, reprise du match en cours ou création d'un nouveau match.
 - Le hero de présentation apparaît seulement dans `Accueil`.
-- Les cartes de contexte de l'accueil indiquent clairement le nom de l'équipe, le statut du match, le nombre de joueurs enregistrés et le nombre de matchs archivés localement. Les cartes `Équipe` et `Joueurs` mènent à `Équipe`; la carte de statut mène à `Match`; la carte archives affiche un résumé temporaire en attendant une future page dédiée.
+- Les cartes de contexte de l'accueil indiquent clairement le nom de l'équipe, le statut du match, le nombre de joueurs enregistrés et le nombre de matchs archivés localement. Les cartes `Équipe` et `Joueurs` mènent à `Équipe`; la carte de statut mène à `Match`; la carte archives mène à `Archives`.
 - L'accueil affiche un seul bouton d'action principal selon l'état courant.
 - `Équipe` est hors workflow et gère le nom de notre équipe ainsi que le bassin permanent de joueurs.
 - Une fois le match commencé, les étapes `Match` et `Joueurs` ne sont plus modifiables.
@@ -250,6 +258,12 @@ Découpage potentiel:
 - Les changements de vue doivent ramener l'utilisateur en haut de la page.
 - Le tableau de contexte de l'accueil affiche l'état de l'équipe, les joueurs enregistrés et les matchs archivés; il ne doit pas afficher les manches, le côté local/visiteur ou l'équité.
 - La préparation du match est séparée en deux groupes avec entêtes: `Équipes` pour notre équipe/côtés/adversaire, puis `Détails` pour date/heure/endroit. `Notre équipe` ressemble à un champ de formulaire et reste cliquable vers `Équipe`.
+- L'état du match dans l'accueil doit utiliser `Aucun match prévu`, `En préparation` et `En cours`, avec la demi-manche courante quand le match est commencé.
+- Dans le détail de match de l'accueil, afficher date, heure et endroit.
+- Le bouton principal de l'accueil devrait utiliser `Préparer un match`; l'état préparé devrait être libellé `Match en préparation`.
+- L'heure du match devrait être saisie en format 24h avec intervalles de 5 minutes.
+- Le nombre de manches initial et le réglage `Frappe fixe` appartiennent à l'écran `Match`.
+- Le langage phrase `visitent les` / `reçoivent les` n'est pas retenu pour le moment; les libellés local/visiteur restent plus robustes.
 - Le bouton d'échange `Local` / `Visiteur` doit rester stable visuellement quand les côtés changent.
 - L'action `Optimiser` remplace `Régénérer` et doit être près du tableau principal.
 - Le bouton `Optimiser` devient grisé après optimisation et se réactive dès qu'une modification manuelle est faite.
@@ -270,6 +284,7 @@ Découpage potentiel:
 - Quand la dernière demi-manche est terminée, un modal propose `Archiver et retourner à l'accueil` ou `Ne pas archiver`. Les deux choix ferment le match courant, conservent l'équipe et les joueurs, puis retournent à `Accueil`.
 - L'interface principale ne propose pas de retour à la demi-manche précédente. Une action de correction de progression pourra être évaluée plus tard comme outil avancé avec confirmation forte.
 - Quand le match est débuté, `Optimiser` est désactivé.
+- Dans `Alignement`, un mode local `Préparer` / `Jouer` peut réduire la densité sans recréer une route `Jouer`. Quand le match est commencé, le mode `Jouer` est forcé.
 - Le tableau principal affiche chaque manche en deux colonnes de demie-manche: `Début` et `Fin`.
 - Les sous-en-têtes utilisent `🏏` pour l'attaque et `🧤` pour la défensive selon le statut visiteur/local.
 - Avant le début du match, glisser un joueur dans la première colonne change l'ordre et déplace la ligne complète.
@@ -280,11 +295,13 @@ Découpage potentiel:
 - L'action `Remplacer` ne fait plus partie de l'étape `Joueurs` avant match. Le remplacement reste une action de changement en cours de match dans `Alignement`, où l'historique déjà joué doit être conservé.
 - Dans l'étape `Joueurs`, cliquer une carte joueur bascule sa disponibilité `Présent` / `Absent` pour le match courant.
 - L'ajout, le renommage et la suppression des joueurs se font dans `Équipe`, hors workflow.
+- Dans `Équipe`, le numéro de chandail optionnel devrait être éditable seulement avant match, comme les autres informations du bassin permanent.
+- Dans `Joueurs`, les cartes doivent garder une taille stable entre présents et absents. Les sections vides n'ont pas besoin d'une carte `Aucun`.
 - Le menu du haut garde les étapes principales visibles et regroupe `Équipe`, `Partager`, `Spectateur` et `Réinitialiser` dans `Autres`.
 - Le libellé `Réinitialiser` devrait être remplacé par `Recommencer`.
 - Les textes d'accueil devraient être resserrés autour de: `Clair et équitable pour le banc, facile pour les entraîneurs et beau pour les parents.` et `Prépare un match et crée un alignement équitable qui respecte les règles Rallye-Cap.`
 - Les entêtes de demi-manche du tableau principal affichent seulement les icônes bâton et gant; `Début` est toujours la colonne de gauche et `Fin` la colonne de droite.
-- Le démarrage de la progression du match est bloqué tant que l'alignement n'a pas 6 à 12 joueurs actifs et 6 positions défensives assignées par manche.
+- Au démarrage de la progression du match, l'application bloque si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que des positions défensives manquent ou que des règles ne sont pas respectées, l'entraîneur reçoit un avertissement et peut continuer après confirmation.
 - Cliquer sur l'en-tête `Ordre` devrait permettre de désélectionner la sélection courante du tableau principal.
 - Quand `Frappe fixe` est désactivé, le tableau et les exports ne doivent pas afficher de rang de frappe `(#)` ni de frappeurs par manche.
 - Les cartes d'équité utilisent les mêmes libellés dans les deux modes: `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` est ajouté seulement quand `Frappe fixe` est activé.
@@ -306,6 +323,16 @@ La section `Partager` regroupe:
 - `Programme`: image parents;
 - `Texte`: texte brut compact;
 - futur lien en ligne vers une vue spectateur en lecture seule.
+
+## Archives
+
+La section `Archives` regroupe:
+
+- liste locale des matchs archivés, du plus récent au plus ancien;
+- consultation en lecture seule, non ouverte par défaut et refermable;
+- suppression manuelle avec confirmation;
+- régénération des exports `Programme`, `Banc` et `Texte` à partir du snapshot figé;
+- affichage sommaire des anciennes archives `legacy` quand les données complètes ne sont pas disponibles.
 
 Le partage `Texte` doit suivre l'ordre réel des demi-manches comme la vue spectateur: attaque en début de manche si notre équipe est visiteuse, défense en début de manche si notre équipe est locale.
 

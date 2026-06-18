@@ -2,7 +2,7 @@
 
 ## Maintenant
 
-- Compléter la gestion multi-match: page d'archives, suppression manuelle, reprise d'un nouveau match avec les mêmes joueurs et archives verrouillées en lecture seule.
+- Compléter la gestion multi-match restante: actions avancées de reprise/recommencement à partir d'un match archivé.
 - Stabiliser les changements de joueurs en cours de match: retrait, remplacement, ajout imprévu, choix de la demi-manche d'effet et historique des demi-manches déjà jouées.
 - Raffiner la gestion des positions futures incomplètes après un retrait ou remplacement pendant le match.
 - Améliorer les exports et partages: PDF parents responsive et aperçu modifiable pour l'export `Texte`.
@@ -60,34 +60,37 @@ Match -> Joueurs -> Alignement
 - Cette gestion ne devient pas une étape numérotée et elle est accessible dans `Équipe`.
 - Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer des joueurs pour les matchs futurs.
 - Le workflow `Joueurs` sert alors à indiquer les présences et absences du match courant, sans supprimer de joueur du bassin permanent.
-- L'accueil contextuel est livré pour la création d'équipe, la reprise du match courant et la création d'un nouveau match. Les archives restent à ajouter.
+- L'accueil contextuel est livré pour la création d'équipe, la reprise du match courant, la création d'un nouveau match et l'accès aux archives.
 
 ### Gaps connus du workflow
 
-- La fin de match offre maintenant une sortie de base: archiver ou non, conserver l'équipe et les joueurs, puis retourner à l'accueil. Il reste à livrer une vraie page d'archives et les actions avancées de reprise/recommencement.
+- La fin de match offre maintenant une sortie de base complète: archiver ou non, conserver l'équipe et les joueurs, puis retourner à l'accueil. Il reste à livrer les actions avancées de reprise/recommencement.
 - Les exports doivent être contrôlés plus finement selon la validité réelle du match.
 - Les changements de joueurs doivent encore être stabilisés quand ils créent des positions futures incomplètes.
-- Le modèle de données courant utilise encore `team` et `players` comme bassin permanent et comme base du match courant. Une séparation interne plus nette reste à faire avant les archives.
+- Le modèle de données courant utilise encore `team` et `players` comme bassin permanent et comme base du match courant. Une séparation interne plus nette reste à faire avant une synchronisation ou publication en ligne.
 
 ## Prochaines fonctionnalités candidates
 
+- Ajouter des titres de page différents par vue/hash afin d'améliorer l'historique du navigateur et le retour arrière.
 - Explorer Firebase/Firestore pour publier optionnellement un match avec un lien ou un QR code toujours à jour.
 - Sauvegarder plusieurs matchs.
-- Ajouter une page d'archives des matchs passés.
-- Terminer un match avec action explicite, puis offrir `Nouveau match avec les mêmes joueurs` ou `Recommencer ce match`. Les archives restent verrouillées quand elles seront disponibles.
+- Livré: ajouter une page d'archives des matchs passés.
+- Terminer un match avec action explicite, puis offrir `Nouveau match avec les mêmes joueurs` ou `Recommencer ce match`.
   - Livré partiellement: à la fin de la dernière demi-manche, l'application propose d'archiver ou non, ferme le match courant, conserve l'équipe et les joueurs, puis retourne à l'accueil.
 - Ajouter les archives à l'accueil contextuel quand la gestion multi-match sera disponible.
-  - Livré partiellement: l'accueil affiche le nombre d'archives locales et un résumé temporaire des derniers matchs archivés.
+  - Livré: l'accueil affiche le nombre d'archives locales et ouvre la page `Archives`.
 - Importer et exporter une liste de joueurs.
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
-- Ajouter un champ de numéro de joueur dans les cartes joueurs. Le numéro ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour les exports.
+- Ajouter un champ optionnel de numéro de chandail dans les cartes joueurs de `Équipe`. Le numéro est éditable seulement hors match, comme le nom du joueur. Il ne doit pas apparaître dans le tableau principal, mais doit rester disponible pour `Programme`, `Banc`, `Texte` et les futurs partages parents/fans.
 - Optimiser automatiquement l'alignement la première fois qu'on arrive sur `Alignement` après des changements de joueurs, parce que les ajouts/retraits ne sont pas toujours bien reflétés avant optimisation.
   - Livré: ajout, suppression et présence/absence avant match déclenchent une optimisation automatique à l'arrivée sur `Alignement`.
-- À la première arrivée sur `Alignement`, demander si l'entraîneur veut rendre l'ordre au bâton aléatoire.
+- À la première arrivée sur `Alignement`, offrir de mélanger l'ordre au bâton avant d'afficher l'alignement, idéalement avec l'option aléatoire comme choix simple et réversible avant le début du match.
 - Livré: ajouter une action à la demande pour mélanger l'ordre au bâton avec une icône shuffle près de `Optimiser`. Le mélange optimise automatiquement les positions, mais `Optimiser` seul conserve maintenant l'ordre courant.
-- Évaluer si l'étape `Joueurs` devrait précéder `Match`, parce que la liste des joueurs est souvent la première donnée réutilisable d'un match à l'autre.
+- Décision: garder `Match` avant `Joueurs`, parce que l'équipe permanente est maintenant séparée et que les présences/absences se décident dans le contexte d'un match daté.
 - Évaluer plus tard une correction de progression avancée. L'interface principale doit d'abord avancer seulement d'une demi-manche à la fois.
+- Deuxième passe Alignement: permettre de recommencer un match démarré par erreur tant que le début de 1re manche n'est pas terminé, avec confirmation claire et retour à l'état non commencé.
 - Pour `Spectateur`, explorer plus tard un suivi en direct du déroulement du match basé sur la progression courante.
+- Dans `Spectateur`, indiquer clairement quand le match n'est pas commencé et placer la vue au début dans ce cas.
 - Dupliquer un match existant.
 - Ajouter un écran de résumé avant impression.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
@@ -106,14 +109,46 @@ La gestion durable de notre équipe, de son nom et de son bassin de joueurs est 
 À stabiliser:
 
 - initialiser les nouveaux matchs avec la date du jour;
+- ajouter le nombre de manches initial dans l'étape `Match`, puisque c'est une propriété du match prévu avant l'ajustement de l'alignement;
+- déplacer le réglage `Frappe fixe` dans l'étape `Match`, puisqu'il décrit les règles/configurations du match courant. Il devient non modifiable après le début du match;
+- utiliser une heure en format 24h avec intervalles de 5 minutes;
+- Livré: `Match` contient maintenant les manches initiales, `Frappe fixe`, l'heure 24h par pas de 5 minutes, l'heure par défaut `18:30` et une mise en page plus claire sans texte d'aide redondant sur `Équipe`.
 - renommer `Réinitialiser` en `Recommencer` dans le menu et les confirmations, parce que l'action sert surtout à repartir proprement;
 - normaliser automatiquement la casse des noms de joueurs à l'ajout;
 - garder les actions de modification clairement bloquées quand le match est débuté.
 
+À ne pas changer pour l'instant:
+
+- garder les libellés local/visiteur plutôt que passer à un langage phrase du type `visitent les` / `reçoivent les`. Ce langage est intéressant, mais la grammaire varie selon les noms d'équipe.
+
+## Accueil
+
+Améliorations UX à prévoir:
+
+- états du match:
+  - `Aucun match prévu`;
+  - `En préparation`;
+  - `En cours`, avec la demi-manche courante affichée.
+- dans le détail du match, afficher date, heure et endroit;
+- Livré: l'accueil utilise `Aucun match prévu`, `Préparer un match`, `Match en préparation` et `En cours` avec la demi-manche courante, et affiche date, heure et endroit quand disponibles.
+
+## Équipe et joueurs
+
+Améliorations UX à prévoir:
+
+- ajouter le numéro de chandail optionnel dans `Équipe`, éditable seulement avant match;
+- Livré: `Équipe` affiche un compteur de joueurs dans l'en-tête.
+- Livré: l'action `Créer une équipe exemple` est placée sous la liste des joueurs et son avertissement précise que l'équipe, les matchs et les archives locales sont remplacés.
+- dans l'étape `Joueurs`, garder des cartes de même taille pour les joueurs présents et absents;
+- dans l'étape `Joueurs`, ne pas afficher de carte vide `Aucun` quand il n'y a pas de présents ou d'absents; la bulle de total existante suffit.
+- Livré: les boîtes `Présents` et `Absents` restent affichées en tout temps, avec des cartes de même hauteur dans une grille à deux colonnes.
+- Livré: quand plus de 12 joueurs existent dans le bassin ou sont collés dans la liste, les joueurs excédentaires restent visibles comme absents au lieu d'être perdus.
+- Livré partiellement: `Joueurs` ne contient plus `Frappe fixe`.
+
 ## Alignement
 
 - L'ordre des frappeurs se modifie directement dans le tableau principal en glissant les joueurs.
-- L'option `Frappe fixe` est un réglage de l'écran `Joueurs`, près de la présence/absence du match courant.
+- L'option `Frappe fixe` doit migrer vers l'écran `Match`, car elle fait partie des paramètres du match courant.
 - L'interface doit indiquer que `Frappe fixe` est normalement activée en Rallye-Cap.
 - Les validations et l'équité suivent le tableau principal pour servir de rétroaction après l'ajustement.
 - Simplifier la densité de l'écran `Alignement`:
@@ -128,6 +163,24 @@ La gestion durable de notre équipe, de son nom et de son bassin de joueurs est 
   - regrouper les cartes d'équité et le tableau détaillé dans une section `Statistiques et équité`;
   - garder les cartes d'équité dans cette section, idéalement repliée par défaut.
   - Livré partiellement: `Suggestions` est renommé et masqué quand il n'y a rien d'actionnable; les cartes d'équité et le tableau sont regroupés dans `Statistiques et équité`.
+- Stabiliser la taille des boutons `Commencer le match` / `Terminer ...` afin que l'interface ne bouge pas selon le texte.
+- Remplacer l'icône seule de shuffle par le libellé texte `Mélanger`.
+- Explorer un mode local `Préparer` / `Jouer` au-dessus du tableau d'alignement, sans recréer une route `Jouer`:
+  - avant match, `Préparer` contient `Mélanger` et `Optimiser`;
+  - quand l'entraîneur veut commencer, il passe à `Jouer`;
+  - `Jouer` contient `Commencer le match` puis la progression de demi-manche, ainsi que `Changement de joueurs`;
+  - quand le match est commencé, l'interface force le mode `Jouer`;
+  - `Préparer` reste utile avant match pour ajuster l'ordre et les positions.
+
+## Archives
+
+Améliorations UX à prévoir:
+
+- ne pas afficher les détails d'une archive par défaut;
+- permettre de fermer le détail d'une archive ouverte;
+- ajouter éventuellement un tri par date ascendant/descendant;
+- ajouter éventuellement de la pagination quand la liste devient longue;
+- ajouter éventuellement des filtres par équipe/adversaire.
 
 ## Publication optionnelle en ligne
 
@@ -138,8 +191,9 @@ Modèle souhaité:
 - local-first: rien n'est envoyé en ligne tant que l'entraîneur ne publie pas le match;
 - publication explicite d'un seul match;
 - lien ou QR code vers une version consultable;
-- mise à jour du match publié quand l'entraîneur modifie l'alignement;
-- données minimales: prénoms, numéros si disponibles, ordre, positions, infos de match;
+- deux vues futures: archive privée complète pour l'entraîneur et projection publique limitée pour les parents;
+- la projection publique doit être dérivée d'un snapshot de match, pas du bassin d'équipe courant;
+- données publiques minimales: prénoms, numéros si disponibles, ordre, positions, infos de match;
 - accès public seulement aux personnes qui ont le lien;
 - vue parents en lecture seule avec informations limitées comme minimum;
 - mode assistant modifiable à évaluer plus tard;
@@ -152,11 +206,20 @@ Notes de coût:
 
 Points à définir avant implémentation:
 
-- format exact du document Firestore;
+- format exact des documents Firestore privé/public;
 - règles de sécurité pour empêcher la modification non autorisée;
 - stratégie `publicId` non devinable et `editToken` local;
 - durée de conservation ou suppression manuelle;
 - comportement hors ligne quand un match publié ne peut pas être synchronisé.
+
+## Partages parents et vues fans
+
+À explorer:
+
+- `Programme`: ajouter une première page style poster avec les équipes, date, heure, joueurs présents et numéros de chandail, avec une composition visuelle baseball en arrière-plan.
+- Évaluer si le `Programme` doit devenir un PDF multi-page plutôt qu'une seule image quand on ajoute une page poster et que le contenu doit éviter les coupures.
+- Future vue fan joueur: vue centrée sur un joueur, montrant quelles manches il frappe, défend ou encourage.
+- La vue fan joueur est probablement une vue partageable en ligne ou une extension de `Spectateur`; la forme exacte reste à explorer plus tard.
 
 ## Sortie Texte
 
@@ -278,7 +341,7 @@ Irritants UX à corriger:
 
 Évolutions de règles / validations:
 
-- Au démarrage du match, afficher un avertissement si les règles ne sont pas respectées, mais permettre à l'entraîneur de continuer quand même après confirmation.
+- Au démarrage du match, bloquer si le nombre de joueurs actifs n'est pas entre 6 et 12. Pour les autres règles ou problèmes d'alignement, afficher un avertissement et permettre à l'entraîneur de continuer après confirmation.
 
 Bugs de sélection du tableau:
 
@@ -287,9 +350,9 @@ Bugs de sélection du tableau:
 - Livré: les entêtes de demi-manche sélectionnent seulement leur demi-manche; l'entête de manche complète ne sélectionne plus les deux colonnes.
 - Livré: cliquer sur `Ordre` désélectionne toute sélection active.
 
-Questions à trancher avant implémentation:
+Questions fermées:
 
-- Quelle correction manuelle est la plus rapide sur téléphone pour une position manquante: clic sur `BANC`, ligne `Positions non assignées`, ou menu d'action sur la manche?
+- Correction manuelle rapide des positions manquantes: le chemin existant par suggestion et clic sur une cellule `BANC` est considéré suffisant pour l'instant. Une zone `Positions non assignées` reste une amélioration possible si ce flux devient trop lent sur téléphone.
 
 ## Bugs et dettes connues
 
@@ -314,6 +377,7 @@ Questions à trancher avant implémentation:
 
 - Les archives de matchs passés seront verrouillées en lecture seule. Elles servent à consulter l'historique, pas à modifier rétroactivement un alignement.
 - L'archivage des matchs sera déclenché par une action manuelle, pas automatiquement.
+- Les exports ne sont pas stockés dans les archives; ils sont régénérés à partir du snapshot figé.
 - La publication en ligne doit au minimum supporter un mode spectateur en lecture seule avec informations limitées.
 - Les exports et publications sont regroupés dans une section `Partager`.
 - La vue terrain est retirée de l'expérience principale.
@@ -336,7 +400,7 @@ Questions à trancher avant implémentation:
 - Boutons `Continuer` ajoutés en bas des étapes du flux principal.
 - Affichage `Visiteur` / `Locale` intégré près des noms d'équipes, avec inversion automatique entre l'équipe et l'adversaire.
 - Gestion séparée de l'ordre retirée; l'ordre se modifie dans le tableau principal de l'alignement.
-- Option `Frappe fixe` déplacée dans l'écran `Joueurs`, avec l'indication que le mode est normalement activé en Rallye-Cap.
+- Option `Frappe fixe` déplacée dans l'écran `Joueurs`, avec l'indication que le mode est normalement activé en Rallye-Cap. Cible suivante: la déplacer dans `Match`.
 - `Alignement` consolidé: les actions principales sont au-dessus du tableau, sans pill de statut ni sous-titre `Tableau principal`.
 - `Optimiser` conserve maintenant l'ordre de frappe courant au lieu de revenir à l'ordre initial des joueurs enregistrés.
 - Bouton shuffle ajouté près de `Optimiser` pour mélanger l'ordre de frappe avant match et optimiser les positions automatiquement.
@@ -354,7 +418,7 @@ Questions à trancher avant implémentation:
 - `Accueil` contextuel livré pour créer l'équipe initiale, reprendre un match ou créer un nouveau match.
 - `Équipe` hors workflow livré pour gérer le nom de notre équipe et le bassin de joueurs.
 - Le hero de présentation apparaît seulement dans `Accueil`.
-- Les cartes de contexte de l'accueil affichent le nom de l'équipe, le statut du match, les joueurs enregistrés et les matchs archivés; les cartes liées à l'équipe mènent à `Équipe`, la carte de statut mène à `Match`, et les archives ouvriront une future page dédiée.
+- Les cartes de contexte de l'accueil affichent le nom de l'équipe, le statut du match, les joueurs enregistrés et les matchs archivés; les cartes liées à l'équipe mènent à `Équipe`, la carte de statut mène à `Match`, et la carte archives mène à `Archives`.
 - L'accueil garde un seul bouton d'action principal selon l'état courant.
 - `Partager` et `Spectateur` sont sortis des étapes numérotées.
 - `Spectateur` masque maintenant l'en-tête global et le workflow numéroté, et utilise la palette visuelle du site.
@@ -368,5 +432,5 @@ Questions à trancher avant implémentation:
 - Les entêtes de demi-manche du tableau principal gardent seulement les icônes bâton et gant.
 - Le bloc `Ajouter des joueurs` est déplacé dans `Équipe`, hors workflow.
 - La création d'équipe exemple est bloquée pendant un match débuté.
-- Le démarrage de la progression du match est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs et 6 positions défensives assignées par manche.
+- Le démarrage de la progression du match bloque si le nombre de joueurs actifs n'est pas entre 6 et 12. Les autres problèmes d'alignement ou de règles affichent un avertissement avec confirmation.
 - Le refactor du workflow a retiré l'onglet `Jouer`; `Alignement` porte maintenant la progression du match, les validations, les suggestions et les changements de joueurs.

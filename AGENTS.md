@@ -20,7 +20,7 @@ Ce dépôt contient une application SPA statique pour préparer un alignement de
 - `app.js` contient la logique applicative principale.
 - `rules.js` contient les validations pures des règles obligatoires.
 - L'état est sauvegardé dans `localStorage` avec la clé `rallye_cap_qc_v4`.
-- Les vues principales sont: `Accueil`, `Équipe`, `Match`, `Joueurs`, `Alignement`, `Partager`, `Spectateur`.
+- Les vues principales sont: `Accueil`, `Équipe`, `Archives`, `Match`, `Joueurs`, `Alignement`, `Partager`, `Spectateur`.
 - `Alignement` porte maintenant la progression du match et les changements de joueurs en cours de match; l'ancien onglet `Jouer` a été retiré.
 - Le moteur d'alignement, les validations, le rendu et les exports sont encore regroupés dans `app.js`.
 

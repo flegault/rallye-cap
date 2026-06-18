@@ -18,12 +18,12 @@ Champs principaux:
 - `started`: match explicitement débuté dans l'état actuel; à remplacer par une progression de demi-manche plus explicite
 - `locks.innings`: ancien stockage de manches barrées, conservé seulement pour compatibilité avec l'état sauvegardé
 - `locks.halves`: stockage interne transitoire des demi-manches complétées, indexées sous la forme `inning:debut` ou `inning:fin`
-- `archives`: liste locale sommaire des matchs terminés et archivés, conservée dans le même état `localStorage`
+- `archives`: liste locale des matchs archivés, conservée dans le même état `localStorage`. Les nouvelles archives utilisent `schemaVersion: 1` et stockent un snapshot complet du match.
 - `route`: vue active
 
 Quand le match est commencé, l'action `Optimiser` est désactivée. Les demi-manches complétées ne doivent pas être recalculées automatiquement. Les changements de joueurs pendant le match doivent viser les demi-manches futures et laisser les corrections ambiguës à l'entraîneur.
 
-Fin de match: quand toutes les demi-manches sont complétées, l'application propose d'archiver ou non le match, conserve l'équipe et le bassin de joueurs, puis retourne à `Accueil`. Une prochaine itération devrait ajouter une page d'archives complète, `nouveau match avec joueurs conservés` et `recommencer ce match`.
+Fin de match: quand toutes les demi-manches sont complétées, l'application propose d'archiver ou non le match, conserve l'équipe et le bassin de joueurs, puis retourne à `Accueil`. Si le match est archivé, l'app crée un snapshot en lecture seule indépendant du bassin permanent.
 
 Le tableau principal rend les manches en deux demi-manches. Les assignations défensives restent stockées par manche dans `schedule`, mais l'édition défensive est bloquée quand la demi-manche défensive correspondante est complétée. Les rangs de frappe affichés pour une demi-manche offensive complétée utilisent `battingOrders` pour éviter de réécrire l'historique quand l'ordre futur change.
 
@@ -40,10 +40,11 @@ Le workflow cible remplace l'ancien onglet `Jouer` par une gestion directe dans 
 - `#alignement`: édition de l'alignement avant match, suivi de progression pendant le match, validations, suggestions, statistiques et changements de joueurs;
 - `#accueil`: porte d'entrée contextuelle selon l'état local;
 - `#equipe`: gestion hors workflow du nom de notre équipe et du bassin de joueurs;
+- `#archives`: liste et consultation en lecture seule des matchs archivés;
 - `#spectateur`: vue en lecture seule dérivée du même état;
 - `#partager`: exports et liens, sans être une étape numérotée du workflow.
 
-`#alignement` démarre le match avec confirmation si la progression est encore au début. Le démarrage est bloqué si l'alignement n'est pas minimalement prêt: 6 à 12 joueurs actifs, au moins une manche préparée et 6 positions défensives assignées pour chaque manche prévue. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
+`#alignement` démarre le match avec confirmation si la progression est encore au début. La cible produit bloque le démarrage si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que l'horaire est incomplet ou que des règles ne sont pas respectées, l'app avertit sans bloquer et demande confirmation. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
 
 Le menu du haut garde seulement les étapes principales visibles. `Équipe`, `Partager`, `Spectateur` et `Réinitialiser` sont regroupés dans `Autres`. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
 
@@ -55,7 +56,9 @@ Le libellé durable souhaité pour l'action destructive globale est `Recommencer
 
 État transitoire: `#equipe` est livré comme espace hors workflow, mais le stockage utilise encore les mêmes champs `team` et `players` pour représenter le bassin permanent et alimenter le match courant. Une prochaine étape devrait introduire une séparation interne plus claire, par exemple `teamProfile`, `roster` et `currentMatch`, avant d'ajouter les archives.
 
-La fermeture de match est maintenant explicite à la fin de la dernière demi-manche. L'archive créée est volontairement sommaire et locale; elle sert de transition produit avant une vraie séparation `teamProfile` / `roster` / `currentMatch` / `archives`.
+La fermeture de match est maintenant explicite à la fin de la dernière demi-manche. Les archives `schemaVersion: 1` conservent un snapshot complet: métadonnées du match, frappe fixe, manches, joueurs figés, ordre, positions, snapshots de frappe et demi-manches complétées. Les anciennes archives sommaires sont conservées comme `legacy` et restent consultables comme résumé.
+
+Les exports `Programme`, `Banc` et `Texte` ne sont pas stockés dans l'archive. Ils sont régénérés à partir du snapshot figé via un état temporaire en lecture seule, puis l'état courant est restauré.
 
 Dette restante: le refactor de workflow a été livré surtout au niveau navigation/rendu. La logique demeure fortement centralisée dans `app.js`, avec des conditions dispersées dans les fonctions de rendu et d'interaction. L'extraction en modules testables reste à faire.
 
@@ -129,14 +132,15 @@ Tests navigateur prioritaires:
 - modification manuelle par glisser-déposer;
 - navigation cible `Accueil`, `Équipe`, `Match`, `Joueurs`, `Alignement`, `Partage`, `Spectateur`;
 - démarrage explicite du match;
-- blocage du démarrage quand l'alignement n'est pas minimalement prêt;
+- blocage du démarrage quand le nombre de joueurs actifs n'est pas entre 6 et 12;
+- avertissement au démarrage pour les autres problèmes d'alignement ou de règles, avec confirmation pour continuer;
 - progression vers la prochaine demi-manche;
 - absence de retour arrière dans l'interface principale;
 - ajout d'un joueur en match débuté;
 - remplacement d'un joueur en match débuté;
 - retrait d'un joueur actif avec seulement 6 joueurs disponibles;
 - lien spectateur en ligne lecture seule à définir plus tard.
-- fin de match, archive locale sommaire et retour à l'accueil avec les mêmes joueurs;
+- fin de match, archive locale complète en lecture seule et retour à l'accueil avec les mêmes joueurs;
 - export parents avec beaucoup de joueurs et noms longs;
 - aperçu modifiable de l'export `Texte`;
 - vue spectateur avec lanceurs affichés sur deux lignes.
