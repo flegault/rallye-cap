@@ -102,8 +102,8 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Un nouveau match est initialisé avec la date du jour et l'heure par défaut `18:30`.
 - L'étape `Match` contient l'adversaire, la date, l'heure en format 24h, l'endroit, le côté local/visiteur, le nombre de manches initial et le réglage `Frappe fixe`. Le nom de notre équipe se gère dans `Équipe`.
 - Le champ d'heure devrait proposer des intervalles de 5 minutes.
-- L'action destructive globale devrait être libellée `Recommencer` plutôt que `Réinitialiser`.
-- Recommencer doit être confirmé clairement et expliquer si les joueurs enregistrés sont conservés ou supprimés.
+- L'action destructive globale garde le libellé `Réinitialiser`, parce qu'elle efface vraiment toutes les données locales.
+- Réinitialiser doit être confirmé clairement et expliquer que l'équipe, les joueurs, les matchs et les archives locales sont supprimés.
 - Terminer un match doit permettre de conserver la liste des joueurs pour préparer un nouveau match.
 
 ## Progression du match dans l'alignement
