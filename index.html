@@ -4,18 +4,22 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Alignement Rallye-Cap</title>
+<link rel="icon" href="favicon.ico" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header class="top">
   <div class="topin">
     <div class="brand"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub" id="topMatchStatus">Aucun match prévu</div></div></div>
-    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
+    <div class="topActions">
+      <a class="quickMatchLink hide" href="#alignement" id="quickMatchLink">Match en cours</a>
+      <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
+    </div>
     <nav class="nav" id="nav">
       <a href="#accueil" data-nav="accueil">Accueil</a>
       <a href="#equipe" data-nav="equipe">Équipe</a>
       <a href="#archives" data-nav="archives">Archives</a>
-      <a href="#partager" data-nav="partager">↗ Partage</a>
+      <a href="#partager" data-nav="partager">Partage</a>
       <a href="#spectateur" data-nav="spectateur">Spectateur</a>
       <button id="cloudAccountBtn">Connexion cloud</button>
       <button class="dangerMenu" id="resetBtn">Réinitialiser</button>
@@ -88,7 +92,6 @@
           <h2>Archives</h2>
           <p class="hint">Consulte les matchs archivés en lecture seule. Les changements futurs à l'équipe ne modifient pas ces archives.</p>
         </div>
-        <span class="tag">Lecture seule</span>
       </div>
       <div id="archivesList" class="archiveList"></div>
     </div>
@@ -99,7 +102,7 @@
   </section>
   <section class="view" id="view-match">
     <div class="card">
-      <div class="spaced"><div><h2>1. Match</h2><p class="hint">Crée le contexte du match courant.</p></div></div>
+      <div class="spaced"><div><h2>1. Match</h2></div></div>
       <h3 class="formSectionTitle">Équipes</h3>
       <div class="matchTeamsGrid">
         <label class="teamLinkLabel"><span>Notre équipe</span><a class="teamField teamFieldLink" href="#equipe"><strong id="matchTeamName">Équipe à définir</strong></a></label>
@@ -156,10 +159,12 @@
     <div class="card noPrint">
       <div class="spaced"><div><h2>Partage</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode spectateur.</p></div></div>
     </div>
-    <div class="grid3 shareGrid">
+    <h3 class="shareSectionTitle noPrint">Cloud</h3>
+    <div class="grid3 shareGrid cloudShareGrid">
       <div class="card shareCard">
-        <h3>Cloud</h3>
-        <p class="hint" id="cloudStatusText">Sauvegarde locale seulement.</p>
+        <h3>Cloud édition</h3>
+        <p class="hint">Pour reprendre ou modifier le match sur un autre appareil avec ton compte.</p>
+        <p class="hint" id="cloudStatusText">Local</p>
         <div class="shareActions">
           <button class="btn secondary" id="cloudSaveBtn">Sauvegarder en ligne</button>
           <button class="btn secondary" id="cloudEditLinkBtn">Copier lien d'édition</button>
@@ -167,14 +172,17 @@
       </div>
       <div class="card shareCard">
         <h3>Spectateur live</h3>
-        <p class="hint" id="publicShareText">Publie une vue lecture seule avec lien non devinable.</p>
-        <label><span>Mot de passe optionnel</span><input id="publicPassword" type="password" autocomplete="new-password" placeholder="ex. mot de passe d'équipe" /></label>
+        <p class="hint" id="publicShareText">Publie une vue parents avec lien non devinable.</p>
+        <label class="publicPasswordField"><span>Mot de passe optionnel</span><input id="publicPassword" name="public-share-password" type="password" autocomplete="new-password" placeholder="ex. mot de passe d'équipe" /></label>
         <div class="shareActions">
           <button class="btn secondary" id="publishPublicBtn">Publier le lien</button>
           <button class="btn secondary" id="copyPublicLinkBtn">Copier lien public</button>
           <button class="btn danger" id="unpublishPublicBtn">Retirer</button>
         </div>
       </div>
+    </div>
+    <h3 class="shareSectionTitle noPrint">Exports locaux</h3>
+    <div class="grid3 shareGrid">
       <div class="card shareCard">
         <h3>Banc</h3>
         <p class="hint">Version imprimable pour gérer les frappeurs, la défensive et le banc.</p>

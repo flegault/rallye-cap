@@ -30,6 +30,13 @@ Dans GitHub, configurer d'abord Pages avec `Settings > Pages > Build and deploym
 
 Le secret `FIREBASE_APPCHECK_SITE_KEY` doit contenir la clé de site reCAPTCHA v3 utilisée par Firebase App Check. Ne pas ajouter de debug token dans les secrets de production.
 
+Pour GitHub Pages, autoriser aussi le domaine publié côté Firebase:
+
+- Firebase Authentication > Authorized domains: `flegault.github.io`
+- App Check / reCAPTCHA v3: `flegault.github.io`
+
+Le debug token App Check sert seulement au développement local et ne doit pas être ajouté aux secrets GitHub ni au fichier publié.
+
 ### App Check en debug local
 
 Pour tester App Check en local, ajouter temporairement ceci dans `firebase-config.js`:

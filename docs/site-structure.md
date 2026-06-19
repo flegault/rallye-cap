@@ -23,7 +23,7 @@ La navigation est disponible dans:
 - les étapes numérotées du workflow, affichées dans le contenu;
 - certains boutons de continuité entre les vues.
 
-Le menu global regroupe `Accueil`, `Équipe`, `Archives`, `Partage`, `Spectateur` et l'action destructive `Réinitialiser`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales.
+Le menu global regroupe `Accueil`, `Équipe`, `Archives`, `Partage`, `Spectateur` et l'action destructive `Réinitialiser`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales. Le lien `Partage` devrait rester textuel et ne pas dépendre d'une icône décorative dans le menu.
 
 ## Sitemap actuel
 
@@ -78,7 +78,7 @@ Alignement Rallye-Cap
 |   +-- Exports régénérés depuis le snapshot
 |   +-- Suppression manuelle avec confirmation
 +-- Partager (#partager)
-|   +-- Cloud
+|   +-- Cloud édition
 |   |   +-- Sauvegarder le match courant en ligne
 |   |   +-- Copier le lien d'édition
 |   +-- Spectateur live
@@ -92,10 +92,12 @@ Alignement Rallye-Cap
 |   +-- Texte
 |   |   +-- Copier texte brut
 +-- Spectateur (#spectateur)
+    +-- Programme ou alignement à venir
     +-- Carte de manche courante
     |   +-- Attaque: frappeurs de la manche si la frappe fixe est activée
     |   +-- Attaque: rappel de suivre l'ordre au banc si la frappe fixe est désactivée
     |   +-- Défense: positions défensives
+    +-- État final de remerciement quand le match est terminé
     +-- Navigation précédent / suivant
     +-- Points de progression
 ```
@@ -190,6 +192,14 @@ Alignement Rallye-Cap
 - La vue spectateur affiche les deux lanceurs sur deux lignes séparées pour présenter 6 éléments défensifs, comme les 6 frappeurs en attaque.
 - La route `#spectateur` masque l'en-tête global et le workflow numéroté pour donner une vue plein écran simplifiée.
 - La vue spectateur locale indique `En cours`, `Terminée` et `À venir`, et offre un bouton `Manche en cours`.
+- La vue spectateur pourrait informer qu'une nouvelle demi-manche est disponible sans déplacer automatiquement l'utilisateur qui consulte une autre étape.
+  - Livré pour le spectateur public.
+- La vue spectateur ne devrait pas répéter `Lecture seule` ni afficher `À venir` si ces libellés nuisent à la simplicité.
+  - Livré partiellement pour le spectateur public.
+- La vue spectateur devrait éventuellement inclure une première étape `Programme`, puis un état final `Merci, à la prochaine`.
+  - Livré pour le spectateur public.
+- La section `Partager` mélange actuellement des actions locales et cloud; il faut clarifier ce qui sert à éditer le match, ce qui sert à publier pour les parents, et ce qui exige une connexion.
+  - Livré: la page sépare `Cloud`, `Spectateur live` et `Exports locaux`.
 - Les suggestions et validations pourraient être rapprochées du tableau quand l'utilisateur corrige manuellement.
 - Le flux ne distingue pas encore clairement préparation avant-match, ajustement, et consultation pendant le match.
 
@@ -238,6 +248,9 @@ Découpage potentiel:
 - Est-ce que le réglage des manches devrait aussi être disponible dans la vue spectateur, en plus de l'écran d'alignement?
 - Est-ce que les sous-en-têtes du tableau doivent garder les textes `Début` et `Fin`, ou seulement les icônes et cadenas puisque la colonne gauche est toujours le début et la colonne droite est toujours la fin?
 - Quel patron d'interaction est le plus rapide sur téléphone pour corriger une position défensive manquante après un retrait de joueur: clic sur `BANC`, zone `Positions non assignées`, ou menu d'action par manche?
+- Où placer un raccourci rapide vers le match en cours près du menu sans surcharger le header?
+- Le bouton `Sauvegarder` de `Équipe` doit-il être retiré au profit d'une sauvegarde automatique, ou étendu comme action explicite cohérente ailleurs?
+- Pour la frappe non fixe, quelle interaction minimale permettrait de saisir le dernier frappeur d'une manche sans transformer `Spectateur` en outil d'édition complet?
 
 ## Décisions UX prises
 
@@ -326,10 +339,14 @@ Découpage potentiel:
 
 La section `Partager` regroupe:
 
+- `Cloud édition`: sauvegarde en ligne du match courant et lien d'édition pour l'entraîneur connecté;
+- `Spectateur live`: publication d'une projection publique limitée, avec mot de passe optionnel;
 - `Banc`: tableau imprimable par joueur avec sous-colonnes de manche `🏏` et `🧤`;
 - `Programme`: image parents;
 - `Texte`: texte brut compact;
 - futur lien en ligne vers une vue spectateur en lecture seule.
+
+Les partages locaux doivent rester utilisables sans connexion. Les actions cloud doivent expliquer la connexion requise et proposer de se connecter quand l'utilisateur tente de les utiliser.
 
 ## Archives
 

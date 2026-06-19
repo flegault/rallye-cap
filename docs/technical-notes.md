@@ -38,9 +38,13 @@ L'action globale `Réinitialiser` efface l'état local et tente aussi de supprim
 
 Le partage public peut être publié sans mot de passe ou avec un mot de passe optionnel. Quand un mot de passe est fourni, la projection publique est chiffrée côté client avec WebCrypto avant d'être écrite dans Firestore. Le mot de passe n'est pas sauvegardé dans Firestore. Cette approche garde l'app statique et compatible GitHub Pages, mais un mot de passe faible peut être attaqué hors ligne si quelqu'un récupère le document chiffré.
 
+Bug UX connu: Chrome peut interpréter le champ de mot de passe du partage spectateur comme un formulaire de connexion et proposer d'enregistrer le mot de passe en utilisant un autre champ de la page, comme l'endroit du match, comme nom d'utilisateur. Ce n'est pas une authentification Firebase et le mot de passe n'est pas stocké dans Firestore, mais l'expérience est confuse. À corriger en priorité dans l'UI de partage avec des attributs `autocomplete` plus précis, des noms de champs moins ambigus, une séparation claire entre formulaire de match et mot de passe public, ou une interaction qui ne ressemble pas à un formulaire de connexion classique.
+
 La politique de conflit v1 est volontairement simple: dernière sauvegarde gagne. Si une version distante plus récente est reçue, l'application avertit l'utilisateur et remplace la copie locale.
 
 Pour limiter les écritures Firestore et éviter de publier un alignement incomplet avant l'heure, la synchronisation avant le début du match est volontairement réduite. Tant que `started` est faux, seuls les champs de contexte du match (`team`, `opp`, `date`, `time`, `place`, `side`, `fixed`, `innings`) déclenchent une sauvegarde automatique et sont écrits dans le document cloud. Les ajustements d'alignement avant match restent locaux jusqu'au démarrage du match, même si une information du match est modifiée après coup. Quand l'entraîneur clique `Commencer`, puis pendant le match, la signature et le payload redeviennent complets et incluent joueurs, ordre, positions, progression et demi-manches complétées afin d'alimenter le mode spectateur live.
+
+La projection publique contient aussi des métadonnées de présentation pour le spectateur: `publicStage`, `programme`, `currentIndex` et `phases`. La vue publique ajoute une étape `Programme` avant les demi-manches, affiche `Alignement à venir` avant le début du match, puis affiche un état final quand toutes les demi-manches sont terminées. Si le spectateur consulte la demi-manche courante, la vue suit automatiquement la progression; s'il a navigué ailleurs, l'app affiche plutôt une notification de nouvelle demi-manche.
 
 Les diagrammes d'architecture et de flux sont dans `docs/firebase-firestore-sync.md`.
 

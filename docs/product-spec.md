@@ -102,6 +102,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Un nouveau match est initialisé avec la date du jour et l'heure par défaut `18:30`.
 - L'étape `Match` contient l'adversaire, la date, l'heure en format 24h, l'endroit, le côté local/visiteur, le nombre de manches initial et le réglage `Frappe fixe`. Le nom de notre équipe se gère dans `Équipe`.
 - Le champ d'heure devrait proposer des intervalles de 5 minutes.
+- L'écran `Match` doit rester direct et ne pas répéter un texte d'aide générique comme `Crée le contexte du match courant.` quand les champs expliquent déjà l'action.
 - L'action destructive globale garde le libellé `Réinitialiser`, parce qu'elle efface vraiment toutes les données locales.
 - Réinitialiser doit être confirmé clairement et expliquer que l'équipe, les joueurs, les matchs, les archives locales, le match cloud courant et le lien spectateur public sont supprimés quand c'est possible.
 - Terminer un match doit permettre de conserver la liste des joueurs pour préparer un nouveau match.
@@ -175,15 +176,29 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Les noms de fichiers d'exports parents utilisent le format `YYYY-MM-DD_equipe_adversaire.png`. Si la date manque, le préfixe est `match`; si l'adversaire manque, le nom contient seulement la date et notre équipe.
 - Dans la vue spectateur, les deux lanceurs doivent être affichés sur deux lignes séparées afin que la défensive présente 6 éléments visuels, comme l'ordre de frappe.
 - La vue spectateur doit utiliser la même palette visuelle que le reste du site.
+- La vue spectateur ne doit pas répéter inutilement `Lecture seule` dans les libellés visibles.
+- La vue spectateur devrait éviter de déplacer automatiquement l'utilisateur quand une nouvelle demi-manche devient disponible; elle devrait plutôt informer qu'une mise à jour existe, ou rendre ce comportement très prévisible.
+  - Livré pour le spectateur public: la vue suit automatiquement si le parent est sur la manche courante, sinon elle affiche une notification.
+- Les manches futures dans `Spectateur` ne devraient pas afficher un libellé `À venir` si ce texte alourdit la lecture.
+- Une évolution de `Spectateur` devrait ajouter une étape initiale `Programme`. Si aucune donnée de manche n'est encore publiée, cette étape indique `Alignement à venir` et reste la seule étape visible.
+  - Livré pour le spectateur public: l'étape `Programme` précède les manches et sert d'état d'attente avant publication complète.
+- Une évolution de `Spectateur` devrait ajouter un état final `Merci, à la prochaine` quand le match est terminé, jusqu'à archivage ou suppression.
+  - Livré pour le spectateur public.
+- En frappe non fixe, une future saisie manuelle du dernier frappeur d'une manche pourrait permettre d'annoncer les premiers frappeurs probables de la manche suivante.
 - Le partage externe du mode spectateur cible un futur lien en ligne en lecture seule avec informations limitées, plutôt qu'un fichier HTML autonome.
 - Le partage externe du mode spectateur est maintenant conçu comme un lien Firestore `#public/{publicId}`. Il publie une projection limitée du match courant, en lecture seule, et peut se mettre à jour en direct pendant le match.
 - Le lien public peut être protégé par un mot de passe optionnel. Dans ce cas, la projection publique est chiffrée côté client avant sauvegarde dans Firestore; le mot de passe n'est pas stocké.
 - Avant le début du match, la synchronisation automatique en ligne ne doit pas publier l'alignement. Les informations du match et le lien public peuvent être créés ou mis à jour, mais le payload cloud reste limité au contexte du match. L'alignement complet est synchronisé au démarrage du match, puis pendant la progression du match.
 - La synchronisation en ligne sert au match courant seulement. Les archives restent locales et figées; archiver un match retire le document cloud éditable et le partage public quand c'est possible.
+- Les partages cloud doivent être distingués des exports locaux. La sauvegarde cloud et le lien d'édition servent à reprendre ou modifier le match comme entraîneur, tandis que le lien spectateur sert au partage public limité.
+  - Livré: `Partager` sépare visuellement les actions cloud et les exports locaux.
+- Si une action de partage ou sauvegarde cloud exige une connexion, l'app doit proposer la connexion au moment de l'action et expliquer ce qui deviendra disponible.
+  - Livré: les actions cloud ouvrent la connexion quand nécessaire.
 - L'export `Texte` doit afficher le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
 - Les numéros de chandail, quand ils existent, sont affichés dans l'alignement avec une pastille près du nom et inclus dans `Programme`, `Banc`, `Texte`, `Spectateur` et les exports régénérés depuis les archives.
 - Une évolution du `Programme` pourrait ajouter une première page style poster avec équipes, date, heure, joueurs présents, numéros et visuel baseball. Si cette évolution dépasse une page image fiable, un export PDF multi-page pourrait être plus approprié.
 - Une future vue fan joueur pourrait montrer, pour un seul joueur, les manches où il frappe, défend ou encourage. Cette vue est probablement destinée au partage en ligne ou à une extension de `Spectateur`.
+- Une URL permanente d'équipe est une piste future pour les parents, afin de garder un même lien et voir le prochain match publié. Cette URL ne remplace pas le lien de match spécifique et devra préserver le modèle local-first.
 
 ## Archives
 
@@ -196,3 +211,5 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 ## Questions ouvertes
 
 - Firestore devra-t-il publier seulement une projection publique limitée ou aussi une archive privée complète synchronisée?
+- Le bouton `Sauvegarder` de l'écran `Équipe` doit-il rester une action explicite, ou l'app doit-elle assumer une sauvegarde automatique cohérente partout? La réponse doit tenir compte de la sauvegarde cloud et de la clarté pour l'utilisateur.
+- Le `Programme` accessible depuis `Spectateur` doit-il générer le même export image local, ouvrir une version web adaptée, ou devenir un futur PDF?

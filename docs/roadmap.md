@@ -56,6 +56,10 @@ Match -> Joueurs -> Alignement
 - En cours: intégration Firebase optionnelle pour sauvegarder le match courant, publier un lien spectateur live et ouvrir le match sur mobile avec un compte courriel/Google.
 - En cours: mot de passe public optionnel avec projection spectateur chiffrée côté client.
 - L'accès à `Spectateur` reste possible même si certains exports devront éventuellement être bloqués selon la validité du match.
+- À clarifier: séparer plus nettement les partages locaux (`Banc`, `Programme`, `Texte`) des actions cloud (`sauvegarde édition`, `lien spectateur live`).
+  - Livré: `Partager` sépare maintenant `Cloud`, `Spectateur live` et `Exports locaux`.
+- À clarifier: les actions cloud doivent indiquer quand une connexion est requise et proposer la connexion au moment où l'utilisateur tente une action qui en dépend.
+  - Livré: les actions cloud ouvrent la connexion quand elle est requise et affichent des états plus explicites.
 
 ### Équipe et joueurs permanents
 
@@ -75,6 +79,12 @@ Match -> Joueurs -> Alignement
 ## Prochaines fonctionnalités candidates
 
 - Ajouter des titres de page différents par vue/hash afin d'améliorer l'historique du navigateur et le retour arrière.
+- Ajouter un `favicon.ico`.
+  - Livré: favicon simple ajouté.
+- Capitaliser le nom du jour dans les dates affichées, par exemple `Vendredi`.
+  - Livré: `formatDate()` capitalise le premier caractère.
+- Ajouter un raccourci rapide vers le match en cours près du menu quand un match existe.
+  - Livré: raccourci compact ajouté dans le menu global.
 - Explorer Firebase/Firestore pour publier optionnellement un match avec un lien ou un QR code toujours à jour.
 - Sauvegarder plusieurs matchs.
 - Livré: ajouter une page d'archives des matchs passés.
@@ -94,6 +104,20 @@ Match -> Joueurs -> Alignement
 - Deuxième passe Alignement: permettre de recommencer un match démarré par erreur tant que le début de 1re manche n'est pas terminé, avec confirmation claire et retour à l'état non commencé.
 - Pour `Spectateur`, explorer plus tard un suivi en direct du déroulement du match basé sur la progression courante.
 - Dans `Spectateur`, indiquer clairement quand le match n'est pas commencé et placer la vue au début dans ce cas.
+- Dans `Spectateur`, informer qu'une nouvelle demi-manche est disponible sans forcément déplacer automatiquement l'utilisateur s'il consultait autre chose.
+  - Livré pour le spectateur public: l'utilisateur qui consulte autre chose reçoit une notification au lieu d'être déplacé.
+- Dans `Spectateur`, retirer les libellés visibles qui répètent `Lecture seule`; le contexte doit suffire.
+  - Livré partiellement: les messages publics ne répètent plus `Lecture seule`.
+- Dans `Spectateur`, retirer `À venir` des manches futures si le libellé alourdit la lecture.
+  - Livré: les manches futures ne répètent plus `À venir`.
+- Dans `Spectateur`, ajouter une étape initiale `Programme` avant les manches. Si aucune donnée de manche n'est publiée, cette étape est la seule visible et indique `Alignement à venir`.
+  - Livré: le spectateur public affiche une étape `Programme` avec `Alignement à venir` avant le début.
+- Dans `Spectateur`, ajouter un état final `Merci, à la prochaine` disponible quand le match est terminé et jusqu'à ce qu'il soit archivé ou supprimé.
+  - Livré: le spectateur public affiche un état final quand toutes les demi-manches sont complétées.
+- Dans `Spectateur`, permettre d'ouvrir ou générer le `Programme` depuis la vue spectateur.
+- Explorer une action explicite pour publier ou mettre à jour l'alignement visible dans le spectateur live, afin d'éviter de publier des informations incomplètes par accident.
+- En frappe non fixe, permettre à l'entraîneur d'indiquer manuellement le dernier frappeur d'une manche pour aider la vue spectateur à annoncer les prochains frappeurs probables.
+- Explorer une URL permanente d'équipe, plus friendly, que les parents peuvent garder de match en match pour voir le prochain match publié.
 - Dupliquer un match existant.
 - Ajouter un écran de résumé avant impression.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
@@ -201,6 +225,9 @@ Modèle souhaité:
 - vue parents en lecture seule avec informations limitées comme minimum;
 - mode assistant modifiable à évaluer plus tard;
 - possibilité de dépublier ou remplacer le lien plus tard.
+- possibilité future d'une URL permanente d'équipe qui pointe vers le prochain match publié, sans exposer le bassin permanent complet ni remplacer le lien de match spécifique;
+- interface de connexion plus standard, incluant un bouton Google reconnaissable avec icône;
+- actions cloud guidées: quand une sauvegarde, un lien d'édition ou une publication requiert une connexion, l'app devrait proposer de se connecter au lieu de laisser l'utilisateur deviner.
 
 Notes de coût:
 
@@ -334,6 +361,11 @@ Irritants UX à corriger:
 
 - Le texte d'introduction devrait mieux nommer la promesse produit: un alignement clair et équitable pour le banc, facile pour les entraîneurs et beau pour les parents.
 - Rendre la demi-manche courante plus évidente dans `Alignement`.
+- Retirer l'icône du lien `Partage` dans le menu global.
+- Dans `Match`, retirer le texte d'aide redondant `Crée le contexte du match courant.`
+- Dans `Équipe`, clarifier le modèle du bouton `Sauvegarder`: soit sauvegarde automatique cohérente partout, soit action explicite cohérente, avec une décision particulière pour la sauvegarde cloud.
+- Dans `Partager`, clarifier la carte `Cloud`: elle sert à l'édition et à la sauvegarde en ligne du match courant, pas au partage parents.
+- Dans `Partager`, mieux distinguer les actions disponibles localement des actions qui exigent une connexion cloud.
 - Dans `Spectateur`, afficher les deux lanceurs sur deux lignes séparées pour obtenir 6 éléments visuels comme l'ordre de frappe.
   - Livré: `L1` et `L2` sont affichés sur deux lignes distinctes dans `Spectateur`.
 - Livré: le bouton d'échange `Local` / `Visiteur` reste stable quand on inverse les côtés.
@@ -361,6 +393,7 @@ Questions fermées:
 
 - Pas encore de suite automatisée CLI. La couverture actuelle est une page de tests navigateur dans `tests/rules.html`.
 - Les exports peuvent diverger de l'affichage principal parce qu'ils reconstruisent leur propre HTML.
+- Chrome peut proposer de sauvegarder le mot de passe du spectateur en quittant `Partager`, avec l'endroit du match comme nom d'utilisateur. Le champ de mot de passe du lien public est probablement interprété comme un formulaire de connexion. À corriger avec des attributs `autocomplete` adaptés, des noms de champs moins ambigus, une séparation de formulaire plus claire ou une UI qui n'utilise pas un champ de connexion classique.
 - Livré: l'image parents s'adapte mieux aux longues listes et aux noms longs avec ordre sur deux colonnes, sections aérées et retours de ligne contrôlés.
 - Livré: les partages sont simplifiés en `Banc`, `Programme` et `Texte`; le partage courriel est retiré.
 - Livré: l'export `Banc` imprime un tableau simple avec une ligne par joueur et deux sous-colonnes par manche, `🏏` et `🧤`; la colonne frappe reste vide quand la frappe fixe est désactivée.
