@@ -103,7 +103,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - L'étape `Match` contient l'adversaire, la date, l'heure en format 24h, l'endroit, le côté local/visiteur, le nombre de manches initial et le réglage `Frappe fixe`. Le nom de notre équipe se gère dans `Équipe`.
 - Le champ d'heure devrait proposer des intervalles de 5 minutes.
 - L'action destructive globale garde le libellé `Réinitialiser`, parce qu'elle efface vraiment toutes les données locales.
-- Réinitialiser doit être confirmé clairement et expliquer que l'équipe, les joueurs, les matchs et les archives locales sont supprimés.
+- Réinitialiser doit être confirmé clairement et expliquer que l'équipe, les joueurs, les matchs, les archives locales, le match cloud courant et le lien spectateur public sont supprimés quand c'est possible.
 - Terminer un match doit permettre de conserver la liste des joueurs pour préparer un nouveau match.
 
 ## Progression du match dans l'alignement
@@ -132,7 +132,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Au premier affichage de `Alignement` pour un nouveau match, l'application devrait offrir de mélanger l'ordre de frappe avant de montrer l'alignement généré.
 - Avant le début du match, la première arrivée sur `Alignement` après un ajout, une suppression ou un changement de présence des joueurs optimise automatiquement l'alignement si 6 à 12 joueurs sont actifs.
 - En attaque, afficher seulement les frappeurs de la manche courante quand la frappe fixe est activée.
-- Quand la frappe fixe est désactivée, afficher un rappel de suivre l'ordre au banc au lieu d'une liste de frappeurs par manche.
+- Quand la frappe fixe est désactivée, la vue spectateur affiche constamment l'ordre général des frappeurs dans les demi-manches offensives.
 - En attaque, afficher aussi les lanceurs de la prochaine manche défensive de notre équipe quand cette prochaine défense existe, pour préparer les casques.
 - En défense, afficher les positions défensives de la manche courante.
 - En défense, afficher aussi les deux premiers frappeurs de la prochaine manche offensive de notre équipe quand cette prochaine présence au bâton existe.
@@ -178,6 +178,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Le partage externe du mode spectateur cible un futur lien en ligne en lecture seule avec informations limitées, plutôt qu'un fichier HTML autonome.
 - Le partage externe du mode spectateur est maintenant conçu comme un lien Firestore `#public/{publicId}`. Il publie une projection limitée du match courant, en lecture seule, et peut se mettre à jour en direct pendant le match.
 - Le lien public peut être protégé par un mot de passe optionnel. Dans ce cas, la projection publique est chiffrée côté client avant sauvegarde dans Firestore; le mot de passe n'est pas stocké.
+- Avant le début du match, la synchronisation automatique en ligne ne doit pas publier l'alignement. Les informations du match et le lien public peuvent être créés ou mis à jour, mais le payload cloud reste limité au contexte du match. L'alignement complet est synchronisé au démarrage du match, puis pendant la progression du match.
 - La synchronisation en ligne sert au match courant seulement. Les archives restent locales et figées; archiver un match retire le document cloud éditable et le partage public quand c'est possible.
 - L'export `Texte` doit afficher le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
 - Les numéros de chandail, quand ils existent, sont affichés dans l'alignement avec une pastille près du nom et inclus dans `Programme`, `Banc`, `Texte`, `Spectateur` et les exports régénérés depuis les archives.

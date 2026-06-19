@@ -110,7 +110,7 @@ export async function currentUser() {
   return firebaseAuth.currentUser;
 }
 
-export async function saveMatch(matchId, payload) {
+export async function saveMatch(matchId, payload, clientId) {
   let { fsMod } = await ensureFirebase();
   let user = firebaseAuth.currentUser;
   if (!user) throw new Error("Connexion requise.");
@@ -121,8 +121,9 @@ export async function saveMatch(matchId, payload) {
     schemaVersion: 1,
     updatedAt: fsMod.serverTimestamp(),
     updatedAtMs: Date.now(),
+    updatedByClientId: clientId || null,
     payload
-  }, { merge: true });
+  });
   return id;
 }
 

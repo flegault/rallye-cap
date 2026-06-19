@@ -19,9 +19,13 @@ La première passe utilise:
 
 Les archives locales ne sont pas synchronisées en ligne. À la fin d'un match, l'archive locale reste figée, puis le match éditable et le partage public sont retirés du cloud quand c'est possible.
 
+L'action globale `Réinitialiser` efface l'état local et tente aussi de supprimer le document cloud éditable ainsi que le lien spectateur public courant si l'utilisateur est connecté et que le module Firebase est chargé. La suppression cloud est opportuniste: l'état local est réinitialisé même si le réseau ou Firebase échoue.
+
 Le partage public peut être publié sans mot de passe ou avec un mot de passe optionnel. Quand un mot de passe est fourni, la projection publique est chiffrée côté client avec WebCrypto avant d'être écrite dans Firestore. Le mot de passe n'est pas sauvegardé dans Firestore. Cette approche garde l'app statique et compatible GitHub Pages, mais un mot de passe faible peut être attaqué hors ligne si quelqu'un récupère le document chiffré.
 
 La politique de conflit v1 est volontairement simple: dernière sauvegarde gagne. Si une version distante plus récente est reçue, l'application avertit l'utilisateur et remplace la copie locale.
+
+Pour limiter les écritures Firestore et éviter de publier un alignement incomplet avant l'heure, la synchronisation avant le début du match est volontairement réduite. Tant que `started` est faux, seuls les champs de contexte du match (`team`, `opp`, `date`, `time`, `place`, `side`, `fixed`, `innings`) déclenchent une sauvegarde automatique et sont écrits dans le document cloud. Les ajustements d'alignement avant match restent locaux jusqu'au démarrage du match, même si une information du match est modifiée après coup. Quand l'entraîneur clique `Commencer`, puis pendant le match, la signature et le payload redeviennent complets et incluent joueurs, ordre, positions, progression et demi-manches complétées afin d'alimenter le mode spectateur live.
 
 Les diagrammes d'architecture et de flux sont dans `docs/firebase-firestore-sync.md`.
 
