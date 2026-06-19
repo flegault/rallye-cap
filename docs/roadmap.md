@@ -52,6 +52,8 @@ Match -> Joueurs -> Alignement
 
 - `Partager` et `Spectateur` ne font plus partie du chemin numéroté.
 - Le spectateur autonome est retiré de `Partager`; la cible de partage externe devient un futur lien en ligne en lecture seule.
+- En cours: intégration Firebase optionnelle pour sauvegarder le match courant, publier un lien spectateur live et ouvrir le match sur mobile avec un compte courriel/Google.
+- En cours: mot de passe public optionnel avec projection spectateur chiffrée côté client.
 - L'accès à `Spectateur` reste possible même si certains exports devront éventuellement être bloqués selon la validité du match.
 
 ### Équipe et joueurs permanents

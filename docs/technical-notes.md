@@ -4,6 +4,27 @@
 
 L'état applicatif est sauvegardé dans `localStorage` avec la clé `rallye_cap_qc_v4`.
 
+## Sauvegarde Firebase optionnelle
+
+Firebase est une couche optionnelle au-dessus du stockage local. L'application doit continuer de fonctionner hors ligne et sans configuration Firebase. Pour activer la synchronisation, créer un fichier `firebase-config.js` basé sur `firebase-config.example.js`, puis configurer Firebase Authentication et Firestore dans le projet Firebase.
+
+La première passe utilise:
+
+- Firebase Authentication avec courriel/mot de passe et Google;
+- Firestore pour synchroniser seulement le match courant;
+- `users/{uid}/matches/{matchId}` pour le document privé éditable par l'entraîneur connecté;
+- `publicMatches/{publicId}` pour la projection spectateur publique en lecture seule;
+- un lien `#edit/{matchId}` pour reprendre l'édition sur un autre appareil connecté au même compte;
+- un lien `#public/{publicId}` pour la vue spectateur live.
+
+Les archives locales ne sont pas synchronisées en ligne. À la fin d'un match, l'archive locale reste figée, puis le match éditable et le partage public sont retirés du cloud quand c'est possible.
+
+Le partage public peut être publié sans mot de passe ou avec un mot de passe optionnel. Quand un mot de passe est fourni, la projection publique est chiffrée côté client avec WebCrypto avant d'être écrite dans Firestore. Le mot de passe n'est pas sauvegardé dans Firestore. Cette approche garde l'app statique et compatible GitHub Pages, mais un mot de passe faible peut être attaqué hors ligne si quelqu'un récupère le document chiffré.
+
+La politique de conflit v1 est volontairement simple: dernière sauvegarde gagne. Si une version distante plus récente est reçue, l'application avertit l'utilisateur et remplace la copie locale.
+
+Les diagrammes d'architecture et de flux sont dans `docs/firebase-firestore-sync.md`.
+
 Champs principaux:
 
 - `team`, `opp`, `date`, `place`

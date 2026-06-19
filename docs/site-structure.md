@@ -14,6 +14,8 @@ L'application est une SPA avec huit vues accessibles par hash URL:
 - `#alignement`
 - `#partager`
 - `#spectateur`
+- `#public/{publicId}` pour le spectateur live public en lecture seule
+- `#edit/{matchId}` pour reprendre un match cloud privé après connexion
 
 La navigation est disponible dans:
 
@@ -77,6 +79,13 @@ Alignement Rallye-Cap
 |   +-- Exports régénérés depuis le snapshot
 |   +-- Suppression manuelle avec confirmation
 +-- Partager (#partager)
+|   +-- Cloud
+|   |   +-- Sauvegarder le match courant en ligne
+|   |   +-- Copier le lien d'édition
+|   +-- Spectateur live
+|   |   +-- Publier un lien public
+|   |   +-- Mot de passe optionnel chiffré côté client
+|   |   +-- Retirer le partage
 |   +-- Banc
 |   |   +-- Imprimer le banc
 |   +-- Programme

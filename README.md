@@ -6,6 +6,19 @@ Application SPA statique pour préparer, ajuster et partager l'alignement d'une 
 
 Ouvrir `index.html` dans un navigateur moderne. Les données restent sauvegardées localement sur l'appareil avec `localStorage`.
 
+## Synchronisation Firebase optionnelle
+
+L'application reste utilisable sans Firebase. Pour tester la sauvegarde en ligne:
+
+1. Créer un projet Firebase avec Authentication et Firestore.
+2. Activer les méthodes de connexion courriel/mot de passe et Google.
+3. Copier `firebase-config.example.js` vers `firebase-config.js` et remplacer les valeurs.
+4. Déployer des règles basées sur `firestore.rules`.
+
+La sync sauvegarde seulement le match courant. Les archives restent locales. Le partage spectateur public utilise un lien `#public/...`; avec mot de passe, la projection publique est chiffrée côté client avant d'être écrite dans Firestore.
+
+Les diagrammes Mermaid de cette intégration sont dans [`docs/firebase-firestore-sync.md`](docs/firebase-firestore-sync.md).
+
 Flux principal actuel:
 
 1. `Match`: adversaire, local/visiteur, date, heure, endroit, manches initiales et option `Frappe fixe`.

@@ -23,6 +23,7 @@
           <a href="#archives" data-nav="archives">Archives</a>
           <a href="#partager" data-nav="partager">↗ Partage</a>
           <a href="#spectateur" data-nav="spectateur">Spectateur</a>
+          <button id="cloudAccountBtn">Connexion cloud</button>
           <button id="resetBtn">Réinitialiser</button>
         </div>
       </div>
@@ -164,6 +165,24 @@
       <div class="spaced"><div><h2>Partage</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode spectateur.</p></div></div>
     </div>
     <div class="grid3 shareGrid">
+      <div class="card shareCard">
+        <h3>Cloud</h3>
+        <p class="hint" id="cloudStatusText">Sauvegarde locale seulement.</p>
+        <div class="shareActions">
+          <button class="btn secondary" id="cloudSaveBtn">Sauvegarder en ligne</button>
+          <button class="btn secondary" id="cloudEditLinkBtn">Copier lien d'édition</button>
+        </div>
+      </div>
+      <div class="card shareCard">
+        <h3>Spectateur live</h3>
+        <p class="hint" id="publicShareText">Publie une vue lecture seule avec lien non devinable.</p>
+        <label><span>Mot de passe optionnel</span><input id="publicPassword" type="password" autocomplete="new-password" placeholder="ex. mot de passe d'équipe" /></label>
+        <div class="shareActions">
+          <button class="btn secondary" id="publishPublicBtn">Publier le lien</button>
+          <button class="btn secondary" id="copyPublicLinkBtn">Copier lien public</button>
+          <button class="btn danger" id="unpublishPublicBtn">Retirer</button>
+        </div>
+      </div>
       <div class="card shareCard">
         <h3>Banc</h3>
         <p class="hint">Version imprimable pour gérer les frappeurs, la défensive et le banc.</p>

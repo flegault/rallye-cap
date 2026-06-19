@@ -26,6 +26,8 @@ label{display:grid;gap:7px}label span{font-size:13px;font-weight:900;color:var(-
 .shareCard{display:flex;flex-direction:column;gap:10px}
 .shareCard h3,.shareCard p{margin:0}
 .shareCard .btn{margin-top:auto;align-self:flex-start}
+.shareActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.shareActions .btn{margin-top:0}
 .archiveList{display:grid;gap:10px;margin-top:16px}.archiveRow{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px}.archiveMain{border:0;background:transparent;text-align:left;color:var(--ink);display:grid;gap:4px;cursor:pointer}.archiveMain b{font-size:16px}.archiveMain span,.archiveMain em{color:var(--muted);font-size:12px}.archiveActions{margin:12px 0}.archiveTable{margin-top:12px}
 .matchProgress{display:flex;align-items:center;justify-content:space-between;gap:14px}.matchProgress p{margin:8px 0 0}.lineupModeTabs{margin:14px 0 4px}.lineupActions{margin:10px 0 14px;align-items:center}.prepareActions,.playActions{align-items:center}.lineupActions .btn{width:190px;max-width:100%;height:42px;min-height:42px;padding:0 14px}
 .matchMeta{color:var(--muted);margin-top:8px}
