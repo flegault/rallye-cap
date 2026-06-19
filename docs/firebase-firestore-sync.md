@@ -96,15 +96,16 @@ sequenceDiagram
   participant FS as Firestore privé
 
   Desktop->>FS: Sauvegarde users/{uid}/matches/{matchId}
-  Desktop-->>Mobile: Partage #edit/{matchId}
   Mobile->>Auth: Connexion courriel ou Google
   Auth-->>Mobile: uid
-  Mobile->>FS: Lecture users/{uid}/matches/{matchId}
+  Mobile->>FS: Liste users/{uid}/matches
+  FS-->>Mobile: Mes matchs en ligne
+  Mobile->>FS: Ouvre users/{uid}/matches/{matchId}
   FS-->>Mobile: Payload du match
   Mobile->>Mobile: Remplace la copie locale après confirmation/chargement
 ```
 
-En v1, le lien d'édition fonctionne pour le même compte. Les rôles multi-entraîneurs ou invitations sont hors portée.
+En v1, l'entraîneur reprend un match en ligne via `Mes matchs en ligne` après connexion. Les rôles multi-entraîneurs ou invitations sont hors portée.
 
 ## Spectateur public live
 

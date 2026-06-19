@@ -64,7 +64,7 @@ Flux principal actuel:
 2. `Joueurs`: présences/absences pour le match courant.
 3. `Alignement`: ordre des frappeurs, optimisation, progression par demi-manche, validations, suggestions et changements de joueurs.
 
-`Accueil` sert de porte d'entrée contextuelle. `Équipe` gère le nom de l'équipe et le bassin permanent de joueurs hors workflow. `Partager` et `Spectateur` sont accessibles dans le menu.
+`Accueil` sert de porte d'entrée contextuelle. `Équipe` gère le nom de l'équipe et le bassin permanent de joueurs hors workflow. `Mes matchs` sert à reprendre les matchs cloud. `Partager` est une action contextuelle du match courant, tandis que `Spectateur` reste accessible dans le menu.
 
 L'app doit rester utilisable hors ligne et conserver le français du Québec en UTF-8.
 

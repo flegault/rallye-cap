@@ -8,6 +8,7 @@ L'application est une SPA avec huit vues accessibles par hash URL:
 
 - `#accueil`
 - `#equipe`
+- `#mesmatchs`
 - `#archives`
 - `#match`
 - `#joueurs`
@@ -15,7 +16,6 @@ L'application est une SPA avec huit vues accessibles par hash URL:
 - `#partager`
 - `#spectateur`
 - `#public/{publicId}` pour le spectateur live public en lecture seule
-- `#edit/{matchId}` pour reprendre un match cloud privé après connexion
 
 La navigation est disponible dans:
 
@@ -44,6 +44,11 @@ Alignement Rallye-Cap
 |   |   +-- Renommer un joueur
 |   |   +-- Supprimer un joueur
 |   +-- Créer une équipe exemple
++-- Mes matchs (#mesmatchs)
+|   +-- Sauvegarder le match courant en ligne
+|   +-- Mes matchs en ligne
+|   |   +-- Ouvrir
+|   |   +-- Supprimer
 +-- Match (#match)
 |   +-- Local / visiteur
 |   +-- Adversaire
@@ -78,19 +83,18 @@ Alignement Rallye-Cap
 |   +-- Exports régénérés depuis le snapshot
 |   +-- Suppression manuelle avec confirmation
 +-- Partager (#partager)
-|   +-- Cloud édition
-|   |   +-- Sauvegarder le match courant en ligne
-|   |   +-- Copier le lien d'édition
+|   +-- Exports
+|   |   +-- Programme
+|   |   +-- Banc
+|   |   +-- Texte
+|   +-- En ligne
 |   +-- Spectateur live
 |   |   +-- Publier un lien public
 |   |   +-- Mot de passe optionnel chiffré côté client
 |   |   +-- Retirer le partage
-|   +-- Banc
-|   |   +-- Imprimer le banc
-|   +-- Programme
-|   |   +-- Générer le programme
-|   +-- Texte
-|   |   +-- Copier texte brut
+|   +-- Édition
+|   |   +-- Sauvegarder le match courant en ligne
+|   |   +-- Mes matchs en ligne: ouvrir ou supprimer
 +-- Spectateur (#spectateur)
     +-- Programme ou alignement à venir
     +-- Carte de manche courante
@@ -122,7 +126,7 @@ Le workflow cible suit la réalité d'un match et évite de devoir revenir dans 
 📅 Match -> 👨‍👩‍👦‍👦 Joueurs -> 📋 Alignement
 ```
 
-`Archives`, `Partager` et `Spectateur` sont des pages non numérotées accessibles dans le menu. `Spectateur` est une vue simplifiée en lecture seule.
+`Archives`, `Mes matchs` et `Spectateur` sont des pages non numérotées accessibles dans le menu. `Partager` reste une route non numérotée, mais elle est ouverte depuis le match courant plutôt que depuis le menu global. `Spectateur` est une vue simplifiée en lecture seule.
 
 La gestion durable de notre équipe et de son bassin de joueurs est séparée du workflow de match sans devenir une étape numérotée. Elle vit dans `Équipe` et sert à définir le nom de notre équipe ainsi que les joueurs disponibles pour les matchs futurs. Le workflow `Joueurs` sert seulement à indiquer qui est présent ou absent pour le match courant.
 
@@ -198,8 +202,7 @@ Alignement Rallye-Cap
   - Livré partiellement pour le spectateur public.
 - La vue spectateur devrait éventuellement inclure une première étape `Programme`, puis un état final `Merci, à la prochaine`.
   - Livré pour le spectateur public.
-- La section `Partager` mélange actuellement des actions locales et cloud; il faut clarifier ce qui sert à éditer le match, ce qui sert à publier pour les parents, et ce qui exige une connexion.
-  - Livré: la page sépare `Cloud`, `Spectateur live` et `Exports locaux`.
+- `Mes matchs` gère la sauvegarde, l'ouverture et la suppression des matchs cloud. La section `Partager` agit seulement sur le match courant et regroupe les exports (`Programme`, `Banc`, `Texte`) ainsi que `Spectateur live`.
 - Les suggestions et validations pourraient être rapprochées du tableau quand l'utilisateur corrige manuellement.
 - Le flux ne distingue pas encore clairement préparation avant-match, ajustement, et consultation pendant le match.
 
@@ -339,12 +342,10 @@ Découpage potentiel:
 
 La section `Partager` regroupe:
 
-- `Cloud édition`: sauvegarde en ligne du match courant et lien d'édition pour l'entraîneur connecté;
-- `Spectateur live`: publication d'une projection publique limitée, avec mot de passe optionnel;
-- `Banc`: tableau imprimable par joueur avec sous-colonnes de manche `🏏` et `🧤`;
-- `Programme`: image parents;
-- `Texte`: texte brut compact;
-- futur lien en ligne vers une vue spectateur en lecture seule.
+- `Exports`: `Programme`, `Banc` et `Texte`;
+- `En ligne`: `Spectateur live` pour publier le lien public du match courant aux fans.
+
+La gestion des matchs cloud vit dans `Mes matchs`, pas dans `Partager`.
 
 Les partages locaux doivent rester utilisables sans connexion. Les actions cloud doivent expliquer la connexion requise et proposer de se connecter quand l'utilisateur tente de les utiliser.
 
@@ -371,4 +372,4 @@ Améliorations UX à prévoir:
 - publication en ligne;
 - QR code.
 
-Le mode publication en ligne devrait au minimum offrir une vue parents en lecture seule avec des informations limitées.
+Le mode publication en ligne devrait au minimum offrir une vue fans en lecture seule avec des informations limitées.

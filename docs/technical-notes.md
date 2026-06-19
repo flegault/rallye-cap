@@ -17,7 +17,7 @@ La première passe utilise:
 - App Check optionnel avec reCAPTCHA v3 quand `appCheckSiteKey` est configuré;
 - `users/{uid}/matches/{matchId}` pour le document privé éditable par l'entraîneur connecté;
 - `publicMatches/{publicId}` pour la projection spectateur publique en lecture seule;
-- un lien `#edit/{matchId}` pour reprendre l'édition sur un autre appareil connecté au même compte;
+- une liste `Mes matchs en ligne` pour ouvrir ou supprimer les matchs cloud du compte connecté;
 - un lien `#public/{publicId}` pour la vue spectateur live.
 
 App Check est initialisé avant Auth et Firestore quand `firebase-config.js` contient `appCheckSiteKey`, `recaptchaV3SiteKey` ou `appCheck.siteKey`. Le rafraîchissement automatique des tokens est activé. En développement local, `appCheckDebugToken` doit être utilisé pour éviter que les appels `localhost` soient classés comme non vérifiés.
@@ -34,6 +34,8 @@ Les métriques App Check peuvent contenir des requêtes anciennes provenant d'on
 
 Les archives locales ne sont pas synchronisées en ligne. À la fin d'un match, l'archive locale reste figée, puis le match éditable et le partage public sont retirés du cloud quand c'est possible.
 
+Les documents privés contiennent le `payload` complet pour l'édition, plus des métadonnées top-level (`team`, `opp`, `date`, `time`, `place`, `started`, `completed`, `currentIndex`, `currentLabel`, `publicId`, `updatedAtMs`) afin d'afficher `Mes matchs en ligne` sans dépendre d'un lien d'édition. Ouvrir un match en ligne remplace la copie locale seulement après confirmation et conserve les archives locales.
+
 L'action globale `Réinitialiser` efface l'état local et tente aussi de supprimer le document cloud éditable ainsi que le lien spectateur public courant si l'utilisateur est connecté et que le module Firebase est chargé. La suppression cloud est opportuniste: l'état local est réinitialisé même si le réseau ou Firebase échoue.
 
 Le partage public peut être publié sans mot de passe ou avec un mot de passe optionnel. Quand un mot de passe est fourni, la projection publique est chiffrée côté client avec WebCrypto avant d'être écrite dans Firestore. Le mot de passe n'est pas sauvegardé dans Firestore. Cette approche garde l'app statique et compatible GitHub Pages, mais un mot de passe faible peut être attaqué hors ligne si quelqu'un récupère le document chiffré.
@@ -42,7 +44,7 @@ Bug UX connu: Chrome peut interpréter le champ de mot de passe du partage spect
 
 La politique de conflit v1 est volontairement simple: dernière sauvegarde gagne. Si une version distante plus récente est reçue, l'application avertit l'utilisateur et remplace la copie locale.
 
-Pour limiter les écritures Firestore et éviter de publier un alignement incomplet avant l'heure, la synchronisation avant le début du match est volontairement réduite. Tant que `started` est faux, seuls les champs de contexte du match (`team`, `opp`, `date`, `time`, `place`, `side`, `fixed`, `innings`) déclenchent une sauvegarde automatique et sont écrits dans le document cloud. Les ajustements d'alignement avant match restent locaux jusqu'au démarrage du match, même si une information du match est modifiée après coup. Quand l'entraîneur clique `Commencer`, puis pendant le match, la signature et le payload redeviennent complets et incluent joueurs, ordre, positions, progression et demi-manches complétées afin d'alimenter le mode spectateur live.
+Le document privé cloud contient le match complet pour permettre l'édition sur un autre appareil avant ou pendant le match. La limitation avant match s'applique au partage public: le spectateur peut voir le contexte et l'état `Alignement à venir`, mais l'expérience publique ne doit pas présenter l'alignement complet avant le début du match.
 
 La projection publique contient aussi des métadonnées de présentation pour le spectateur: `publicStage`, `programme`, `currentIndex` et `phases`. La vue publique ajoute une étape `Programme` avant les demi-manches, affiche `Alignement à venir` avant le début du match, puis affiche un état final quand toutes les demi-manches sont terminées. Si le spectateur consulte la demi-manche courante, la vue suit automatiquement la progression; s'il a navigué ailleurs, l'app affiche plutôt une notification de nouvelle demi-manche.
 
@@ -84,13 +86,14 @@ Le workflow cible remplace l'ancien onglet `Jouer` par une gestion directe dans 
 - `#alignement`: édition de l'alignement avant match, suivi de progression pendant le match, validations, suggestions, statistiques et changements de joueurs;
 - `#accueil`: porte d'entrée contextuelle selon l'état local;
 - `#equipe`: gestion hors workflow du nom de notre équipe et du bassin de joueurs;
+- `#mesmatchs`: liste des matchs cloud du compte connecté, avec ouverture et suppression;
 - `#archives`: liste et consultation en lecture seule des matchs archivés;
 - `#spectateur`: vue en lecture seule dérivée du même état;
-- `#partager`: exports et liens, sans être une étape numérotée du workflow.
+- `#partager`: exports et lien spectateur du match courant, accessible par actions contextuelles plutôt que par le menu global.
 
 `#alignement` démarre le match avec confirmation si la progression est encore au début. La cible produit bloque le démarrage si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que l'horaire est incomplet ou que des règles ne sont pas respectées, l'app avertit sans bloquer et demande confirmation. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
 
-Le menu du haut est un menu global unique qui regroupe `Accueil`, `Équipe`, `Archives`, `Partager`, `Spectateur` et `Réinitialiser`. Les étapes `Match`, `Joueurs` et `Alignement` restent visibles dans le contenu via le workflow numéroté, pas dans le header. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
+Le menu du haut est un menu global unique qui regroupe `Accueil`, `Équipe`, `Mes matchs`, `Archives`, `Spectateur` et `Réinitialiser`. `Partager` reste une route contextuelle du match courant, mais n'est plus un item du menu global. Les étapes `Match`, `Joueurs` et `Alignement` restent visibles dans le contenu via le workflow numéroté, pas dans le header. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
 
 La route `#spectateur` ajoute une classe `spectatorRoute` sur `body` pour masquer l'en-tête global et le workflow numéroté sans dupliquer la structure HTML.
 

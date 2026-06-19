@@ -120,21 +120,51 @@ export async function currentUser() {
   return firebaseAuth.currentUser;
 }
 
-export async function saveMatch(matchId, payload, clientId) {
+function matchSummary(payload, extra = {}) {
+  let phases = Array.isArray(extra.phases) ? extra.phases : [];
+  let currentIndex = Number.isFinite(extra.currentIndex) ? extra.currentIndex : 0;
+  let completed = !!extra.completed;
+  return {
+    team: payload?.team || "",
+    opp: payload?.opp || "",
+    date: payload?.date || "",
+    time: payload?.time || "",
+    place: payload?.place || "",
+    started: payload?.started === true,
+    completed,
+    currentIndex,
+    currentLabel: phases[currentIndex]?.label || (completed ? "Match terminé" : ""),
+    publicId: extra.publicId || null
+  };
+}
+
+export async function saveMatch(matchId, payload, clientId, extra = {}) {
   let { fsMod } = await ensureFirebase();
   let user = firebaseAuth.currentUser;
   if (!user) throw new Error("Connexion requise.");
   let id = matchId || randomId(18);
   let ref = fsMod.doc(firebaseDb, "users", user.uid, "matches", id);
+  let summary = matchSummary(payload, extra);
   await fsMod.setDoc(ref, {
     ownerUid: user.uid,
     schemaVersion: 1,
     updatedAt: fsMod.serverTimestamp(),
     updatedAtMs: Date.now(),
     updatedByClientId: clientId || null,
+    ...summary,
     payload
   });
   return id;
+}
+
+export async function listMatches() {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user) throw new Error("Connexion requise.");
+  let ref = fsMod.collection(firebaseDb, "users", user.uid, "matches");
+  let q = fsMod.query(ref, fsMod.orderBy("updatedAtMs", "desc"));
+  let snap = await fsMod.getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
 export async function listenMatch(matchId, callback) {

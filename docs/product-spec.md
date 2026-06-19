@@ -23,7 +23,7 @@ Le workflow cible suit la réalité du match et limite les retours en arrière u
 1. `📅 Match`: entrer les informations du match: adversaire, date, heure, endroit, nombre de manches initial, frappe fixe, local ou visiteur.
 2. `👨‍👩‍👦‍👦 Joueurs`: indiquer quels joueurs du bassin permanent sont présents ou absents pour ce match.
 3. `📋 Alignement`: optimiser, ajuster manuellement, suivre la progression du match, appliquer les suggestions et gérer les changements de joueurs.
-4. `Partager`: page non numérotée accessible par une icône standard de partage.
+4. `Partager`: page non numérotée accessible depuis le match courant.
 
 Le mode spectateur est une vue simplifiée en lecture seule accessible par le menu. Il n'est plus une étape du workflow principal.
 
@@ -190,8 +190,9 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Le lien public peut être protégé par un mot de passe optionnel. Dans ce cas, la projection publique est chiffrée côté client avant sauvegarde dans Firestore; le mot de passe n'est pas stocké.
 - Avant le début du match, la synchronisation automatique en ligne ne doit pas publier l'alignement. Les informations du match et le lien public peuvent être créés ou mis à jour, mais le payload cloud reste limité au contexte du match. L'alignement complet est synchronisé au démarrage du match, puis pendant la progression du match.
 - La synchronisation en ligne sert au match courant seulement. Les archives restent locales et figées; archiver un match retire le document cloud éditable et le partage public quand c'est possible.
-- Les partages cloud doivent être distingués des exports locaux. La sauvegarde cloud et le lien d'édition servent à reprendre ou modifier le match comme entraîneur, tandis que le lien spectateur sert au partage public limité.
-  - Livré: `Partager` sépare visuellement les actions cloud et les exports locaux.
+- Les partages en ligne doivent être distingués des exports. `Spectateur live` publie une vue pour les fans depuis `Partager`; la sauvegarde et la reprise des matchs cloud vivent dans `Mes matchs`.
+  - Livré: `Partager` affiche `Exports` avant `En ligne`, sans lien d'édition ni gestion de matchs cloud.
+- `Mes matchs en ligne` affiche le titre du match, la date/heure/lieu, le statut, la date de modification, puis les actions `Ouvrir` et `Supprimer`. Ouvrir un match en ligne remplace le match local seulement après confirmation et conserve les archives locales.
 - Si une action de partage ou sauvegarde cloud exige une connexion, l'app doit proposer la connexion au moment de l'action et expliquer ce qui deviendra disponible.
   - Livré: les actions cloud ouvrent la connexion quand nécessaire.
 - L'export `Texte` doit afficher le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.

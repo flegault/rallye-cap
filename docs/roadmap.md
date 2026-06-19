@@ -17,7 +17,7 @@ Le workflow livré est maintenant:
 Match -> Joueurs -> Alignement
 ```
 
-`Partager` et `Spectateur` sont des vues hors étapes numérotées, accessibles dans le menu.
+`Mes matchs` et `Spectateur` sont des vues hors étapes numérotées accessibles dans le menu. `Partager` est une route contextuelle du match courant.
 
 ### Navigation
 
@@ -27,7 +27,8 @@ Match -> Joueurs -> Alignement
 - `#match`: informations du match, côté local/visiteur, adversaire, date, heure et endroit.
 - `#joueurs`: liste des joueurs du match et présence/absence avant le début.
 - `#alignement`: frappe fixe, ordre des frappeurs, optimisation défensive, progression du match, validations, suggestions, statistiques et changements de joueurs.
-- `#partager`: exports `Banc`, `Programme` et `Texte`. Le partage courriel et le spectateur autonome sont retirés.
+- `#mesmatchs`: sauvegarde, ouverture et suppression des matchs cloud du compte connecté.
+- `#partager`: exports `Banc`, `Programme` et `Texte`, plus publication `Spectateur live` du match courant. Le partage courriel et le spectateur autonome sont retirés.
 - `#spectateur`: vue simplifiée en lecture seule.
 - Anciennes routes:
   - `#jouer` redirige vers `#alignement`.
@@ -56,8 +57,9 @@ Match -> Joueurs -> Alignement
 - En cours: intégration Firebase optionnelle pour sauvegarder le match courant, publier un lien spectateur live et ouvrir le match sur mobile avec un compte courriel/Google.
 - En cours: mot de passe public optionnel avec projection spectateur chiffrée côté client.
 - L'accès à `Spectateur` reste possible même si certains exports devront éventuellement être bloqués selon la validité du match.
-- À clarifier: séparer plus nettement les partages locaux (`Banc`, `Programme`, `Texte`) des actions cloud (`sauvegarde édition`, `lien spectateur live`).
-  - Livré: `Partager` sépare maintenant `Cloud`, `Spectateur live` et `Exports locaux`.
+- Livré: `Mes matchs` est dans le menu global, tandis que `Partager` est une action contextuelle du match courant.
+- Livré: `Partager` présente maintenant `Exports` (`Programme`, `Banc`, `Texte`) avant `En ligne` (`Spectateur live`).
+- Livré: `Mes matchs en ligne` permet d'ouvrir ou supprimer les matchs cloud du compte connecté sans lien d'édition.
 - À clarifier: les actions cloud doivent indiquer quand une connexion est requise et proposer la connexion au moment où l'utilisateur tente une action qui en dépend.
   - Livré: les actions cloud ouvrent la connexion quand elle est requise et affichent des états plus explicites.
 
@@ -86,7 +88,7 @@ Match -> Joueurs -> Alignement
 - Ajouter un raccourci rapide vers le match en cours près du menu quand un match existe.
   - Livré: raccourci compact ajouté dans le menu global.
 - Explorer Firebase/Firestore pour publier optionnellement un match avec un lien ou un QR code toujours à jour.
-- Sauvegarder plusieurs matchs.
+- Livré: sauvegarder plusieurs matchs cloud et les afficher dans `Mes matchs en ligne`, avec date de modification, ouverture et suppression.
 - Livré: ajouter une page d'archives des matchs passés.
 - Terminer un match avec action explicite, puis offrir `Nouveau match avec les mêmes joueurs` ou `Recommencer ce match`.
   - Livré partiellement: à la fin de la dernière demi-manche, l'application propose d'archiver ou non, ferme le match courant, conserve l'équipe et les joueurs, puis retourne à l'accueil.
@@ -222,12 +224,12 @@ Modèle souhaité:
 - la projection publique doit être dérivée d'un snapshot de match, pas du bassin d'équipe courant;
 - données publiques minimales: prénoms, numéros si disponibles, ordre, positions, infos de match;
 - accès public seulement aux personnes qui ont le lien;
-- vue parents en lecture seule avec informations limitées comme minimum;
+- vue fans en lecture seule avec informations limitées comme minimum;
 - mode assistant modifiable à évaluer plus tard;
 - possibilité de dépublier ou remplacer le lien plus tard.
 - possibilité future d'une URL permanente d'équipe qui pointe vers le prochain match publié, sans exposer le bassin permanent complet ni remplacer le lien de match spécifique;
 - interface de connexion plus standard, incluant un bouton Google reconnaissable avec icône;
-- actions cloud guidées: quand une sauvegarde, un lien d'édition ou une publication requiert une connexion, l'app devrait proposer de se connecter au lieu de laisser l'utilisateur deviner.
+- actions cloud guidées: quand une sauvegarde, une liste de matchs ou une publication requiert une connexion, l'app devrait proposer de se connecter au lieu de laisser l'utilisateur deviner.
 
 Notes de coût:
 
@@ -364,8 +366,8 @@ Irritants UX à corriger:
 - Retirer l'icône du lien `Partage` dans le menu global.
 - Dans `Match`, retirer le texte d'aide redondant `Crée le contexte du match courant.`
 - Dans `Équipe`, clarifier le modèle du bouton `Sauvegarder`: soit sauvegarde automatique cohérente partout, soit action explicite cohérente, avec une décision particulière pour la sauvegarde cloud.
-- Dans `Partager`, clarifier la carte `Cloud`: elle sert à l'édition et à la sauvegarde en ligne du match courant, pas au partage parents.
-- Dans `Partager`, mieux distinguer les actions disponibles localement des actions qui exigent une connexion cloud.
+- Livré: `Mes matchs` sert à la sauvegarde et à la reprise des matchs cloud; `Spectateur live` dans `Partager` sert au lien pour les fans.
+- Livré: les actions disponibles localement sont dans `Exports`; les actions qui exigent une connexion sont dans `En ligne`.
 - Dans `Spectateur`, afficher les deux lanceurs sur deux lignes séparées pour obtenir 6 éléments visuels comme l'ordre de frappe.
   - Livré: `L1` et `L2` sont affichés sur deux lignes distinctes dans `Spectateur`.
 - Livré: le bouton d'échange `Local` / `Visiteur` reste stable quand on inverse les côtés.
