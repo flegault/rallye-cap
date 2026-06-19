@@ -3,6 +3,7 @@ const SDK = "https://www.gstatic.com/firebasejs/11.10.0/";
 let firebaseApp = null;
 let firebaseAuth = null;
 let firebaseDb = null;
+let firebaseAppCheck = null;
 let api = null;
 
 async function loadConfig() {
@@ -25,9 +26,18 @@ async function ensureFirebase() {
   let authMod = await import(SDK + "firebase-auth.js");
   let fsMod = await import(SDK + "firebase-firestore.js");
   firebaseApp = appMod.initializeApp(config);
+  let appCheckSiteKey = config.appCheckSiteKey || config.recaptchaV3SiteKey || config.appCheck?.siteKey || "";
+  if (appCheckSiteKey) {
+    if (config.appCheckDebugToken) self.FIREBASE_APPCHECK_DEBUG_TOKEN = config.appCheckDebugToken;
+    let appCheckMod = await import(SDK + "firebase-app-check.js");
+    firebaseAppCheck = appCheckMod.initializeAppCheck(firebaseApp, {
+      provider: new appCheckMod.ReCaptchaV3Provider(appCheckSiteKey),
+      isTokenAutoRefreshEnabled: true
+    });
+  }
   firebaseAuth = authMod.getAuth(firebaseApp);
   firebaseDb = fsMod.getFirestore(firebaseApp);
-  api = { authMod, fsMod };
+  api = { authMod, fsMod, appCheck: firebaseAppCheck };
   return api;
 }
 

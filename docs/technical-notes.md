@@ -8,14 +8,29 @@ L'état applicatif est sauvegardé dans `localStorage` avec la clé `rallye_cap_
 
 Firebase est une couche optionnelle au-dessus du stockage local. L'application doit continuer de fonctionner hors ligne et sans configuration Firebase. Pour activer la synchronisation, créer un fichier `firebase-config.js` basé sur `firebase-config.example.js`, puis configurer Firebase Authentication et Firestore dans le projet Firebase.
 
+En production GitHub Pages, `firebase-config.js` est généré par le workflow `.github/workflows/pages.yml` à partir des secrets GitHub Actions. Le fichier local `firebase-config.js` reste ignoré par Git. Le workflow copie seulement les fichiers statiques nécessaires dans `dist`, écrit la configuration Firebase générée, puis publie l'artifact avec GitHub Pages.
+
 La première passe utilise:
 
 - Firebase Authentication avec courriel/mot de passe et Google;
 - Firestore pour synchroniser seulement le match courant;
+- App Check optionnel avec reCAPTCHA v3 quand `appCheckSiteKey` est configuré;
 - `users/{uid}/matches/{matchId}` pour le document privé éditable par l'entraîneur connecté;
 - `publicMatches/{publicId}` pour la projection spectateur publique en lecture seule;
 - un lien `#edit/{matchId}` pour reprendre l'édition sur un autre appareil connecté au même compte;
 - un lien `#public/{publicId}` pour la vue spectateur live.
+
+App Check est initialisé avant Auth et Firestore quand `firebase-config.js` contient `appCheckSiteKey`, `recaptchaV3SiteKey` ou `appCheck.siteKey`. Le rafraîchissement automatique des tokens est activé. En développement local, `appCheckDebugToken` doit être utilisé pour éviter que les appels `localhost` soient classés comme non vérifiés.
+
+Procédure de debug App Check:
+
+1. Ajouter temporairement `appCheckDebugToken: true` dans `firebase-config.js`, avec une clé `appCheckSiteKey` valide.
+2. Ouvrir l'app avec la console du navigateur visible et déclencher Firebase, par exemple en se connectant au cloud.
+3. Copier le jeton affiché sous la forme `AppCheck debug token`.
+4. L'ajouter dans Firebase Console > App Check > app Web > Manage debug tokens.
+5. Remplacer ensuite `true` par le jeton enregistré, par exemple `appCheckDebugToken: "..."`.
+
+Les métriques App Check peuvent contenir des requêtes anciennes provenant d'onglets ouverts ou d'une version non rechargée de l'app. Les catégories `invalid requests` et `outdated client requests` doivent être surveillées avant production. L'enforcement App Check côté Firebase ne devrait être activé qu'après avoir vérifié que les clients légitimes sont validés, sinon Firestore et Authentication peuvent être bloqués pour les utilisateurs.
 
 Les archives locales ne sont pas synchronisées en ligne. À la fin d'un match, l'archive locale reste figée, puis le match éditable et le partage public sont retirés du cloud quand c'est possible.
 
