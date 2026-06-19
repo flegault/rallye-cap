@@ -67,11 +67,11 @@ Le workflow cible remplace l'ancien onglet `Jouer` par une gestion directe dans 
 
 `#alignement` démarre le match avec confirmation si la progression est encore au début. La cible produit bloque le démarrage si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que l'horaire est incomplet ou que des règles ne sont pas respectées, l'app avertit sans bloquer et demande confirmation. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
 
-Le menu du haut garde seulement les étapes principales visibles. `Équipe`, `Partager`, `Spectateur` et `Réinitialiser` sont regroupés dans `Autres`. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
+Le menu du haut est un menu global unique qui regroupe `Accueil`, `Équipe`, `Archives`, `Partager`, `Spectateur` et `Réinitialiser`. Les étapes `Match`, `Joueurs` et `Alignement` restent visibles dans le contenu via le workflow numéroté, pas dans le header. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
 
 La route `#spectateur` ajoute une classe `spectatorRoute` sur `body` pour masquer l'en-tête global et le workflow numéroté sans dupliquer la structure HTML.
 
-Le libellé durable souhaité pour l'action destructive globale est `Recommencer`, pas `Réinitialiser`. L'implémentation doit préciser si les joueurs sont conservés ou effacés.
+Le libellé durable pour l'action destructive globale est `Réinitialiser`, parce que l'action efface l'équipe, les joueurs, le match courant et les archives locales.
 
 État transitoire: l'onglet `Jouer` n'est plus visible et l'ancienne route `#jouer` est redirigée vers `#alignement`. Le modèle interne utilise encore `started` et `locks.halves`; il devrait éventuellement être remplacé par un index monotone de demi-manche complétée ou courante, par exemple `currentHalfIndex` ou `completedHalfCount`. Les demi-manches passées deviendraient alors de l'historique non modifiable, la demi-manche courante serait mise en évidence, et les demi-manches futures resteraient modifiables dans `Alignement`.
 

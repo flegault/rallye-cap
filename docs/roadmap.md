@@ -21,6 +21,7 @@ Match -> Joueurs -> Alignement
 
 ### Navigation
 
+- Livré: le header est simplifié en un menu global unique avec statut compact du match; les étapes `Match`, `Joueurs` et `Alignement` restent dans le contenu plutôt que dans la barre du haut.
 - `#accueil`: porte d'entrée contextuelle; création de l'équipe si elle manque, reprise du match ou création d'un nouveau match.
 - `#equipe`: gestion hors workflow de notre équipe et du bassin permanent de joueurs.
 - `#match`: informations du match, côté local/visiteur, adversaire, date, heure et endroit.
@@ -115,7 +116,7 @@ La gestion durable de notre équipe, de son nom et de son bassin de joueurs est 
 - déplacer le réglage `Frappe fixe` dans l'étape `Match`, puisqu'il décrit les règles/configurations du match courant. Il devient non modifiable après le début du match;
 - utiliser une heure en format 24h avec intervalles de 5 minutes;
 - Livré: `Match` contient maintenant les manches initiales, `Frappe fixe`, l'heure 24h par pas de 5 minutes, l'heure par défaut `18:30` et une mise en page plus claire sans texte d'aide redondant sur `Équipe`.
-- renommer `Réinitialiser` en `Recommencer` dans le menu et les confirmations, parce que l'action sert surtout à repartir proprement;
+- garder `Réinitialiser` pour l'action destructive globale, parce qu'elle efface vraiment toutes les données locales;
 - normaliser automatiquement la casse des noms de joueurs à l'ajout;
 - garder les actions de modification clairement bloquées quand le match est débuté.
 
@@ -430,7 +431,7 @@ Questions fermées:
 - Les informations de match, la liste des joueurs et l'alignement partant sont verrouillés après le début du match.
 - L'étape `Joueurs` permet de basculer `Présent` / `Absent` en cliquant directement la carte du joueur; l'ajout, le renommage et la suppression de joueurs sont déplacés dans `Équipe`.
 - L'action `Remplacer` est retirée de l'étape `Joueurs` avant match; elle reste disponible dans le flux de changement de joueurs en cours de match.
-- Le menu du haut regroupe maintenant `Équipe`, `Partager`, `Spectateur` et `Réinitialiser` dans `Autres`.
+- Le menu du haut est maintenant un menu global unique avec `Accueil`, `Équipe`, `Archives`, `Partage`, `Spectateur` et `Réinitialiser`.
 - Les entêtes de demi-manche du tableau principal gardent seulement les icônes bâton et gant.
 - Le bloc `Ajouter des joueurs` est déplacé dans `Équipe`, hors workflow.
 - La création d'équipe exemple est bloquée pendant un match débuté.

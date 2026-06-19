@@ -9,24 +9,16 @@
 <body>
 <header class="top">
   <div class="topin">
-    <div class="brand"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub">Ordre au bâton • Défensive • Spectateur</div></div></div>
-    <button class="hamb" id="hamb">☰</button>
+    <div class="brand"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub" id="topMatchStatus">Aucun match prévu</div></div></div>
+    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
     <nav class="nav" id="nav">
       <a href="#accueil" data-nav="accueil">Accueil</a>
-      <a href="#match" data-nav="match">📅 Match</a>
-      <a href="#joueurs" data-nav="joueurs">👨‍👩‍👦‍👦 Joueurs</a>
-      <a href="#alignement" data-nav="alignement">📋 Alignement</a>
-      <div class="navMore">
-        <button id="moreBtn" aria-expanded="false" aria-controls="moreMenu">⋯ Autres</button>
-        <div class="moreMenu" id="moreMenu">
-          <a href="#equipe" data-nav="equipe">Équipe</a>
-          <a href="#archives" data-nav="archives">Archives</a>
-          <a href="#partager" data-nav="partager">↗ Partage</a>
-          <a href="#spectateur" data-nav="spectateur">Spectateur</a>
-          <button id="cloudAccountBtn">Connexion cloud</button>
-          <button id="resetBtn">Réinitialiser</button>
-        </div>
-      </div>
+      <a href="#equipe" data-nav="equipe">Équipe</a>
+      <a href="#archives" data-nav="archives">Archives</a>
+      <a href="#partager" data-nav="partager">↗ Partage</a>
+      <a href="#spectateur" data-nav="spectateur">Spectateur</a>
+      <button id="cloudAccountBtn">Connexion cloud</button>
+      <button class="dangerMenu" id="resetBtn">Réinitialiser</button>
     </nav>
   </div>
 </header>

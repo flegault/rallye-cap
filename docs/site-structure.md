@@ -19,12 +19,11 @@ L'application est une SPA avec huit vues accessibles par hash URL:
 
 La navigation est disponible dans:
 
-- la barre du haut;
-- les étapes numérotées;
-- le menu `Autres`;
+- un menu global unique dans la barre du haut;
+- les étapes numérotées du workflow, affichées dans le contenu;
 - certains boutons de continuité entre les vues.
 
-Le menu `Autres` regroupe les actions secondaires. L'action destructive globale devrait être libellée `Recommencer` plutôt que `Réinitialiser`.
+Le menu global regroupe `Accueil`, `Équipe`, `Archives`, `Partage`, `Spectateur` et l'action destructive `Réinitialiser`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales.
 
 ## Sitemap actuel
 
@@ -305,8 +304,8 @@ Découpage potentiel:
 - L'ajout, le renommage et la suppression des joueurs se font dans `Équipe`, hors workflow.
 - Dans `Équipe`, le numéro de chandail optionnel devrait être éditable seulement avant match, comme les autres informations du bassin permanent.
 - Dans `Joueurs`, les cartes doivent garder une taille stable entre présents et absents. Les sections vides n'ont pas besoin d'une carte `Aucun`.
-- Le menu du haut garde les étapes principales visibles et regroupe `Équipe`, `Partager`, `Spectateur` et `Réinitialiser` dans `Autres`.
-- Le libellé `Réinitialiser` devrait être remplacé par `Recommencer`.
+- Le menu du haut est un menu global unique. Les étapes principales restent dans le contenu, pas dans le header.
+- Le libellé `Réinitialiser` est conservé pour l'action destructive globale, parce qu'elle efface toutes les données locales.
 - Les textes d'accueil devraient être resserrés autour de: `Clair et équitable pour le banc, facile pour les entraîneurs et beau pour les parents.` et `Prépare un match et crée un alignement équitable qui respecte les règles Rallye-Cap.`
 - Les entêtes de demi-manche du tableau principal affichent seulement les icônes bâton et gant; `Début` est toujours la colonne de gauche et `Fin` la colonne de droite.
 - Au démarrage de la progression du match, l'application bloque si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que des positions défensives manquent ou que des règles ne sont pas respectées, l'entraîneur reçoit un avertissement et peut continuer après confirmation.
