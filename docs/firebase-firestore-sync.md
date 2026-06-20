@@ -1,6 +1,6 @@
 # Firebase / Firestore: synchronisation et partage
 
-Ce document décrit la cible de la première intégration Firebase. L'application reste locale par défaut; Firebase ajoute une sauvegarde optionnelle du match courant, une édition mobile et un mode spectateur public live.
+Ce document décrit la cible de la première intégration Firebase. L'application reste locale par défaut; Firebase ajoute une sauvegarde optionnelle des matchs mis en ligne, une édition mobile et un mode spectateur public live.
 
 ## Vue d'ensemble
 
@@ -18,8 +18,8 @@ flowchart LR
 Principes:
 
 - `localStorage` demeure la sauvegarde immédiate et hors ligne.
-- Firestore synchronise seulement le match courant.
-- Les archives restent locales et figées.
+- Firestore synchronise seulement les matchs explicitement mis en ligne.
+- Les archives sont des matchs `archived` en lecture seule; elles peuvent rester locales ou exister en ligne, mais ne doivent plus être modifiées.
 - Le spectateur public lit une projection limitée, pas l'état complet du match.
 - Un mot de passe public optionnel chiffre la projection côté client.
 
@@ -38,6 +38,7 @@ erDiagram
   PRIVATE_MATCH {
     string ownerUid
     number schemaVersion
+    string status
     number updatedAtMs
     object payload
   }
@@ -60,9 +61,9 @@ users/{uid}/matches/{matchId}
 publicMatches/{publicId}
 ```
 
-Le document privé contient le match courant complet pour l'édition. Le document public contient seulement ce que la vue spectateur doit afficher.
+Le document privé contient le match complet pour l'édition, incluant `status` au niveau racine et dans `payload.status`. Le document public contient seulement ce que la vue spectateur doit afficher.
 
-## Sauvegarde du match courant
+## Sauvegarde d'un match
 
 ```mermaid
 sequenceDiagram
@@ -99,13 +100,13 @@ sequenceDiagram
   Mobile->>Auth: Connexion courriel ou Google
   Auth-->>Mobile: uid
   Mobile->>FS: Liste users/{uid}/matches
-  FS-->>Mobile: Mes matchs en ligne
+  FS-->>Mobile: Mes matchs
   Mobile->>FS: Ouvre users/{uid}/matches/{matchId}
   FS-->>Mobile: Payload du match
   Mobile->>Mobile: Remplace la copie locale après confirmation/chargement
 ```
 
-En v1, l'entraîneur reprend un match en ligne via `Mes matchs en ligne` après connexion. Les rôles multi-entraîneurs ou invitations sont hors portée.
+En v1, l'entraîneur reprend un match en ligne via `Mes matchs` après connexion. Les rôles multi-entraîneurs ou invitations sont hors portée.
 
 ## Spectateur public live
 
@@ -155,7 +156,7 @@ flowchart LR
   Archive --> LocalOnly["Consultation locale lecture seule"]
 ```
 
-Archiver un match ne synchronise pas l'archive. Les changements futurs à l'équipe et aux joueurs ne modifient pas l'archive.
+Archiver un match le rend figé. Les changements futurs à l'équipe et aux joueurs ne modifient pas l'archive. Si le match archivé existe en ligne, les règles Firestore empêchent ses modifications futures tout en permettant sa suppression.
 
 ## Règles de sécurité
 
@@ -165,7 +166,9 @@ flowchart TD
   Path --> Private["users/{uid}/matches/{matchId}"]
   Path --> Public["publicMatches/{publicId}"]
   Private --> AuthCheck{"request.auth.uid == uid?"}
-  AuthCheck -- Oui --> AllowPrivate["Lecture/écriture permise"]
+  AuthCheck -- Oui --> Archived{"Match déjà archivé?"}
+  Archived -- Non --> AllowPrivate["Lecture/création/modification permise"]
+  Archived -- Oui --> DeleteOnly["Suppression permise<br/>modification refusée"]
   AuthCheck -- Non --> DenyPrivate["Refus"]
   Public --> ReadPublic["Lecture publique permise"]
   Public --> WritePublic{"Écriture par ownerUid?"}
@@ -173,4 +176,4 @@ flowchart TD
   WritePublic -- Non --> DenyWrite["Refus"]
 ```
 
-Les règles Firestore protègent les documents privés. Le chiffrement côté client protège le contenu d'un partage public avec mot de passe.
+Les règles Firestore protègent les documents privés. Un match déjà archivé ne peut plus être modifié côté cloud, mais son propriétaire peut le supprimer. Le chiffrement côté client protège le contenu d'un partage public avec mot de passe.

@@ -10,7 +10,7 @@
 <body>
 <header class="top">
   <div class="topin">
-    <div class="brand"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub" id="topMatchStatus">Aucun match prévu</div></div></div>
+    <a class="brand brandLink" href="#accueil" aria-label="Retour à l'accueil"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub" id="topMatchStatus">Aucun match prévu</div></div></a>
     <div class="topActions">
       <a class="quickMatchLink hide" href="#alignement" id="quickMatchLink">Match en cours</a>
       <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
@@ -19,7 +19,6 @@
       <a href="#accueil" data-nav="accueil">Accueil</a>
       <a href="#equipe" data-nav="equipe">Équipe</a>
       <a href="#mesmatchs" data-nav="mesmatchs">Mes matchs</a>
-      <a href="#archives" data-nav="archives">Archives</a>
       <a href="#spectateur" data-nav="spectateur">Spectateur</a>
       <button id="cloudAccountBtn">Connexion cloud</button>
       <button class="dangerMenu" id="resetBtn">Réinitialiser</button>
@@ -85,30 +84,13 @@
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#accueil">Retour à l'accueil</a></div>
   </section>
-  <section class="view" id="view-archives">
-    <div class="card">
-      <div class="spaced">
-        <div>
-          <h2>Archives</h2>
-          <p class="hint">Consulte les matchs archivés en lecture seule. Les changements futurs à l'équipe ne modifient pas ces archives.</p>
-        </div>
-      </div>
-      <div id="archivesList" class="archiveList"></div>
-    </div>
-    <div class="card hide" id="archiveDetailCard">
-      <div id="archiveDetail"></div>
-    </div>
-    <div class="stepActions noPrint"><a class="btn brandBtn" href="#accueil">Retour à l'accueil</a></div>
-  </section>
   <section class="view" id="view-mesmatchs">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>Mes matchs</h2><p class="hint">Sauvegarde, ouvre ou supprime tes matchs en ligne avec ton compte.</p></div></div>
+      <div class="spaced"><div><h2>Mes matchs</h2><p class="hint">Ouvre, trie, archive, supprime ou synchronise tes matchs locaux et en ligne.</p></div></div>
       <p class="hint" id="cloudStatusText">Local</p>
       <div class="shareActions">
-        <button class="btn secondary" id="cloudSaveBtn">Sauvegarder en ligne</button>
         <button class="btn secondary" id="refreshCloudMatchesBtn">Actualiser</button>
       </div>
-      <h3 class="onlineMatchesTitle">Mes matchs en ligne</h3>
       <div class="onlineMatches" id="cloudMatchesList"></div>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#accueil">Retour à l'accueil</a></div>
@@ -132,6 +114,7 @@
         <label><span>Manches</span><input id="innings" type="number" min="4" max="9" step="1" /></label>
         <div class="fixedField"><span>Frappe fixe</span><div class="switchLine matchSwitch"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div class="tiny">Normalement activé en Rallye-Cap: 6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
       </div>
+      <label class="fanMessageField"><span>Message aux fans</span><textarea id="fanMessage" maxlength="300" placeholder="ex. Apportez vos sourires et vos casquettes!"></textarea><small class="hint">Affiché dans Spectateurs en direct et dans le Programme. Markdown simple accepté.</small></label>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#joueurs">Continuer</a></div>
   </section>
@@ -193,13 +176,14 @@
     <h3 class="shareSectionTitle noPrint">En ligne</h3>
     <div class="grid3 shareGrid cloudShareGrid">
       <div class="card shareCard">
-        <h3>Spectateur live</h3>
-        <p class="hint" id="publicShareText">Publie une vue pour vos fans</p>
-        <label class="publicPasswordField"><span>Mot de passe optionnel</span><input id="publicPassword" name="public-share-password" type="password" autocomplete="new-password" placeholder="ex. mot de passe d'équipe" /></label>
+        <h3>Spectateurs en direct</h3>
+        <p class="hint" id="publicShareText">Les fans pourront suivre le match en direct!</p>
+        <label class="publicPasswordField"><span>Mot de passe optionnel</span><input id="publicPassword" name="spectator-access-code" type="text" inputmode="text" autocomplete="off" aria-label="Mot de passe du lien spectateurs" placeholder="ex. Youppi!" /></label>
+        <p class="hint hide" id="publicPasswordHint">Ce mot de passe devra être fourni aux fans.</p>
         <div class="shareActions">
-          <button class="btn secondary" id="publishPublicBtn">Publier le lien</button>
-          <button class="btn secondary" id="copyPublicLinkBtn">Copier lien public</button>
-          <button class="btn danger" id="unpublishPublicBtn">Retirer</button>
+          <button class="btn secondary" id="publishPublicBtn">Créer un lien</button>
+          <button class="btn secondary" id="copyPublicLinkBtn">Copier le lien</button>
+          <button class="btn danger" id="unpublishPublicBtn">Retirer le lien</button>
         </div>
       </div>
     </div>

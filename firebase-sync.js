@@ -131,6 +131,7 @@ function matchSummary(payload, extra = {}) {
     time: payload?.time || "",
     place: payload?.place || "",
     started: payload?.started === true,
+    status: payload?.status || (completed ? "completed" : payload?.started === true ? "active" : "draft"),
     completed,
     currentIndex,
     currentLabel: phases[currentIndex]?.label || (completed ? "Match terminé" : ""),

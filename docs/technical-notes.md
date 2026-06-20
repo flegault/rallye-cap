@@ -2,7 +2,7 @@
 
 ## État
 
-L'état applicatif est sauvegardé dans `localStorage` avec la clé `rallye_cap_qc_v4`.
+L'état applicatif est sauvegardé dans `localStorage` avec la clé `rallye_cap_qc_v5`.
 
 ## Sauvegarde Firebase optionnelle
 
@@ -13,11 +13,11 @@ En production GitHub Pages, `firebase-config.js` est généré par le workflow `
 La première passe utilise:
 
 - Firebase Authentication avec courriel/mot de passe et Google;
-- Firestore pour synchroniser seulement le match courant;
+- Firestore pour synchroniser les matchs explicitement mis en ligne;
 - App Check optionnel avec reCAPTCHA v3 quand `appCheckSiteKey` est configuré;
 - `users/{uid}/matches/{matchId}` pour le document privé éditable par l'entraîneur connecté;
 - `publicMatches/{publicId}` pour la projection spectateur publique en lecture seule;
-- une liste `Mes matchs en ligne` pour ouvrir ou supprimer les matchs cloud du compte connecté;
+- une liste `Mes matchs` pour ouvrir ou supprimer les matchs cloud du compte connecté;
 - un lien `#public/{publicId}` pour la vue spectateur live.
 
 App Check est initialisé avant Auth et Firestore quand `firebase-config.js` contient `appCheckSiteKey`, `recaptchaV3SiteKey` ou `appCheck.siteKey`. Le rafraîchissement automatique des tokens est activé. En développement local, `appCheckDebugToken` doit être utilisé pour éviter que les appels `localhost` soient classés comme non vérifiés.
@@ -32,9 +32,11 @@ Procédure de debug App Check:
 
 Les métriques App Check peuvent contenir des requêtes anciennes provenant d'onglets ouverts ou d'une version non rechargée de l'app. Les catégories `invalid requests` et `outdated client requests` doivent être surveillées avant production. L'enforcement App Check côté Firebase ne devrait être activé qu'après avoir vérifié que les clients légitimes sont validés, sinon Firestore et Authentication peuvent être bloqués pour les utilisateurs.
 
-Les archives locales ne sont pas synchronisées en ligne. À la fin d'un match, l'archive locale reste figée, puis le match éditable et le partage public sont retirés du cloud quand c'est possible.
+Les archives sont des matchs `archived` en lecture seule. Elles peuvent rester locales ou exister en ligne, mais les règles Firestore empêchent leur modification future tout en gardant la suppression permise au propriétaire.
 
-Les documents privés contiennent le `payload` complet pour l'édition, plus des métadonnées top-level (`team`, `opp`, `date`, `time`, `place`, `started`, `completed`, `currentIndex`, `currentLabel`, `publicId`, `updatedAtMs`) afin d'afficher `Mes matchs en ligne` sans dépendre d'un lien d'édition. Ouvrir un match en ligne remplace la copie locale seulement après confirmation et conserve les archives locales.
+Les documents privés contiennent le `payload` complet pour l'édition, plus des métadonnées top-level (`team`, `opp`, `date`, `time`, `place`, `status`, `started`, `completed`, `currentIndex`, `currentLabel`, `publicId`, `updatedAtMs`) afin d'afficher `Mes matchs` sans dépendre d'un lien d'édition.
+
+Les documents privés incluent aussi `status` au niveau racine. Les règles Firestore interdisent la modification d'un match déjà archivé (`status == archived` ou `payload.status == archived`), mais gardent la suppression permise au propriétaire.
 
 L'action globale `Réinitialiser` efface l'état local et tente aussi de supprimer le document cloud éditable ainsi que le lien spectateur public courant si l'utilisateur est connecté et que le module Firebase est chargé. La suppression cloud est opportuniste: l'état local est réinitialisé même si le réseau ou Firebase échoue.
 
@@ -46,7 +48,9 @@ La politique de conflit v1 est volontairement simple: dernière sauvegarde gagne
 
 Le document privé cloud contient le match complet pour permettre l'édition sur un autre appareil avant ou pendant le match. La limitation avant match s'applique au partage public: le spectateur peut voir le contexte et l'état `Alignement à venir`, mais l'expérience publique ne doit pas présenter l'alignement complet avant le début du match.
 
-La projection publique contient aussi des métadonnées de présentation pour le spectateur: `publicStage`, `programme`, `currentIndex` et `phases`. La vue publique ajoute une étape `Programme` avant les demi-manches, affiche `Alignement à venir` avant le début du match, puis affiche un état final quand toutes les demi-manches sont terminées. Si le spectateur consulte la demi-manche courante, la vue suit automatiquement la progression; s'il a navigué ailleurs, l'app affiche plutôt une notification de nouvelle demi-manche.
+La projection publique contient aussi des métadonnées de présentation pour le spectateur: `publicStage`, `programme`, `fanMessage`, `currentIndex` et `phases`. La vue publique ajoute une étape `Programme` avant les demi-manches, affiche `Alignement à venir` avant le début du match, puis affiche un état final quand toutes les demi-manches sont terminées. Si le spectateur consulte la demi-manche courante, la vue suit automatiquement la progression; s'il a navigué ailleurs, l'app affiche plutôt une notification de nouvelle demi-manche.
+
+Le champ `fanMessage` est une courte note destinée aux fans. Le rendu HTML utilise un mini-Markdown interne sans dépendance: le texte est échappé avant transformation, puis seuls `**gras**`, `*italique*`, les retours de ligne et les listes `- item` sont reconnus. L'export SVG `Programme` convertit ce mini-Markdown en lignes de texte lisibles et augmente la hauteur de l'image au besoin.
 
 Les diagrammes d'architecture et de flux sont dans `docs/firebase-firestore-sync.md`.
 
@@ -54,6 +58,7 @@ Champs principaux:
 
 - `team`, `opp`, `date`, `place`
 - `time`: heure du match courant, optionnelle
+- `fanMessage`: message optionnel aux fans, limité à 300 caractères
 - `side`: `visiteur` ou `locale`
 - `fixed`: frappe fixe activée ou non
 - `innings`: nombre de manches
@@ -62,7 +67,7 @@ Champs principaux:
 - `battingOrders`: snapshots d'ordre au bâton par demie-manche offensive barrée, indexés sous la forme `inning:debut` ou `inning:fin`
 - `schedule`: positions par manche
 - `started`: match explicitement débuté dans l'état actuel; à remplacer par une progression de demi-manche plus explicite
-- `locks.innings`: ancien stockage de manches barrées, conservé seulement pour compatibilité avec l'état sauvegardé
+- `locks.innings`: champ hérité du modèle de progression précédent; il ne doit plus guider de nouvelle logique. La source courante est `locks.halves`.
 - `locks.halves`: stockage interne transitoire des demi-manches complétées, indexées sous la forme `inning:debut` ou `inning:fin`
 - `archives`: liste locale des matchs archivés, conservée dans le même état `localStorage`. Les nouvelles archives utilisent `schemaVersion: 1` et stockent un snapshot complet du match.
 - `route`: vue active
@@ -86,14 +91,13 @@ Le workflow cible remplace l'ancien onglet `Jouer` par une gestion directe dans 
 - `#alignement`: édition de l'alignement avant match, suivi de progression pendant le match, validations, suggestions, statistiques et changements de joueurs;
 - `#accueil`: porte d'entrée contextuelle selon l'état local;
 - `#equipe`: gestion hors workflow du nom de notre équipe et du bassin de joueurs;
-- `#mesmatchs`: liste des matchs cloud du compte connecté, avec ouverture et suppression;
-- `#archives`: liste et consultation en lecture seule des matchs archivés;
+- `#mesmatchs`: tableaux des matchs locaux et cloud, incluant les matchs archivés en lecture seule;
 - `#spectateur`: vue en lecture seule dérivée du même état;
 - `#partager`: exports et lien spectateur du match courant, accessible par actions contextuelles plutôt que par le menu global.
 
 `#alignement` démarre le match avec confirmation si la progression est encore au début. La cible produit bloque le démarrage si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que l'horaire est incomplet ou que des règles ne sont pas respectées, l'app avertit sans bloquer et demande confirmation. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
 
-Le menu du haut est un menu global unique qui regroupe `Accueil`, `Équipe`, `Mes matchs`, `Archives`, `Spectateur` et `Réinitialiser`. `Partager` reste une route contextuelle du match courant, mais n'est plus un item du menu global. Les étapes `Match`, `Joueurs` et `Alignement` restent visibles dans le contenu via le workflow numéroté, pas dans le header. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
+Le menu du haut est un menu global unique qui regroupe `Accueil`, `Équipe`, `Mes matchs`, `Spectateur` et `Réinitialiser`. `Partager` reste une route contextuelle du match courant, mais n'est plus un item du menu global. Les étapes `Match`, `Joueurs` et `Alignement` restent visibles dans le contenu via le workflow numéroté, pas dans le header. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
 
 La route `#spectateur` ajoute une classe `spectatorRoute` sur `body` pour masquer l'en-tête global et le workflow numéroté sans dupliquer la structure HTML.
 
@@ -103,7 +107,7 @@ Le libellé durable pour l'action destructive globale est `Réinitialiser`, parc
 
 État transitoire: `#equipe` est livré comme espace hors workflow, mais le stockage utilise encore les mêmes champs `team` et `players` pour représenter le bassin permanent et alimenter le match courant. Une prochaine étape devrait introduire une séparation interne plus claire, par exemple `teamProfile`, `roster` et `currentMatch`, avant d'ajouter les archives.
 
-La fermeture de match est maintenant explicite à la fin de la dernière demi-manche. Les archives `schemaVersion: 1` conservent un snapshot complet: métadonnées du match, frappe fixe, manches, joueurs figés, ordre, positions, snapshots de frappe et demi-manches complétées. Les anciennes archives sommaires sont conservées comme `legacy` et restent consultables comme résumé.
+La fermeture de match est maintenant explicite à la fin de la dernière demi-manche. Les archives sont des matchs v5 avec le statut `archived`; elles conservent les métadonnées du match, frappe fixe, manches, joueurs figés, ordre, positions, snapshots de frappe et demi-manches complétées.
 
 Les exports `Programme`, `Banc` et `Texte` ne sont pas stockés dans l'archive. Ils sont régénérés à partir du snapshot figé via un état temporaire en lecture seule, puis l'état courant est restauré.
 
@@ -173,7 +177,7 @@ Tests unitaires prioritaires:
 Tests navigateur prioritaires:
 
 - chargement de l'exemple;
-- date du jour initialisée pour un nouveau match;
+- nouveaux matchs créés sans date ni heure par défaut;
 - ajout de joueurs;
 - génération et régénération;
 - modification manuelle par glisser-déposer;
@@ -215,3 +219,27 @@ Découpage recommandé:
 - `src/ui/render.js`: rendu DOM;
 - `src/ui/exports.js`: exports `Banc`, `Programme` et `Texte`;
 - `tests/`: cas métier.
+
+## État actuel v5 multi-match
+
+Le modèle officiel courant est multi-match et local-first. Jusqu'à la mise en production, l'app ne supporte aucun vieux modèle de données. Si aucune donnée `rallye_cap_qc_v5` valide n'existe, elle démarre vide.
+
+Décision durable pendant la phase de développement:
+
+- ne pas ajouter de migration depuis `rallye_cap_qc_v4` ou toute autre ancienne clé;
+- ne pas ajouter de logique de compatibilité pour lire, réparer ou convertir d'anciens payloads locaux ou cloud;
+- corriger directement le modèle courant plutôt que de masquer les problèmes avec des fallbacks;
+- réévaluer une vraie stratégie de migration seulement au moment d'une version de production avec utilisateurs réels.
+
+Structure persistée sous `rallye_cap_qc_v5`:
+
+- `teamProfile`: nom de notre équipe;
+- `roster`: bassin permanent de joueurs, indépendant des matchs;
+- `matches`: liste locale de matchs;
+- `activeMatchId`: match ouvert dans le workflow.
+
+Chaque match contient ses infos, joueurs du match, ordre, positions, progression, statut et références cloud. Les statuts sont `draft`, `active`, `completed` et `archived`.
+
+`Mes matchs` est la vue centrale. Elle affiche deux tableaux triables, `Matchs` et `Matchs archivés`, qui combinent les matchs locaux et les matchs cloud du compte connecté. Les colonnes sont `Notre équipe`, `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Les doublons sont fusionnés par `cloud.matchId`. Un match seulement en ligne est importé localement quand l'utilisateur clique `Ouvrir`.
+
+La page `Archives` séparée est retirée. Une archive est un match avec le statut `archived`; elle peut être ouverte dans les vues existantes avec les actions de modification désactivées.

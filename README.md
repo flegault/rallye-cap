@@ -54,7 +54,7 @@ appCheckDebugToken: "JETON_DEBUG_ENREGISTRE"
 
 Ne pas activer l'enforcement App Check tant que les métriques Firebase affichent encore des requêtes `Unverified`, `invalid` ou `outdated client`. En local, fermer les anciens onglets et faire un rechargement complet aide à éliminer les requêtes provenant d'une vieille version de l'app.
 
-La sync sauvegarde seulement le match courant. Les archives restent locales. Le partage spectateur public utilise un lien `#public/...`; avec mot de passe, la projection publique est chiffrée côté client avant d'être écrite dans Firestore.
+La sync sauvegarde les matchs explicitement mis en ligne. Les matchs archivés restent en lecture seule; côté Firestore, ils ne peuvent plus être modifiés, mais peuvent être supprimés par leur propriétaire. Le partage spectateur public utilise un lien `#public/...`; avec mot de passe, la projection publique est chiffrée côté client avant d'être écrite dans Firestore.
 
 Les diagrammes Mermaid de cette intégration sont dans [`docs/firebase-firestore-sync.md`](docs/firebase-firestore-sync.md).
 
