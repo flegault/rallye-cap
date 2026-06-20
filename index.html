@@ -114,7 +114,8 @@
         <label><span>Manches</span><input id="innings" type="number" min="4" max="9" step="1" /></label>
         <div class="fixedField"><span>Frappe fixe</span><div class="switchLine matchSwitch"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div class="tiny">Normalement activé en Rallye-Cap: 6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
       </div>
-      <label class="fanMessageField"><span>Message aux fans</span><textarea id="fanMessage" maxlength="300" placeholder="ex. Apportez vos sourires et vos casquettes!"></textarea><small class="hint">Affiché dans Spectateurs en direct et dans le Programme. Markdown simple accepté.</small></label>
+      <label class="fanMessageField"><span>Message aux fans</span><textarea id="fanMessage" maxlength="300" placeholder="ex. Apportez vos sourires et vos casquettes!"></textarea><small class="hint">Affiché dans Spectateurs en direct et dans le Programme. Markdown simple: **gras**, *italique*, retours de ligne et listes avec "-".</small></label>
+      <div class="fanMessagePreview hide" id="fanMessagePreview"></div>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#joueurs">Continuer</a></div>
   </section>
@@ -170,7 +171,11 @@
       <div class="card shareCard">
         <h3>Texte</h3>
         <p class="hint">Texte brut compact pour Funny Print ou une petite imprimante.</p>
-        <button class="btn secondary" id="copyTextBtn">Copier texte</button>
+        <button class="btn secondary" id="copyTextBtn">Préparer le texte</button>
+        <div class="textPreviewBox hide" id="textPreviewBox">
+          <textarea id="textPreview" aria-label="Aperçu texte à copier"></textarea>
+          <button class="btn secondary" id="copyTextPreviewBtn" type="button">Copier le texte</button>
+        </div>
       </div>
     </div>
     <h3 class="shareSectionTitle noPrint">En ligne</h3>

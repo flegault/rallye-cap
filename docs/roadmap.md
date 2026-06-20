@@ -4,7 +4,7 @@
 
 - Priorité `Spectateurs / Cloud`: concevoir une URL fixe d'équipe pour les fans. Cette URL doit afficher les matchs publics de l'équipe en ordre chronologique et permettre aux parents de conserver le même lien de match en match.
 - Compléter la gestion multi-match restante: actions avancées de reprise/recommencement à partir d'un match archivé.
-- Améliorer les exports et partages: PDF parents responsive et aperçu modifiable pour l'export `Texte`.
+- Améliorer les exports et partages: PDF parents responsive.
 - Extraire la logique métier de `app.js` dans des modules testables.
 - Ajouter des tests automatisés exécutables en CLI pour la génération, la progression par demi-manche, les exports et les projections publiques.
 
@@ -16,12 +16,14 @@
   - alléger l'étape `Programme` pour éviter les doublons visuels;
   - rendre les infos de match plus faciles à scanner sur mobile;
   - garder les notifications de nouvelle demi-manche seulement lorsqu'elles aident à revenir à la manche courante.
+  - Livré: l'étape `Programme` affiche maintenant les équipes comme titre, les infos de match sont plus lisibles, les demi-manches utilisent des titres courts `Frappeurs` / `Défenseurs`, et les pastilles de navigation sont cliquables.
 - Joueur favori dans `Spectateurs en direct`:
   - permettre au spectateur de cliquer un joueur pour le mettre en évidence partout dans la vue publique;
   - un seul joueur favori à la fois;
   - cliquer le favori à nouveau le désélectionne;
   - mémoriser ce choix localement dans le navigateur du spectateur, sans écrire dans Firestore;
-  - utiliser une clé locale basée sur le match public et l'identité du joueur disponible, avec fallback nom/numéro.
+  - utiliser le `playerId` publié dans la projection publique, sans fallback nom/numéro.
+  - Livré: les joueurs dans `Programme`, `Frappeurs` et `Défenseurs` sont cliquables; le favori est mémorisé localement par `playerId` et peut donc suivre le même joueur entre les matchs.
 - URL fixe d'équipe pour les fans:
   - ajouter une route publique future du type `#fans/{teamPublicId}`;
   - la page liste les matchs publics de l'équipe en ordre chronologique;
@@ -438,6 +440,9 @@ Questions fermées:
 - Livré: le champ de mot de passe de `Spectateurs en direct` utilise maintenant un champ texte avec `autocomplete="off"` et des noms d'inputs dédiés afin de réduire les propositions de sauvegarde du gestionnaire de mots de passe Chrome.
 - À surveiller: Chrome peut encore proposer de sauvegarder le code si le navigateur détecte malgré tout un flux d'authentification; dans ce cas, il faudra remplacer le champ par un contrôle encore plus personnalisé.
 - Livré: le placeholder du mot de passe `Spectateurs en direct` est `ex. Youppi!`; le champ est verrouillé après création du lien et se réactive quand le lien est retiré.
+- Livré: le `Message aux fans` peut être modifié pendant un match actif, affiche les indications mini-Markdown dans l'interface et montre un aperçu.
+- Livré: l'export `Texte` présente maintenant un aperçu éditable avant la copie.
+- Livré: l'équipe exemple des Expos de 1994 inclut les numéros de chandail du roster 1994.
 - Livré: ajout d'un `Message aux fans` dans l'onglet `Match`, avec mini-Markdown limité, affiché dans l'étape publique `Programme` et dans l'export image `Programme`.
 - Livré: l'image parents s'adapte mieux aux longues listes et aux noms longs avec ordre sur deux colonnes, sections aérées et retours de ligne contrôlés.
 - Livré: les partages sont simplifiés en `Banc`, `Programme` et `Texte`; le partage courriel est retiré.
