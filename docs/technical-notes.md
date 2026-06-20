@@ -240,6 +240,6 @@ Structure persistée sous `rallye_cap_qc_v5`:
 
 Chaque match contient ses infos, joueurs du match, ordre, positions, progression, statut et références cloud. Les statuts sont `draft`, `active`, `completed` et `archived`.
 
-`Mes matchs` est la vue centrale. Elle affiche deux tableaux triables, `Matchs` et `Matchs archivés`, qui combinent les matchs locaux et les matchs cloud du compte connecté. Les colonnes sont `Notre équipe`, `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Les doublons sont fusionnés par `cloud.matchId`. Un match seulement en ligne est importé localement quand l'utilisateur clique `Ouvrir`.
+`Mes matchs` est la vue centrale. Elle affiche un tableau triable unique qui combine les matchs locaux et les matchs cloud du compte connecté, incluant les archives. Les colonnes sont `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Les doublons sont fusionnés par `cloud.matchId`. Un match seulement en ligne est importé localement quand l'utilisateur clique la ligne.
 
 La page `Archives` séparée est retirée. Une archive est un match avec le statut `archived`; elle peut être ouverte dans les vues existantes avec les actions de modification désactivées.

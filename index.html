@@ -43,17 +43,25 @@
             <strong id="miniTeamName">Équipe à définir</strong>
             <span class="label">Équipe</span>
           </a>
-          <a class="metric metricLink miniTeam" href="#match" id="matchStatusMetric">
-            <strong id="miniMatch">Aucun match prévu</strong>
-            <div class="label">statut du match</div>
-          </a>
           <a class="metric metricLink" href="#equipe">
             <div class="big" id="miniPlayers">0</div>
-            <div class="label">joueurs enregistrés</div>
+            <div class="label">joueurs</div>
           </a>
+          <button class="metric metricLink" id="draftMetric" type="button">
+            <div class="big" id="miniDrafts">0</div>
+            <div class="label">en préparation</div>
+          </button>
+          <button class="metric metricLink" id="activeMetric" type="button">
+            <div class="big" id="miniActiveMatches">0</div>
+            <div class="label">en cours</div>
+          </button>
+          <button class="metric metricLink" id="completedMetric" type="button">
+            <div class="big" id="miniCompleted">0</div>
+            <div class="label">terminés</div>
+          </button>
           <button class="metric metricLink" id="archiveMetric" type="button">
             <div class="big" id="miniArchives">0</div>
-            <div class="label">matchs archivés</div>
+            <div class="label">archivés</div>
           </button>
         </div>
       </div>
@@ -71,10 +79,9 @@
       </div>
       <div class="grid2 teamSetup">
         <label><span>Nom de notre équipe</span><input id="teamName" placeholder="ex. Expos de Montréal" /></label>
-        <button class="btn brandBtn" id="saveTeamBtn" type="button">Enregistrer</button>
       </div>
       <div class="players" id="teamPlayers"></div>
-      <div class="homeActions noPrint"><button class="btn secondary" id="exampleTeamBtn" type="button">Créer une équipe exemple</button></div>
+      <div class="homeActions noPrint"><button class="btn secondary" id="teamMatchBtn" type="button">Préparer un match</button><button class="btn secondary" id="exampleTeamBtn" type="button">Créer une équipe exemple</button></div>
     </div>
     <div class="card" id="teamAddPlayersCard">
       <div class="spaced">
@@ -87,8 +94,8 @@
   <section class="view" id="view-mesmatchs">
     <div class="card noPrint">
       <div class="spaced"><div><h2>Mes matchs</h2><p class="hint">Ouvre, trie, archive, supprime ou synchronise tes matchs locaux et en ligne.</p></div></div>
-      <p class="hint" id="cloudStatusText">Local</p>
       <div class="shareActions">
+        <button class="btn brandBtn hide" id="newMatchFromListBtn" type="button">Créer un match</button>
         <button class="btn secondary" id="refreshCloudMatchesBtn">Actualiser</button>
       </div>
       <div class="onlineMatches" id="cloudMatchesList"></div>

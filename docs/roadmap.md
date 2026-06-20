@@ -10,6 +10,12 @@
 
 ## Priorité Spectateurs / Cloud
 
+- Équipe privée dans le cloud pour l'entraîneur:
+  - sauvegarder le profil d'équipe et le `roster` permanent dans Firestore, séparément des matchs;
+  - permettre de reprendre la préparation sur mobile sans devoir transférer manuellement les joueurs;
+  - garder ces données privées au compte connecté, sans exposition aux fans;
+  - clarifier comment synchroniser les changements d'équipe avec les matchs en préparation seulement, sans modifier les matchs commencés, terminés ou archivés;
+  - complexité estimée: moyenne, parce qu'il faut gérer la fusion local/cloud du roster et les conflits possibles entre deux appareils.
 - Polish visible par les fans:
   - rendre l'écran `Spectateurs en direct` plus lisible avant partage public large;
   - remplacer les titres génériques par les noms des équipes quand possible;
@@ -204,6 +210,7 @@ Améliorations UX à prévoir:
 - Livré: `Équipe` affiche un compteur de joueurs dans l'en-tête.
 - Livré: pendant un match commencé, `Équipe` affiche une note expliquant que le bassin permanent est verrouillé jusqu'à la fin ou l'archivage du match.
 - Livré: l'action de suppression d'un joueur dans `Équipe` utilise une icône `×` plutôt qu'une poubelle.
+- Livré: `Équipe` offre une action contextuelle pour préparer un match ou modifier le match courant, et `Mes matchs` offre `Créer un match` quand aucun match non archivé n'est actif.
 - Livré: l'action `Créer une équipe exemple` est placée sous la liste des joueurs et son avertissement précise que l'équipe, les matchs et les archives locales sont remplacés.
 - dans l'étape `Joueurs`, garder des cartes de même taille pour les joueurs présents et absents;
 - dans l'étape `Joueurs`, ne pas afficher de carte vide `Aucun` quand il n'y a pas de présents ou d'absents; la bulle de total existante suffit.
@@ -504,7 +511,7 @@ Questions fermées:
 - `Accueil` contextuel livré pour créer l'équipe initiale, reprendre un match ou créer un nouveau match.
 - `Équipe` hors workflow livré pour gérer le nom de notre équipe et le bassin de joueurs.
 - Le hero de présentation apparaît seulement dans `Accueil`.
-- Les cartes de contexte de l'accueil affichent le nom de l'équipe, le statut du match, les joueurs enregistrés et les matchs archivés; les cartes liées à l'équipe mènent à `Équipe`, la carte de statut mène à `Match`, et la carte archives mène à `Archives`.
+- Les cartes de contexte de l'accueil affichent le nom de l'équipe, les joueurs, les matchs en préparation, en cours, terminés et archivés. Les cartes à zéro pour `En préparation` et `En cours` ne sont pas cliquables; `Terminés` et `Archivés` mènent à `Mes matchs`.
 - L'accueil garde un seul bouton d'action principal selon l'état courant.
 - `Partager` et `Spectateur` sont sortis des étapes numérotées.
 - `Spectateur` masque maintenant l'en-tête global et le workflow numéroté, et utilise la palette visuelle du site.
@@ -527,7 +534,7 @@ Questions fermées:
 - Décision de développement: aucun vieux modèle de données n'est supporté avant la mise en production. Aucune migration, compatibilité ou réparation automatique d'anciens états ne doit être ajoutée tant que l'app n'a pas d'utilisateurs de production.
 - `teamProfile`, `roster`, `matches` et `activeMatchId` deviennent la structure officielle.
 - `Mes matchs` remplace la logique séparée `Mes matchs` / `Archives`.
-- Deux tableaux triables sont livrés: `Matchs` et `Matchs archivés`.
+- Livré: `Mes matchs` utilise maintenant un seul tableau triable pour tous les statuts.
 - Les matchs locaux et cloud sont fusionnés dans les tableaux; les matchs seulement en ligne sont importés localement à l'ouverture.
 - Les lignes de `Mes matchs` sont cliquables pour ouvrir le match; les actions sont des icônes avec titres accessibles.
 - Les actions livrées sont `Mettre en ligne`, `Retirer du cloud`, `Archiver` et `Supprimer`.

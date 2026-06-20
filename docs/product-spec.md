@@ -31,7 +31,23 @@ Le mode spectateur est une vue simplifiée en lecture seule accessible par le me
 
 Le hero de présentation apparaît seulement sur `Accueil`. Quand un match courant non archivé existe, les cartes de l'accueil suivent le workflow: la carte `Match` résume adversaire, date, heure et endroit; la carte `Joueurs` résume présents et absents; la carte `Alignement` ou `Jouer` ouvre le tableau. L'accueil doit afficher un seul bouton d'action principal selon l'état courant.
 
-La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs. Le numéro de chandail est optionnel, limité à 2 chiffres, et se modifie dans `Équipe`, avant le match, comme le nom du joueur. Quand il est défini, il est affiché près du nom dans l'alignement et inclus dans les exports. Pendant un match commencé, l'équipe permanente est verrouillée et l'interface doit expliquer que les joueurs ne peuvent pas être modifiés avant la fin ou l'archivage du match.
+La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs. Ces champs se sauvegardent automatiquement localement; il n'y a pas de bouton `Enregistrer` dans `Équipe`. Le numéro de chandail est optionnel, limité à 2 chiffres, et se modifie dans `Équipe`, avant le match, comme le nom du joueur. Quand il est défini, il est affiché près du nom dans l'alignement et inclus dans les exports. Pendant un match commencé, l'équipe permanente est verrouillée et l'interface doit expliquer que les joueurs ne peuvent pas être modifiés avant la fin ou l'archivage du match.
+
+Depuis `Équipe`, l'utilisateur doit pouvoir revenir facilement au workflow de match: si aucun match non archivé n'est actif, l'action prépare un nouveau match à partir de l'équipe; sinon elle ouvre l'onglet `Match` du match courant. Depuis `Mes matchs`, une action `Créer un match` doit être offerte quand l'équipe est complète et qu'aucun match non archivé n'est actif.
+
+Hiérarchie des actions:
+
+- `brandBtn` / primaire: une seule action principale par écran ou par carte de travail. Elle représente la prochaine étape évidente du workflow ou l'action qui fait avancer le match.
+- `secondary`: navigation contextuelle, exports, actions utiles mais non obligatoires, ou actions qui ne devraient pas détourner du flux principal.
+- `danger`: actions destructives ou irréversibles comme réinitialiser, retirer un lien public ou supprimer.
+- Icônes seules: actions répétitives ou compactes dans les tableaux, avec `title` et `aria-label` explicites.
+- `Accueil`: les actions de création, préparation ou continuation du match peuvent être primaires. Les liens de partage ou de consultation restent secondaires.
+- `Équipe`: `Ajouter` peut être primaire dans la carte d'ajout de joueurs. `Préparer un match` ou `Aller au match actif` reste secondaire parce que ce n'est pas l'action principale de gestion de l'équipe.
+- `Mes matchs`: `Créer un match` peut être primaire seulement quand aucun match non archivé n'est actif. Les actions de ligne restent en icônes.
+- `Match` et `Joueurs`: `Continuer` est primaire parce qu'il suit le workflow.
+- `Alignement`: `Commencer` ou l'action d'avancement du match est primaire. `Mélanger`, `Optimiser`, `Changement de joueurs` et `Partager` restent secondaires.
+- `Partager`: `Programme`, `Banc`, `Texte`, `Créer un lien` et `Copier le lien` restent secondaires; `Retirer le lien` est danger.
+- `Spectateurs en direct`: la navigation reste simple; `Suivant` peut être primaire, tandis que `Précédent` et `Manche en cours` restent secondaires.
 
 Observations UX à explorer:
 
@@ -201,7 +217,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Les partages en ligne doivent être distingués des exports. `Spectateurs en direct` crée un lien public stable pour les fans depuis `Partager`; les données derrière ce lien se mettent ensuite à jour automatiquement quand le match en ligne sauvegarde. La sauvegarde et la reprise des matchs cloud vivent dans `Mes matchs`.
   - Livré: `Partager` affiche `Exports` avant `En ligne`, sans lien d'édition ni gestion de matchs cloud.
 - Le champ de mot de passe de `Spectateurs en direct` ne doit pas être assimilé à un mot de passe de connexion par le navigateur. Il est affiché comme champ texte avec `autocomplete="off"` pour éviter les propositions de sauvegarde de Chrome.
-- `Mes matchs` affiche deux tableaux triables: `Matchs` et `Matchs archivés`. Les colonnes sont `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Une ligne cliquée ouvre le match, sauf si l'utilisateur clique une action. `Modifié` utilise le format `YYYY-MM-DD HH:mm`. Les actions sont représentées par des icônes avec titres accessibles: mettre en ligne, retirer du cloud, archiver et supprimer.
+- `Mes matchs` affiche un seul tableau triable qui contient les matchs en préparation, en cours, terminés et archivés. Les colonnes sont `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Une ligne cliquée ouvre le match, sauf si l'utilisateur clique une action. `Modifié` utilise le format `YYYY-MM-DD HH:mm`. Les actions sont représentées par des icônes avec titres accessibles: mettre en ligne, retirer du cloud, archiver et supprimer.
 - Si une action de partage ou sauvegarde cloud exige une connexion, l'app doit proposer la connexion au moment de l'action et expliquer ce qui deviendra disponible.
   - Livré: les actions cloud ouvrent la connexion quand nécessaire.
 - L'export `Texte` affiche le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
@@ -212,7 +228,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 
 ## Archives
 
-- Les archives vivent dans `Mes matchs`, dans le tableau `Matchs archivés`; il n'y a plus de page `Archives` séparée dans le modèle courant.
+- Les archives vivent dans `Mes matchs`; il n'y a plus de page `Archives` séparée dans le modèle courant.
 - Chaque archive est en lecture seule et peut être consultée, refermée ou supprimée manuellement avec confirmation. Les détails ne devraient pas être ouverts par défaut.
 - Les archives complètes conservent les métadonnées du match, les joueurs figés, l'ordre, la frappe fixe, les manches, les positions, les snapshots de frappe et les demi-manches complétées.
 - Les exports `Programme`, `Banc` et `Texte` peuvent être régénérés depuis une archive complète, mais les fichiers ou rendus d'export ne sont pas stockés dans l'archive.
