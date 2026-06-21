@@ -107,6 +107,9 @@ Alignement Rallye-Cap
     +-- Navigation précédent / suivant
     +-- Points de progression
 +-- Fans publics (#fans/{teamPublicId})
+    +-- Équipe publiée
+    |   +-- Liste des joueurs
+    |   +-- Choix de plusieurs favoris privés au navigateur
     +-- Liste des matchs publiés pour l'équipe
     +-- Indicateur de match protégé par mot de passe
     +-- Ouverture du match dans `#public/{publicId}`

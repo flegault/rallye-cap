@@ -24,13 +24,13 @@
   - Livré: l'étape `Programme` affiche maintenant les équipes comme titre, les infos de match sont plus lisibles, les demi-manches utilisent des titres courts `Frappeurs` / `Défenseurs`, et les pastilles de navigation sont cliquables.
 - Joueur favori dans `Spectateurs en direct`:
   - permettre au spectateur de cliquer un joueur pour le mettre en évidence partout dans la vue publique;
-  - un seul joueur favori à la fois;
-  - cliquer le favori à nouveau le désélectionne;
+  - plusieurs joueurs favoris peuvent être sélectionnés;
+  - cliquer un favori à nouveau le désélectionne;
   - mémoriser ce choix localement dans le navigateur du spectateur, sans écrire dans Firestore;
   - utiliser le `playerId` publié dans la projection publique, sans fallback nom/numéro.
-  - Livré: les joueurs dans `Programme`, `Frappeurs` et `Défenseurs` sont cliquables; le favori est mémorisé localement par `playerId` et peut donc suivre le même joueur entre les matchs.
+  - Livré: les joueurs dans `#fans`, `Programme`, `Frappeurs` et `Défenseurs` sont cliquables; les favoris sont mémorisés localement par `playerId` et peuvent donc suivre les mêmes joueurs entre les matchs d'une équipe.
 - URL fixe d'équipe pour les fans:
-  - Livré: la route publique `#fans/{teamPublicId}` liste les matchs dont le lien `Spectateurs en direct` est publié pour l'équipe, avec mot de passe optionnel pour la liste.
+  - Livré: la route publique `#fans/{teamPublicId}` affiche les joueurs de l'équipe et liste les matchs dont le lien `Spectateurs en direct` est publié, avec mot de passe optionnel pour la liste.
   - Livré: chaque match public mène vers son lien `#public/{publicId}` et affiche si un mot de passe est requis.
   - Livré: les matchs apparaissent ou disparaissent selon les liens `Spectateurs en direct` créés ou retirés par le coach.
   - La visibilité publique reste contrôlée par le lien spectateur du match.
@@ -267,7 +267,7 @@ Modèle souhaité:
 - vue fans en lecture seule avec informations limitées comme minimum;
 - mode assistant modifiable à évaluer plus tard;
 - possibilité de dépublier ou remplacer le lien plus tard.
-- priorité future proche: URL fixe d'équipe `#fans/{teamPublicId}` qui liste les matchs publics en ordre chronologique, sans exposer le bassin permanent complet ni remplacer les liens de match `#public/{publicId}`;
+- Livré: URL fixe d'équipe `#fans/{teamPublicId}` qui affiche une projection publique limitée du bassin permanent et liste les matchs publics en ordre chronologique, sans remplacer les liens de match `#public/{publicId}`;
 - interface de connexion plus standard, incluant un bouton Google reconnaissable avec icône;
 - actions cloud guidées: quand une sauvegarde, une liste de matchs ou une publication requiert une connexion, l'app devrait proposer de se connecter au lieu de laisser l'utilisateur deviner.
 
