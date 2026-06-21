@@ -211,6 +211,7 @@ Améliorations UX à prévoir:
 - Livré: pendant un match commencé, `Équipe` affiche une note expliquant que le bassin permanent est verrouillé jusqu'à la fin ou l'archivage du match.
 - Livré: l'action de suppression d'un joueur dans `Équipe` utilise une icône `×` plutôt qu'une poubelle.
 - Livré: `Équipe` offre une action contextuelle pour préparer un match ou modifier le match courant, et `Mes matchs` offre `Créer un match` quand aucun match non archivé n'est actif.
+- Livré: l'étape `Joueurs` permet d'ajouter rapidement un joueur à l'équipe et au match courant avant le début, sans quitter le workflow.
 - Livré: l'action `Créer une équipe exemple` est placée sous la liste des joueurs et son avertissement précise que l'équipe, les matchs et les archives locales sont remplacés.
 - dans l'étape `Joueurs`, garder des cartes de même taille pour les joueurs présents et absents;
 - dans l'étape `Joueurs`, ne pas afficher de carte vide `Aucun` quand il n'y a pas de présents ou d'absents; la bulle de total existante suffit.

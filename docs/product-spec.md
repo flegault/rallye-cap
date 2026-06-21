@@ -35,6 +35,8 @@ La gestion de notre équipe et de son bassin permanent de joueurs est séparée 
 
 Depuis `Équipe`, l'utilisateur doit pouvoir revenir facilement au workflow de match: si aucun match non archivé n'est actif, l'action prépare un nouveau match à partir de l'équipe; sinon elle ouvre l'onglet `Match` du match courant. Depuis `Mes matchs`, une action `Créer un match` doit être offerte quand l'équipe est complète et qu'aucun match non archivé n'est actif.
 
+L'ajout de joueurs utilise le même modal depuis `Équipe` et depuis l'étape `Joueurs`. Le numéro de chandail peut être saisi en même temps avec des formats simples comme `#27 Émile`, `27 Émile` ou `Émile #27`. Dans `Équipe`, le joueur est ajouté seulement au bassin permanent. Dans `Joueurs`, avant le début du match, le raccourci `Ajouter un joueur à l'équipe` ajoute le joueur au bassin permanent et au match courant. Si moins de 12 joueurs sont présents, le joueur est ajouté comme présent; sinon il est ajouté comme absent. La suppression et le renommage restent gérés dans `Équipe`.
+
 Hiérarchie des actions:
 
 - `brandBtn` / primaire: une seule action principale par écran ou par carte de travail. Elle représente la prochaine étape évidente du workflow ou l'action qui fait avancer le match.

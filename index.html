@@ -87,7 +87,7 @@
       <div class="spaced">
         <div><h3>Ajouter des joueurs</h3><p class="hint">Ces joueurs seront disponibles pour les matchs futurs.</p></div>
       </div>
-      <div class="grid2"><label><span>Un nom par ligne, ou séparé par virgule</span><textarea id="teamNames" placeholder="ex. Émile, Julien, Noah"></textarea></label><button class="btn brandBtn" id="addTeamNames" type="button">Ajouter</button></div>
+      <button class="btn brandBtn" id="addTeamNames" type="button">Ajouter des joueurs</button>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#accueil">Retour à l'accueil</a></div>
   </section>
@@ -128,7 +128,8 @@
   </section>
   <section class="view" id="view-joueurs">
     <div class="card">
-      <div class="spaced"><div><h2>2. Joueurs</h2><p class="hint">Indique qui est présent ou absent pour ce match. L'ajout et la suppression se font dans Équipe.</p></div><span class="tag" id="activeCountTag">0 actif</span></div>
+      <div class="spaced"><div><h2>2. Joueurs</h2><p class="hint">Indique qui est présent ou absent pour ce match. Ajoute rapidement un joueur à l'équipe au besoin; la suppression reste dans Équipe.</p></div><span class="tag" id="activeCountTag">0 actif</span></div>
+      <div class="row noPrint"><button class="btn secondary" id="addPlayerToTeamFromMatchBtn" type="button">Ajouter un joueur à l'équipe</button></div>
       <div class="players" id="players"></div>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#alignement" id="toAlign">Continuer</a></div>
