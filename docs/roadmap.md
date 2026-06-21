@@ -3,11 +3,45 @@
 ## Maintenant
 
 - Compléter la gestion multi-match restante: actions avancées de reprise/recommencement à partir d'un match archivé.
-- Stabiliser les changements de joueurs en cours de match: retrait, remplacement, ajout imprévu, choix de la demi-manche d'effet et historique des demi-manches déjà jouées.
-- Raffiner la gestion des positions futures incomplètes après un retrait ou remplacement pendant le match.
-- Améliorer les exports et partages: PDF parents responsive et aperçu modifiable pour l'export `Texte`.
+- Améliorer les exports et partages: PDF parents responsive.
 - Extraire la logique métier de `app.js` dans des modules testables.
-- Ajouter des tests pour la génération, la progression par demi-manche et les cas limites des changements de joueurs.
+- Ajouter des tests automatisés exécutables en CLI pour la génération, la progression par demi-manche, les exports et les projections publiques.
+
+## Priorité Spectateurs / Cloud
+
+- Équipe privée dans le cloud pour l'entraîneur:
+  - sauvegarder le profil d'équipe et le `roster` permanent dans Firestore, séparément des matchs;
+  - permettre de reprendre la préparation sur mobile sans devoir transférer manuellement les joueurs;
+  - garder ces données privées au compte connecté, sans exposition aux fans;
+  - clarifier comment synchroniser les changements d'équipe avec les matchs en préparation seulement, sans modifier les matchs commencés, terminés ou archivés;
+  - complexité estimée: moyenne, parce qu'il faut gérer la fusion local/cloud du roster et les conflits possibles entre deux appareils.
+- Polish visible par les fans:
+  - rendre l'écran `Spectateurs en direct` plus lisible avant partage public large;
+  - remplacer les titres génériques par les noms des équipes quand possible;
+  - alléger l'étape `Programme` pour éviter les doublons visuels;
+  - rendre les infos de match plus faciles à scanner sur mobile;
+  - garder les notifications de nouvelle demi-manche seulement lorsqu'elles aident à revenir à la manche courante.
+  - Livré: l'étape `Programme` affiche maintenant les équipes comme titre, les infos de match sont plus lisibles, les demi-manches utilisent des titres courts `Frappeurs` / `Défenseurs`, et les pastilles de navigation sont cliquables.
+- Joueur favori dans `Spectateurs en direct`:
+  - permettre au spectateur de cliquer un joueur pour le mettre en évidence partout dans la vue publique;
+  - un seul joueur favori à la fois;
+  - cliquer le favori à nouveau le désélectionne;
+  - mémoriser ce choix localement dans le navigateur du spectateur, sans écrire dans Firestore;
+  - utiliser le `playerId` publié dans la projection publique, sans fallback nom/numéro.
+  - Livré: les joueurs dans `Programme`, `Frappeurs` et `Défenseurs` sont cliquables; le favori est mémorisé localement par `playerId` et peut donc suivre le même joueur entre les matchs.
+- URL fixe d'équipe pour les fans:
+  - Livré: la route publique `#fans/{teamPublicId}` liste les matchs dont le lien `Spectateurs en direct` est publié pour l'équipe, avec mot de passe optionnel pour la liste.
+  - Livré: chaque match public mène vers son lien `#public/{publicId}` et affiche si un mot de passe est requis.
+  - Livré: les matchs apparaissent ou disparaissent selon les liens `Spectateurs en direct` créés ou retirés par le coach.
+  - La visibilité publique reste contrôlée par le lien spectateur du match.
+- Identifiant public d'équipe:
+  - Livré: `Équipe` contient un champ optionnel `Identifiant public`;
+  - exemple: `expos-rallye-cap`;
+  - l'identifiant est normalisé en minuscules avec lettres, chiffres et tirets, de 3 à 40 caractères;
+  - l'identifiant doit être unique côté Firestore et l'app refuse d'écraser celui d'une autre équipe;
+  - il sert à produire l'URL stable `#fans/{teamPublicId}`;
+  - Livré: quand le lien permanent est actif, l'identifiant est verrouillé; il faut retirer le lien pour le changer.
+- Livré: un document public `publicTeams/{teamPublicId}` contient la liste publique ou une version chiffrée de cette liste. Les détails protégés par mot de passe restent dans les documents de match chiffrés.
 
 ## Workflow actuel
 
@@ -17,17 +51,18 @@ Le workflow livré est maintenant:
 Match -> Joueurs -> Alignement
 ```
 
-`Partager` et `Spectateur` sont des vues hors étapes numérotées, accessibles dans le menu.
+`Mes matchs` et `Spectateur` sont des vues hors étapes numérotées accessibles dans le menu. `Partager` est une route contextuelle du match courant.
 
 ### Navigation
 
 - Livré: le header est simplifié en un menu global unique avec statut compact du match; les étapes `Match`, `Joueurs` et `Alignement` restent dans le contenu plutôt que dans la barre du haut.
-- `#accueil`: porte d'entrée contextuelle; création de l'équipe si elle manque, reprise du match ou création d'un nouveau match.
+- `#accueil`: porte d'entrée contextuelle; création de l'équipe si elle manque, création explicite d'un match si l'équipe existe sans match actif, ou reprise du match courant.
 - `#equipe`: gestion hors workflow de notre équipe et du bassin permanent de joueurs.
 - `#match`: informations du match, côté local/visiteur, adversaire, date, heure et endroit.
 - `#joueurs`: liste des joueurs du match et présence/absence avant le début.
 - `#alignement`: frappe fixe, ordre des frappeurs, optimisation défensive, progression du match, validations, suggestions, statistiques et changements de joueurs.
-- `#partager`: exports `Banc`, `Programme` et `Texte`. Le partage courriel et le spectateur autonome sont retirés.
+- `#mesmatchs`: sauvegarde, ouverture et suppression des matchs cloud du compte connecté.
+- `#partager`: exports `Banc`, `Programme` et `Texte`, plus `Spectateurs en direct` pour créer le lien public du match courant. Le partage courriel et le spectateur autonome sont retirés.
 - `#spectateur`: vue simplifiée en lecture seule.
 - Anciennes routes:
   - `#jouer` redirige vers `#alignement`.
@@ -53,7 +88,14 @@ Match -> Joueurs -> Alignement
 
 - `Partager` et `Spectateur` ne font plus partie du chemin numéroté.
 - Le spectateur autonome est retiré de `Partager`; la cible de partage externe devient un futur lien en ligne en lecture seule.
+- En cours: intégration Firebase optionnelle pour sauvegarder le match courant, publier un lien spectateur live et ouvrir le match sur mobile avec un compte courriel/Google.
+- En cours: mot de passe public optionnel avec projection spectateur chiffrée côté client.
 - L'accès à `Spectateur` reste possible même si certains exports devront éventuellement être bloqués selon la validité du match.
+- Livré: `Mes matchs` est dans le menu global, tandis que `Partager` est une action contextuelle du match courant.
+- Livré: `Partager` présente maintenant `Exports` (`Programme`, `Banc`, `Texte`) avant `En ligne` (`Spectateurs en direct`).
+- Livré: `Mes matchs` permet d'ouvrir ou supprimer les matchs cloud du compte connecté sans lien d'édition.
+- À clarifier: les actions cloud doivent indiquer quand une connexion est requise et proposer la connexion au moment où l'utilisateur tente une action qui en dépend.
+  - Livré: les actions cloud ouvrent la connexion quand elle est requise et affichent des états plus explicites.
 
 ### Équipe et joueurs permanents
 
@@ -61,25 +103,31 @@ Match -> Joueurs -> Alignement
 - Cette gestion ne devient pas une étape numérotée et elle est accessible dans `Équipe`.
 - Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer des joueurs pour les matchs futurs.
 - Le workflow `Joueurs` sert alors à indiquer les présences et absences du match courant, sans supprimer de joueur du bassin permanent.
-- L'accueil contextuel est livré pour la création d'équipe, la reprise du match courant, la création d'un nouveau match et l'accès aux archives.
+- L'accueil contextuel est livré pour la création d'équipe, la création explicite d'un match, la reprise du match courant et l'accès aux archives. La création ou modification de l'équipe ne crée plus de match automatiquement.
 
 ### Gaps connus du workflow
 
 - La fin de match offre maintenant une sortie de base complète: archiver ou non, conserver l'équipe et les joueurs, puis retourner à l'accueil. Il reste à livrer les actions avancées de reprise/recommencement.
 - Les exports doivent être contrôlés plus finement selon la validité réelle du match.
-- Les changements de joueurs doivent encore être stabilisés quand ils créent des positions futures incomplètes.
+- À surveiller: les changements de joueurs en cours de match sont considérés suffisamment fonctionnels pour l'instant. Les cas avancés de retrait, remplacement, ajout imprévu et positions futures incomplètes restent documentés, mais ne sont plus une priorité immédiate.
 - Le modèle de données courant utilise encore `team` et `players` comme bassin permanent et comme base du match courant. Une séparation interne plus nette reste à faire avant une synchronisation ou publication en ligne.
 
 ## Prochaines fonctionnalités candidates
 
-- Ajouter des titres de page différents par vue/hash afin d'améliorer l'historique du navigateur et le retour arrière.
+- Livré: les titres de page changent par vue/hash afin d'améliorer l'historique du navigateur et le retour arrière. Une amélioration future pourrait enrichir le titre avec les équipes du match courant.
+- Ajouter un `favicon.ico`.
+  - Livré: favicon simple ajouté.
+- Capitaliser le nom du jour dans les dates affichées, par exemple `Vendredi`.
+  - Livré: `formatDate()` capitalise le premier caractère.
+- Ajouter un raccourci rapide vers le match en cours près du menu quand un match existe.
+  - Livré: raccourci compact ajouté près du menu global, visible seulement pour un match commencé ou terminé non archivé.
 - Explorer Firebase/Firestore pour publier optionnellement un match avec un lien ou un QR code toujours à jour.
-- Sauvegarder plusieurs matchs.
+- Livré: sauvegarder plusieurs matchs cloud et les afficher dans `Mes matchs`, avec date de modification, ouverture et suppression.
 - Livré: ajouter une page d'archives des matchs passés.
 - Terminer un match avec action explicite, puis offrir `Nouveau match avec les mêmes joueurs` ou `Recommencer ce match`.
   - Livré partiellement: à la fin de la dernière demi-manche, l'application propose d'archiver ou non, ferme le match courant, conserve l'équipe et les joueurs, puis retourne à l'accueil.
 - Ajouter les archives à l'accueil contextuel quand la gestion multi-match sera disponible.
-  - Livré: l'accueil affiche le nombre d'archives locales et ouvre la page `Archives`.
+  - Redécoupé: les archives vivent maintenant dans `Mes matchs`; l'accueil se concentre sur le match courant non archivé.
 - Importer et exporter une liste de joueurs.
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
 - Livré: ajouter un champ optionnel de numéro de chandail à 2 chiffres dans les cartes joueurs de `Équipe`. Le numéro est éditable seulement hors match, comme le nom du joueur. Il apparaît en pastille dans l'alignement et reste disponible pour `Programme`, `Banc`, `Texte`, `Spectateur` et les futurs partages parents/fans.
@@ -92,7 +140,21 @@ Match -> Joueurs -> Alignement
 - Deuxième passe Alignement: permettre de recommencer un match démarré par erreur tant que le début de 1re manche n'est pas terminé, avec confirmation claire et retour à l'état non commencé.
 - Pour `Spectateur`, explorer plus tard un suivi en direct du déroulement du match basé sur la progression courante.
 - Dans `Spectateur`, indiquer clairement quand le match n'est pas commencé et placer la vue au début dans ce cas.
-- Dupliquer un match existant.
+- Dans `Spectateur`, informer qu'une nouvelle demi-manche est disponible sans forcément déplacer automatiquement l'utilisateur s'il consultait autre chose.
+  - Livré pour le spectateur public: l'utilisateur qui consulte autre chose reçoit une notification au lieu d'être déplacé.
+- Dans `Spectateur`, retirer les libellés visibles qui répètent `Lecture seule`; le contexte doit suffire.
+  - Livré partiellement: les messages publics ne répètent plus `Lecture seule`.
+- Dans `Spectateur`, retirer `À venir` des manches futures si le libellé alourdit la lecture.
+  - Livré: les manches futures ne répètent plus `À venir`.
+- Dans `Spectateur`, ajouter une étape initiale `Programme` avant les manches. Si aucune donnée de manche n'est publiée, cette étape est la seule visible et indique `Alignement à venir`.
+  - Livré: le spectateur public affiche une étape `Programme` avec `Alignement à venir` avant le début.
+- Dans `Spectateur`, ajouter un état final `Merci, à la prochaine` disponible quand le match est terminé et jusqu'à ce qu'il soit archivé ou supprimé.
+  - Livré: le spectateur public affiche un état final quand toutes les demi-manches sont complétées.
+- Dans `Spectateur`, permettre d'ouvrir ou générer le `Programme` depuis la vue spectateur.
+- Explorer une action explicite pour publier ou mettre à jour l'alignement visible dans le spectateur live, afin d'éviter de publier des informations incomplètes par accident.
+- En frappe non fixe, permettre à l'entraîneur d'indiquer manuellement le dernier frappeur d'une manche pour aider la vue spectateur à annoncer les prochains frappeurs probables.
+- L'URL permanente d'équipe est remontée en priorité `Spectateurs / Cloud` sous la forme `#fans/{teamPublicId}`.
+- Rejeté pour l'instant: dupliquer un match existant. L'usage réel ne justifie pas cette action dans la première version.
 - Ajouter un écran de résumé avant impression.
 - En mode attaque, afficher les lanceurs de la prochaine manche défensive si applicable.
 - En mode défense, afficher les deux premiers frappeurs de la prochaine manche offensive si applicable.
@@ -109,11 +171,11 @@ La gestion durable de notre équipe, de son nom et de son bassin de joueurs est 
 
 À stabiliser:
 
-- initialiser les nouveaux matchs avec la date du jour;
+- initialiser les nouveaux matchs sans date ni heure par défaut;
 - ajouter le nombre de manches initial dans l'étape `Match`, puisque c'est une propriété du match prévu avant l'ajustement de l'alignement;
 - déplacer le réglage `Frappe fixe` dans l'étape `Match`, puisqu'il décrit les règles/configurations du match courant. Il devient non modifiable après le début du match;
 - utiliser une heure en format 24h avec intervalles de 5 minutes;
-- Livré: `Match` contient maintenant les manches initiales, `Frappe fixe`, l'heure 24h par pas de 5 minutes, l'heure par défaut `18:30` et une mise en page plus claire sans texte d'aide redondant sur `Équipe`.
+- Livré: `Match` contient maintenant les manches initiales, `Frappe fixe`, l'heure 24h par pas de 5 minutes et une mise en page plus claire sans texte d'aide redondant sur `Équipe`.
 - garder `Réinitialiser` pour l'action destructive globale, parce qu'elle efface vraiment toutes les données locales;
 - normaliser automatiquement la casse des noms de joueurs à l'ajout;
 - garder les actions de modification clairement bloquées quand le match est débuté.
@@ -132,6 +194,7 @@ Améliorations UX à prévoir:
   - `En cours`, avec la demi-manche courante affichée.
 - dans le détail du match, afficher date, heure et endroit;
 - Livré: l'accueil utilise `Aucun match prévu`, `Préparer un match`, `Match en préparation` et `En cours` avec la demi-manche courante, et affiche date, heure et endroit quand disponibles.
+- Livré: quand un match courant non archivé existe, l'accueil affiche trois cartes workflow cliquables: `Match`, `Joueurs`, puis `Alignement` ou `Jouer`.
 
 ## Équipe et joueurs
 
@@ -139,6 +202,10 @@ Améliorations UX à prévoir:
 
 - Livré: ajouter le numéro de chandail optionnel dans `Équipe`, éditable seulement avant match;
 - Livré: `Équipe` affiche un compteur de joueurs dans l'en-tête.
+- Livré: pendant un match commencé, `Équipe` affiche une note expliquant que le bassin permanent est verrouillé jusqu'à la fin ou l'archivage du match.
+- Livré: l'action de suppression d'un joueur dans `Équipe` utilise une icône `×` plutôt qu'une poubelle.
+- Livré: `Équipe` offre une action contextuelle pour préparer un match ou modifier le match courant, et `Mes matchs` offre `Créer un match` quand aucun match non archivé n'est actif.
+- Livré: l'étape `Joueurs` permet d'ajouter rapidement un joueur à l'équipe et au match courant avant le début, sans quitter le workflow.
 - Livré: l'action `Créer une équipe exemple` est placée sous la liste des joueurs et son avertissement précise que l'équipe, les matchs et les archives locales sont remplacés.
 - dans l'étape `Joueurs`, garder des cartes de même taille pour les joueurs présents et absents;
 - dans l'étape `Joueurs`, ne pas afficher de carte vide `Aucun` quand il n'y a pas de présents ou d'absents; la bulle de total existante suffit.
@@ -165,6 +232,7 @@ Améliorations UX à prévoir:
   - garder les cartes d'équité dans cette section, idéalement repliée par défaut.
   - Livré partiellement: `Suggestions` est renommé et masqué quand il n'y a rien d'actionnable; les cartes d'équité et le tableau sont regroupés dans `Statistiques et équité`.
 - Livré: stabiliser la taille des boutons `Mélanger`, `Optimiser`, `Commencer` / `Terminer...`, `Changement de joueurs` et des boutons `+` / `-` de manches afin que l'interface ne bouge pas selon le texte.
+- Livré: la pastille de rang dans la colonne `Ordre` utilise une couleur plus neutre pour ne pas ressembler à une erreur.
 - Livré: remplacer l'icône seule de shuffle par le libellé texte `Mélanger`.
 - Livré: mode local `Préparer` / `Jouer` au-dessus du tableau d'alignement, sans recréer une route `Jouer`:
   - avant match, `Préparer` contient `Mélanger` et `Optimiser`;
@@ -196,9 +264,12 @@ Modèle souhaité:
 - la projection publique doit être dérivée d'un snapshot de match, pas du bassin d'équipe courant;
 - données publiques minimales: prénoms, numéros si disponibles, ordre, positions, infos de match;
 - accès public seulement aux personnes qui ont le lien;
-- vue parents en lecture seule avec informations limitées comme minimum;
+- vue fans en lecture seule avec informations limitées comme minimum;
 - mode assistant modifiable à évaluer plus tard;
 - possibilité de dépublier ou remplacer le lien plus tard.
+- priorité future proche: URL fixe d'équipe `#fans/{teamPublicId}` qui liste les matchs publics en ordre chronologique, sans exposer le bassin permanent complet ni remplacer les liens de match `#public/{publicId}`;
+- interface de connexion plus standard, incluant un bouton Google reconnaissable avec icône;
+- actions cloud guidées: quand une sauvegarde, une liste de matchs ou une publication requiert une connexion, l'app devrait proposer de se connecter au lieu de laisser l'utilisateur deviner.
 
 Notes de coût:
 
@@ -305,13 +376,16 @@ Comportement livré:
 - retrait d'un joueur actif avec avertissement, sans toucher aux demi-manches jouées;
 - obligation de remplacer un joueur si seulement 6 joueurs sont actifs.
 
-## Stabilisation changements en cours de match
+## Changements en cours de match à surveiller
 
-Bogues majeurs à prioriser:
+Ces scénarios sont importants à long terme, mais ils sont moins prioritaires pour la première version cloud parce que le flux actuel est considéré suffisamment utilisable et devrait être peu fréquent au départ.
 
 - Quand toutes les demi-manches sont terminées, l'application doit permettre de terminer le match et de préparer un nouveau match avec les mêmes joueurs. Présentement, l'entraîneur peut se retrouver bloqué dans un état de match terminé.
+  - Livré partiellement: la fin de match propose maintenant d'archiver ou non et retourne à l'accueil.
 - Après ajout ou retrait de joueurs, l'alignement peut rester dans un état mal ajusté tant que l'utilisateur ne clique pas manuellement sur `Optimiser`.
+  - Livré partiellement: avant match, l'arrivée sur `Alignement` optimise automatiquement après des changements de joueurs quand 6 à 12 joueurs sont actifs.
 - Quand plus de 12 joueurs sont entrés, l'application semble rendre seulement 12 joueurs actifs. Les joueurs excédentaires devraient plutôt apparaître comme absents ou inactifs, sans être perdus ni invisibles.
+  - Livré: les joueurs excédentaires restent visibles comme absents.
 - Il semble y avoir des bogues quand un joueur redevient présent après avoir été absent ou inactif. À valider avec les nouvelles règles d'ordre.
 - Retirer ou désactiver un joueur pendant un match peut laisser des manches futures avec moins de 6 positions assignées et rendre l'alignement difficile à corriger.
   - Première correction livrée: générer une suggestion pour insérer un joueur du banc dans une position manquante et permettre de cliquer une cellule `BANC` pour remplir automatiquement une position manquante.
@@ -332,6 +406,12 @@ Irritants UX à corriger:
 
 - Le texte d'introduction devrait mieux nommer la promesse produit: un alignement clair et équitable pour le banc, facile pour les entraîneurs et beau pour les parents.
 - Rendre la demi-manche courante plus évidente dans `Alignement`.
+- Retirer l'icône du lien `Partage` dans le menu global.
+- Dans `Match`, retirer le texte d'aide redondant `Crée le contexte du match courant.`
+- Dans `Équipe`, clarifier le modèle du bouton `Sauvegarder`: soit sauvegarde automatique cohérente partout, soit action explicite cohérente, avec une décision particulière pour la sauvegarde cloud.
+- Livré: le modal `Réinitialiser` avertit que l'équipe, les joueurs, les matchs locaux, les archives, les données cloud connues et les liens spectateur seront supprimés quand c'est possible.
+- Livré: `Mes matchs` sert à la sauvegarde et à la reprise des matchs cloud; `Spectateurs en direct` dans `Partager` sert au lien pour les fans.
+- Livré: les actions disponibles localement sont dans `Exports`; les actions qui exigent une connexion sont dans `En ligne`.
 - Dans `Spectateur`, afficher les deux lanceurs sur deux lignes séparées pour obtenir 6 éléments visuels comme l'ordre de frappe.
   - Livré: `L1` et `L2` sont affichés sur deux lignes distinctes dans `Spectateur`.
 - Livré: le bouton d'échange `Local` / `Visiteur` reste stable quand on inverse les côtés.
@@ -359,6 +439,13 @@ Questions fermées:
 
 - Pas encore de suite automatisée CLI. La couverture actuelle est une page de tests navigateur dans `tests/rules.html`.
 - Les exports peuvent diverger de l'affichage principal parce qu'ils reconstruisent leur propre HTML.
+- Livré: le champ de mot de passe de `Spectateurs en direct` utilise maintenant un champ texte avec `autocomplete="off"` et des noms d'inputs dédiés afin de réduire les propositions de sauvegarde du gestionnaire de mots de passe Chrome.
+- À surveiller: Chrome peut encore proposer de sauvegarder le code si le navigateur détecte malgré tout un flux d'authentification; dans ce cas, il faudra remplacer le champ par un contrôle encore plus personnalisé.
+- Livré: le placeholder du mot de passe `Spectateurs en direct` est `ex. Youppi!`; le champ est verrouillé après création du lien et se réactive quand le lien est retiré.
+- Livré: le `Message aux fans` peut être modifié pendant un match actif, affiche les indications mini-Markdown dans l'interface et montre un aperçu.
+- Livré: l'export `Texte` présente maintenant un aperçu éditable avant la copie.
+- Livré: l'équipe exemple des Expos de 1994 inclut les numéros de chandail du roster 1994.
+- Livré: ajout d'un `Message aux fans` dans l'onglet `Match`, avec mini-Markdown limité, affiché dans l'étape publique `Programme` et dans l'export image `Programme`.
 - Livré: l'image parents s'adapte mieux aux longues listes et aux noms longs avec ordre sur deux colonnes, sections aérées et retours de ligne contrôlés.
 - Livré: les partages sont simplifiés en `Banc`, `Programme` et `Texte`; le partage courriel est retiré.
 - Livré: l'export `Banc` imprime un tableau simple avec une ligne par joueur et deux sous-colonnes par manche, `🏏` et `🧤`; la colonne frappe reste vide quand la frappe fixe est désactivée.
@@ -419,7 +506,7 @@ Questions fermées:
 - `Accueil` contextuel livré pour créer l'équipe initiale, reprendre un match ou créer un nouveau match.
 - `Équipe` hors workflow livré pour gérer le nom de notre équipe et le bassin de joueurs.
 - Le hero de présentation apparaît seulement dans `Accueil`.
-- Les cartes de contexte de l'accueil affichent le nom de l'équipe, le statut du match, les joueurs enregistrés et les matchs archivés; les cartes liées à l'équipe mènent à `Équipe`, la carte de statut mène à `Match`, et la carte archives mène à `Archives`.
+- Les cartes de contexte de l'accueil affichent le nom de l'équipe, les joueurs, les matchs en préparation, en cours, terminés et archivés. Les cartes à zéro pour `En préparation` et `En cours` ne sont pas cliquables; `Terminés` et `Archivés` mènent à `Mes matchs`.
 - L'accueil garde un seul bouton d'action principal selon l'état courant.
 - `Partager` et `Spectateur` sont sortis des étapes numérotées.
 - `Spectateur` masque maintenant l'en-tête global et le workflow numéroté, et utilise la palette visuelle du site.
@@ -435,3 +522,22 @@ Questions fermées:
 - La création d'équipe exemple est bloquée pendant un match débuté.
 - Le démarrage de la progression du match bloque si le nombre de joueurs actifs n'est pas entre 6 et 12. Les autres problèmes d'alignement ou de règles affichent un avertissement avec confirmation.
 - Le refactor du workflow a retiré l'onglet `Jouer`; `Alignement` porte maintenant la progression du match, les validations, les suggestions et les changements de joueurs.
+
+## Livré: refactor multi-match v5
+
+- Stockage local basculé vers `rallye_cap_qc_v5`.
+- Décision de développement: aucun vieux modèle de données n'est supporté avant la mise en production. Aucune migration, compatibilité ou réparation automatique d'anciens états ne doit être ajoutée tant que l'app n'a pas d'utilisateurs de production.
+- `teamProfile`, `roster`, `matches` et `activeMatchId` deviennent la structure officielle.
+- `Mes matchs` remplace la logique séparée `Mes matchs` / `Archives`.
+- Livré: `Mes matchs` utilise maintenant un seul tableau triable pour tous les statuts.
+- Les matchs locaux et cloud sont fusionnés dans les tableaux; les matchs seulement en ligne sont importés localement à l'ouverture.
+- Les lignes de `Mes matchs` sont cliquables pour ouvrir le match; les actions sont des icônes avec titres accessibles.
+- Les actions livrées sont `Mettre en ligne`, `Retirer du cloud`, `Archiver` et `Supprimer`.
+- Les archives sont maintenant des matchs `archived` en lecture seule.
+- Stabilisé: l'action `Archiver` est disponible seulement pour les matchs terminés; un match en préparation ou en cours doit être terminé ou supprimé.
+- `Partager` reste limité au match actif et ne contient plus de reprise d'édition cloud.
+- Stabilisé: un nouveau match est créé seulement par action explicite, copie les joueurs de l'équipe, démarre sans date/heure/adversaire/endroit et apparaît immédiatement dans `Mes matchs`.
+- Stabilisé: le raccourci du header ignore les archives, affiche `Match en cours` pour un match actif et `Match terminé` pour un match complété.
+- Stabilisé: les tableaux `Mes matchs` utilisent les colonnes `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié`, `Actions`; `Modifié` est formaté `YYYY-MM-DD HH:mm`.
+
+Dette restante: nettoyer le code mort hérité des anciennes archives et extraire la couche d'état v5 hors de `app.js` quand le modèle sera validé manuellement.

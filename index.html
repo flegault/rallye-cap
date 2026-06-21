@@ -4,19 +4,23 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Alignement Rallye-Cap</title>
+<link rel="icon" href="favicon.ico" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header class="top">
   <div class="topin">
-    <div class="brand"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub" id="topMatchStatus">Aucun match prévu</div></div></div>
-    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
+    <a class="brand brandLink" href="#accueil" aria-label="Retour à l'accueil"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub" id="topMatchStatus">Aucun match prévu</div></div></a>
+    <div class="topActions">
+      <a class="quickMatchLink hide" href="#alignement" id="quickMatchLink">Match en cours</a>
+      <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
+    </div>
     <nav class="nav" id="nav">
       <a href="#accueil" data-nav="accueil">Accueil</a>
       <a href="#equipe" data-nav="equipe">Équipe</a>
-      <a href="#archives" data-nav="archives">Archives</a>
-      <a href="#partager" data-nav="partager">↗ Partage</a>
+      <a href="#mesmatchs" data-nav="mesmatchs">Mes matchs</a>
       <a href="#spectateur" data-nav="spectateur">Spectateur</a>
+      <button id="cloudAccountBtn">Connexion cloud</button>
       <button class="dangerMenu" id="resetBtn">Réinitialiser</button>
     </nav>
   </div>
@@ -39,17 +43,25 @@
             <strong id="miniTeamName">Équipe à définir</strong>
             <span class="label">Équipe</span>
           </a>
-          <a class="metric metricLink miniTeam" href="#match" id="matchStatusMetric">
-            <strong id="miniMatch">Aucun match prévu</strong>
-            <div class="label">statut du match</div>
-          </a>
           <a class="metric metricLink" href="#equipe">
             <div class="big" id="miniPlayers">0</div>
-            <div class="label">joueurs enregistrés</div>
+            <div class="label">joueurs</div>
           </a>
+          <button class="metric metricLink" id="draftMetric" type="button">
+            <div class="big" id="miniDrafts">0</div>
+            <div class="label">en préparation</div>
+          </button>
+          <button class="metric metricLink" id="activeMetric" type="button">
+            <div class="big" id="miniActiveMatches">0</div>
+            <div class="label">en cours</div>
+          </button>
+          <button class="metric metricLink" id="completedMetric" type="button">
+            <div class="big" id="miniCompleted">0</div>
+            <div class="label">terminés</div>
+          </button>
           <button class="metric metricLink" id="archiveMetric" type="button">
             <div class="big" id="miniArchives">0</div>
-            <div class="label">matchs archivés</div>
+            <div class="label">archivés</div>
           </button>
         </div>
       </div>
@@ -67,38 +79,33 @@
       </div>
       <div class="grid2 teamSetup">
         <label><span>Nom de notre équipe</span><input id="teamName" placeholder="ex. Expos de Montréal" /></label>
-        <button class="btn brandBtn" id="saveTeamBtn" type="button">Enregistrer</button>
+        <label><span>Identifiant public</span><input id="teamPublicSlug" placeholder="ex. expos-rallye-cap" autocomplete="off" autocapitalize="none" spellcheck="false" /><small class="hint">Optionnel pour le lien permanent: <code id="teamPublicSlugUrl">#fans/expos-rallye-cap</code>.</small></label>
       </div>
       <div class="players" id="teamPlayers"></div>
-      <div class="homeActions noPrint"><button class="btn secondary" id="exampleTeamBtn" type="button">Créer une équipe exemple</button></div>
+      <div class="homeActions noPrint"><button class="btn secondary" id="teamMatchBtn" type="button">Préparer un match</button><button class="btn secondary" id="exampleTeamBtn" type="button">Créer une équipe exemple</button></div>
     </div>
     <div class="card" id="teamAddPlayersCard">
       <div class="spaced">
         <div><h3>Ajouter des joueurs</h3><p class="hint">Ces joueurs seront disponibles pour les matchs futurs.</p></div>
       </div>
-      <div class="grid2"><label><span>Un nom par ligne, ou séparé par virgule</span><textarea id="teamNames" placeholder="ex. Émile, Julien, Noah"></textarea></label><button class="btn brandBtn" id="addTeamNames" type="button">Ajouter</button></div>
+      <button class="btn brandBtn" id="addTeamNames" type="button">Ajouter des joueurs</button>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#accueil">Retour à l'accueil</a></div>
   </section>
-  <section class="view" id="view-archives">
-    <div class="card">
-      <div class="spaced">
-        <div>
-          <h2>Archives</h2>
-          <p class="hint">Consulte les matchs archivés en lecture seule. Les changements futurs à l'équipe ne modifient pas ces archives.</p>
-        </div>
-        <span class="tag">Lecture seule</span>
+  <section class="view" id="view-mesmatchs">
+    <div class="card noPrint">
+      <div class="spaced"><div><h2>Mes matchs</h2><p class="hint">Ouvre, trie, archive, supprime ou synchronise tes matchs locaux et en ligne.</p></div></div>
+      <div class="shareActions">
+        <button class="btn brandBtn hide" id="newMatchFromListBtn" type="button">Créer un match</button>
+        <button class="btn secondary" id="refreshCloudMatchesBtn">Actualiser</button>
       </div>
-      <div id="archivesList" class="archiveList"></div>
-    </div>
-    <div class="card hide" id="archiveDetailCard">
-      <div id="archiveDetail"></div>
+      <div class="onlineMatches" id="cloudMatchesList"></div>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#accueil">Retour à l'accueil</a></div>
   </section>
   <section class="view" id="view-match">
     <div class="card">
-      <div class="spaced"><div><h2>1. Match</h2><p class="hint">Crée le contexte du match courant.</p></div></div>
+      <div class="spaced"><div><h2>1. Match</h2></div></div>
       <h3 class="formSectionTitle">Équipes</h3>
       <div class="matchTeamsGrid">
         <label class="teamLinkLabel"><span>Notre équipe</span><a class="teamField teamFieldLink" href="#equipe"><strong id="matchTeamName">Équipe à définir</strong></a></label>
@@ -115,12 +122,15 @@
         <label><span>Manches</span><input id="innings" type="number" min="4" max="9" step="1" /></label>
         <div class="fixedField"><span>Frappe fixe</span><div class="switchLine matchSwitch"><label class="switch"><input id="fixed" type="checkbox"><span class="slider"></span></label><div class="tiny">Normalement activé en Rallye-Cap: 6 frappeurs par manche, puis on continue avec le prochain frappeur.</div></div></div>
       </div>
+      <label class="fanMessageField"><span>Message aux fans</span><textarea id="fanMessage" maxlength="300" placeholder="ex. Apportez vos sourires et vos casquettes!"></textarea><small class="hint">Affiché dans Spectateurs en direct et dans le Programme. Markdown simple: **gras**, *italique*, retours de ligne et listes avec "-".</small></label>
+      <div class="fanMessagePreview hide" id="fanMessagePreview"></div>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#joueurs">Continuer</a></div>
   </section>
   <section class="view" id="view-joueurs">
     <div class="card">
-      <div class="spaced"><div><h2>2. Joueurs</h2><p class="hint">Indique qui est présent ou absent pour ce match. L'ajout et la suppression se font dans Équipe.</p></div><span class="tag" id="activeCountTag">0 actif</span></div>
+      <div class="spaced"><div><h2>2. Joueurs</h2><p class="hint">Indique qui est présent ou absent pour ce match. Ajoute rapidement un joueur à l'équipe au besoin; la suppression reste dans Équipe.</p></div><span class="tag" id="activeCountTag">0 actif</span></div>
+      <div class="row noPrint"><button class="btn secondary" id="addPlayerToTeamFromMatchBtn" type="button">Ajouter un joueur à l'équipe</button></div>
       <div class="players" id="players"></div>
     </div>
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#alignement" id="toAlign">Continuer</a></div>
@@ -128,18 +138,18 @@
   <section class="view" id="view-alignement">
     <div class="card">
       <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Prépare l’alignement, suis la progression du match et ajuste les changements au besoin.</p></div></div>
-      <div class="segment lineupModeTabs noPrint" role="tablist" aria-label="Mode d'alignement">
-        <button id="lineupPrepareTab" type="button" data-lineup-mode="preparer">Préparer</button>
-        <button id="lineupPlayTab" type="button" data-lineup-mode="jouer">Jouer</button>
-      </div>
       <div class="row lineupActions noPrint">
+        <div class="segment lineupModeTabs" role="tablist" aria-label="Mode d'alignement">
+          <button id="lineupPrepareTab" type="button" data-lineup-mode="preparer">Préparer</button>
+          <button id="lineupPlayTab" type="button" data-lineup-mode="jouer">Jouer</button>
+        </div>
         <div class="row prepareActions" id="prepareActions">
           <button class="btn secondary" id="shuffleOrderBtn" title="Mélanger l’ordre au bâton">Mélanger</button>
           <button class="btn secondary" id="regenBtn">Optimiser</button>
         </div>
         <div class="row playActions" id="playActions">
           <button class="btn brandBtn" id="advanceHalfBtn">Commencer</button>
-          <button class="btn secondary" id="lineupChangeBtn">Changement de joueurs</button>
+          <button class="btn secondary" id="lineupChangeBtn">Changement</button>
         </div>
       </div>
       <div class="suggestions playWarnings hide" id="playWarnings"></div>
@@ -149,34 +159,63 @@
     <div class="card"><h3>Validation</h3><div class="alerts" id="validations"></div></div>
     <div class="card suggestionsCard" id="suggestionsCard"><h3>Suggestions</h3><div class="suggestions" id="suggestions"></div></div>
     <div class="card statsCard"><h3>Statistiques et équité</h3><div class="scores" id="scores"></div><div class="tableWrap statTable" id="stats"></div></div>
-    <div class="stepActions noPrint"><a class="btn brandBtn" href="#partager">Continuer</a></div>
+    <div class="stepActions noPrint"><a class="btn secondary" href="#partager">Partager</a></div>
   </section>
   <section class="view" id="view-partager">
     <div class="card noPrint">
       <div class="spaced"><div><h2>Partage</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode spectateur.</p></div></div>
     </div>
+    <h3 class="shareSectionTitle noPrint">Exports</h3>
     <div class="grid3 shareGrid">
-      <div class="card shareCard">
-        <h3>Banc</h3>
-        <p class="hint">Version imprimable pour gérer les frappeurs, la défensive et le banc.</p>
-        <button class="btn secondary" id="printCoachBtn">Imprimer le banc</button>
-      </div>
       <div class="card shareCard">
         <h3>Programme</h3>
         <p class="hint">Image simple à envoyer dans un groupe ou une conversation.</p>
         <button class="btn secondary" id="parentImageBtn">Générer le programme</button>
       </div>
       <div class="card shareCard">
+        <h3>Banc</h3>
+        <p class="hint">Version imprimable pour gérer les frappeurs, la défensive et le banc.</p>
+        <button class="btn secondary" id="printCoachBtn">Imprimer le banc</button>
+      </div>
+      <div class="card shareCard">
         <h3>Texte</h3>
         <p class="hint">Texte brut compact pour Funny Print ou une petite imprimante.</p>
-        <button class="btn secondary" id="copyTextBtn">Copier texte</button>
+        <button class="btn secondary" id="copyTextBtn">Préparer le texte</button>
+        <div class="textPreviewBox hide" id="textPreviewBox">
+          <textarea id="textPreview" aria-label="Aperçu texte à copier"></textarea>
+          <button class="btn secondary" id="copyTextPreviewBtn" type="button">Copier le texte</button>
+        </div>
+      </div>
+    </div>
+    <h3 class="shareSectionTitle noPrint">En ligne</h3>
+    <div class="grid3 shareGrid cloudShareGrid">
+      <div class="card shareCard">
+        <h3>Lien permanent d'équipe</h3>
+        <p class="hint" id="teamPublicShareText">Un seul lien à conserver pour tous les matchs publiés.</p>
+        <label class="publicPasswordField"><span>Mot de passe optionnel</span><input id="teamPublicPassword" name="team-spectator-access-code" type="text" inputmode="text" autocomplete="off" aria-label="Mot de passe du lien permanent d'équipe" placeholder="ex. Youppi!" /></label>
+        <p class="hint hide" id="teamPublicPasswordHint">Ce mot de passe devra être fourni aux fans pour voir la liste.</p>
+        <div class="shareActions">
+          <button class="btn secondary" id="publishTeamPublicBtn">Créer le lien d'équipe</button>
+          <button class="btn secondary" id="copyTeamPublicLinkBtn">Copier le lien</button>
+          <button class="btn danger" id="unpublishTeamPublicBtn">Retirer le lien</button>
+        </div>
+      </div>
+      <div class="card shareCard">
+        <h3>Spectateurs en direct</h3>
+        <p class="hint" id="publicShareText">Les fans pourront suivre le match en direct!</p>
+        <label class="publicPasswordField"><span>Mot de passe optionnel</span><input id="publicPassword" name="spectator-access-code" type="text" inputmode="text" autocomplete="off" aria-label="Mot de passe du lien spectateurs" placeholder="ex. Youppi!" /></label>
+        <p class="hint hide" id="publicPasswordHint">Ce mot de passe devra être fourni aux fans.</p>
+        <div class="shareActions">
+          <button class="btn secondary" id="publishPublicBtn">Créer un lien</button>
+          <button class="btn secondary" id="copyPublicLinkBtn">Copier le lien</button>
+          <button class="btn danger" id="unpublishPublicBtn">Retirer le lien</button>
+        </div>
       </div>
     </div>
   </section>
   <section class="view" id="view-spectateur">
     <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn secondary" id="matchCurrent">Manche en cours</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
-<div class="foot noPrint">Fait pour Rallye-Cap • Sauvegarde locale seulement</div>
 </main>
 <div class="modalOverlay" id="modalOverlay"><div class="modal"><h3 id="modalTitle"></h3><p id="modalText"></p><div class="row" id="modalActions"></div></div></div>
 <script src="rules.js"></script>

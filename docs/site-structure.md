@@ -4,16 +4,18 @@ Ce document décrit la structure actuelle de l'application et sert de base pour 
 
 ## Navigation actuelle
 
-L'application est une SPA avec huit vues accessibles par hash URL:
+L'application est une SPA avec sept vues applicatives principales accessibles par hash URL:
 
 - `#accueil`
 - `#equipe`
-- `#archives`
+- `#mesmatchs`
 - `#match`
 - `#joueurs`
 - `#alignement`
 - `#partager`
 - `#spectateur`
+- `#public/{publicId}` pour le spectateur live public en lecture seule
+- `#fans/{teamPublicId}` pour la liste publique permanente des matchs publiés d'une équipe
 
 La navigation est disponible dans:
 
@@ -21,7 +23,7 @@ La navigation est disponible dans:
 - les étapes numérotées du workflow, affichées dans le contenu;
 - certains boutons de continuité entre les vues.
 
-Le menu global regroupe `Accueil`, `Équipe`, `Archives`, `Partage`, `Spectateur` et l'action destructive `Réinitialiser`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales.
+Le menu global regroupe `Accueil`, `Équipe`, `Mes matchs`, `Spectateur` et l'action destructive `Réinitialiser`. L'icône et le titre du site ramènent à `Accueil`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales et en ligne connues. `Partager` n'est plus dans le menu global; il reste contextuel au match actif.
 
 ## Sitemap actuel
 
@@ -29,11 +31,11 @@ Le menu global regroupe `Accueil`, `Équipe`, `Archives`, `Partage`, `Spectateur
 Alignement Rallye-Cap
 +-- Accueil (#accueil)
 |   +-- Si aucune équipe: appel à créer l'équipe
-|   +-- Si équipe créée: créer un nouveau match ou reprendre la préparation
-|   +-- Si match commencé: continuer le match
+|   +-- Si équipe créée sans match actif: créer explicitement un nouveau match
+|   +-- Si match courant non archivé: cartes workflow `Match`, `Joueurs`, `Alignement` ou `Jouer`
 |   +-- Hero de présentation
-|   +-- Cartes cliquables: nom de l'équipe, statut du match, joueurs enregistrés, matchs archivés
-|   +-- Statuts: Aucun match prévu, En préparation, En cours avec demi-manche
+|   +-- Cartes cliquables: adversaire/date/heure/endroit, présents/absents, tableau d'alignement ou jeu
+|   +-- Statuts: Aucun match prévu, En préparation, En cours avec demi-manche, Match terminé
 |   +-- Un seul bouton d'action principal selon l'état
 +-- Équipe (#equipe), hors workflow
 |   +-- Nom de notre équipe
@@ -42,6 +44,16 @@ Alignement Rallye-Cap
 |   |   +-- Renommer un joueur
 |   |   +-- Supprimer un joueur
 |   +-- Créer une équipe exemple
++-- Mes matchs (#mesmatchs)
+|   +-- Tableau Matchs
+|   |   +-- Matchs locaux et matchs en ligne non archivés
+|   |   +-- Tri par adversaire, date/heure, endroit, statut, modification
+|   |   +-- Ligne cliquable pour ouvrir
+|   |   +-- Icônes: mettre en ligne, retirer du cloud, archiver, supprimer
+|   +-- Tableau Matchs archivés
+|   |   +-- Archives locales en lecture seule
+|   |   +-- Matchs archivés en ligne du compte connecté
+|   |   +-- Ligne cliquable pour consulter, retirer du cloud, supprimer
 +-- Match (#match)
 |   +-- Local / visiteur
 |   +-- Adversaire
@@ -70,25 +82,34 @@ Alignement Rallye-Cap
 |   +-- Suggestions, seulement quand une action est proposée
 |   +-- Statistiques et équité
 |   +-- Continuer vers Partager
-+-- Archives (#archives)
-|   +-- Liste des matchs archivés
-|   +-- Consultation en lecture seule, fermée par défaut
-|   +-- Exports régénérés depuis le snapshot
-|   +-- Suppression manuelle avec confirmation
 +-- Partager (#partager)
-|   +-- Banc
-|   |   +-- Imprimer le banc
-|   +-- Programme
-|   |   +-- Générer le programme
-|   +-- Texte
-|   |   +-- Copier texte brut
+|   +-- Exports
+|   |   +-- Programme
+|   |   +-- Banc
+|   |   +-- Texte
+|   +-- En ligne
+|   +-- Lien permanent d'équipe
+|   |   +-- Utilise l'identifiant public choisi dans Équipe
+|   |   +-- Créer un lien public d'équipe
+|   |   +-- Mot de passe optionnel chiffré côté client
+|   |   +-- Copier ou retirer le lien
+|   +-- Spectateurs en direct
+|   |   +-- Créer un lien public
+|   |   +-- Mot de passe optionnel chiffré côté client
+|   |   +-- Copier ou retirer le lien
 +-- Spectateur (#spectateur)
+    +-- Programme ou alignement à venir
     +-- Carte de manche courante
     |   +-- Attaque: frappeurs de la manche si la frappe fixe est activée
     |   +-- Attaque: rappel de suivre l'ordre au banc si la frappe fixe est désactivée
     |   +-- Défense: positions défensives
+    +-- État final de remerciement quand le match est terminé
     +-- Navigation précédent / suivant
     +-- Points de progression
++-- Fans publics (#fans/{teamPublicId})
+    +-- Liste des matchs publiés pour l'équipe
+    +-- Indicateur de match protégé par mot de passe
+    +-- Ouverture du match dans `#public/{publicId}`
 ```
 
 ## Flux principal actuel
@@ -111,7 +132,7 @@ Le workflow cible suit la réalité d'un match et évite de devoir revenir dans 
 📅 Match -> 👨‍👩‍👦‍👦 Joueurs -> 📋 Alignement
 ```
 
-`Archives`, `Partager` et `Spectateur` sont des pages non numérotées accessibles dans le menu. `Spectateur` est une vue simplifiée en lecture seule.
+`Mes matchs` et `Spectateur` sont des pages non numérotées accessibles dans le menu. `Partager` reste une route non numérotée, mais elle est ouverte depuis le match courant plutôt que depuis le menu global. `Spectateur` est une vue simplifiée en lecture seule. Créer l'équipe ou modifier le bassin permanent ne crée pas de match automatiquement; le match est créé par une action explicite depuis l'accueil.
 
 La gestion durable de notre équipe et de son bassin de joueurs est séparée du workflow de match sans devenir une étape numérotée. Elle vit dans `Équipe` et sert à définir le nom de notre équipe ainsi que les joueurs disponibles pour les matchs futurs. Le workflow `Joueurs` sert seulement à indiquer qui est présent ou absent pour le match courant.
 
@@ -181,6 +202,13 @@ Alignement Rallye-Cap
 - La vue spectateur affiche les deux lanceurs sur deux lignes séparées pour présenter 6 éléments défensifs, comme les 6 frappeurs en attaque.
 - La route `#spectateur` masque l'en-tête global et le workflow numéroté pour donner une vue plein écran simplifiée.
 - La vue spectateur locale indique `En cours`, `Terminée` et `À venir`, et offre un bouton `Manche en cours`.
+- La vue spectateur pourrait informer qu'une nouvelle demi-manche est disponible sans déplacer automatiquement l'utilisateur qui consulte une autre étape.
+  - Livré pour le spectateur public.
+- La vue spectateur ne devrait pas répéter `Lecture seule` ni afficher `À venir` si ces libellés nuisent à la simplicité.
+  - Livré partiellement pour le spectateur public.
+- La vue spectateur devrait éventuellement inclure une première étape `Programme`, puis un état final `Merci, à la prochaine`.
+  - Livré pour le spectateur public.
+- `Mes matchs` gère la sauvegarde, l'ouverture et la suppression des matchs cloud. La section `Partager` agit seulement sur le match courant et regroupe les exports (`Programme`, `Banc`, `Texte`) ainsi que `Spectateurs en direct`.
 - Les suggestions et validations pourraient être rapprochées du tableau quand l'utilisateur corrige manuellement.
 - Le flux ne distingue pas encore clairement préparation avant-match, ajustement, et consultation pendant le match.
 
@@ -229,14 +257,17 @@ Découpage potentiel:
 - Est-ce que le réglage des manches devrait aussi être disponible dans la vue spectateur, en plus de l'écran d'alignement?
 - Est-ce que les sous-en-têtes du tableau doivent garder les textes `Début` et `Fin`, ou seulement les icônes et cadenas puisque la colonne gauche est toujours le début et la colonne droite est toujours la fin?
 - Quel patron d'interaction est le plus rapide sur téléphone pour corriger une position défensive manquante après un retrait de joueur: clic sur `BANC`, zone `Positions non assignées`, ou menu d'action par manche?
+- Comment faire évoluer le raccourci rapide près du menu sans surcharger le header si d'autres actions globales apparaissent?
+- Le bouton `Sauvegarder` de `Équipe` doit-il être retiré au profit d'une sauvegarde automatique, ou étendu comme action explicite cohérente ailleurs?
+- Pour la frappe non fixe, quelle interaction minimale permettrait de saisir le dernier frappeur d'une manche sans transformer `Spectateur` en outil d'édition complet?
 
 ## Décisions UX prises
 
 - Le workflow cible est `Match`, `Joueurs`, `Alignement`; `Partager` et `Spectateur` ne sont pas des étapes numérotées.
 - `Match` reste avant `Joueurs`, parce que les présences et absences sont confirmées dans le contexte d'un match daté.
-- `Accueil` est la porte d'entrée contextuelle: configuration de l'équipe si elle manque, reprise du match en cours ou création d'un nouveau match.
+- `Accueil` est la porte d'entrée contextuelle: configuration de l'équipe si elle manque, création explicite d'un match si aucun match n'est actif, ou reprise du match en cours.
 - Le hero de présentation apparaît seulement dans `Accueil`.
-- Les cartes de contexte de l'accueil indiquent clairement le nom de l'équipe, le statut du match, le nombre de joueurs enregistrés et le nombre de matchs archivés localement. Les cartes `Équipe` et `Joueurs` mènent à `Équipe`; la carte de statut mène à `Match`; la carte archives mène à `Archives`.
+- Quand un match courant non archivé existe, les cartes de l'accueil suivent le workflow: `Match`, `Joueurs`, puis `Alignement` ou `Jouer`. Un match archivé ouvert ne doit pas alimenter ces raccourcis de préparation.
 - L'accueil affiche un seul bouton d'action principal selon l'état courant.
 - `Équipe` est hors workflow et gère le nom de notre équipe ainsi que le bassin permanent de joueurs.
 - Une fois le match commencé, les étapes `Match` et `Joueurs` ne sont plus modifiables.
@@ -296,7 +327,7 @@ Découpage potentiel:
 - Dans `Équipe`, le numéro de chandail optionnel devrait être éditable seulement avant match, comme les autres informations du bassin permanent.
 - Dans `Joueurs`, les cartes doivent garder une taille stable entre présents et absents. Les sections vides n'ont pas besoin d'une carte `Aucun`.
 - Le menu du haut est un menu global unique. Les étapes principales restent dans le contenu, pas dans le header.
-- Le libellé `Réinitialiser` est conservé pour l'action destructive globale, parce qu'elle efface toutes les données locales.
+- Le libellé `Réinitialiser` est conservé pour l'action destructive globale, parce qu'elle efface toutes les données locales, les archives, les données cloud connues et les liens spectateur quand c'est possible.
 - Les textes d'accueil devraient être resserrés autour de: `Clair et équitable pour le banc, facile pour les entraîneurs et beau pour les parents.` et `Prépare un match et crée un alignement équitable qui respecte les règles Rallye-Cap.`
 - Les entêtes de demi-manche du tableau principal affichent seulement les icônes bâton et gant; `Début` est toujours la colonne de gauche et `Fin` la colonne de droite.
 - Au démarrage de la progression du match, l'application bloque si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que des positions défensives manquent ou que des règles ne sont pas respectées, l'entraîneur reçoit un avertissement et peut continuer après confirmation.
@@ -317,20 +348,23 @@ Découpage potentiel:
 
 La section `Partager` regroupe:
 
-- `Banc`: tableau imprimable par joueur avec sous-colonnes de manche `🏏` et `🧤`;
-- `Programme`: image parents;
-- `Texte`: texte brut compact;
-- futur lien en ligne vers une vue spectateur en lecture seule.
+- `Exports`: `Programme`, `Banc` et `Texte`;
+- `En ligne`: `Spectateurs en direct` pour créer un lien public stable que les fans peuvent suivre pendant le match.
 
-## Archives
+La gestion des matchs cloud vit dans `Mes matchs`, pas dans `Partager`.
 
-La section `Archives` regroupe:
+Les partages locaux doivent rester utilisables sans connexion. Les actions cloud doivent expliquer la connexion requise et proposer de se connecter quand l'utilisateur tente de les utiliser.
+
+## Archives dans Mes matchs
+
+Les archives ne sont plus une page séparée. Elles vivent dans `Mes matchs`, dans le tableau `Matchs archivés`.
+
+La section `Matchs archivés` regroupe:
 
 - liste locale des matchs archivés, du plus récent au plus ancien;
-- consultation en lecture seule, non ouverte par défaut et refermable;
+- consultation en lecture seule dans les vues existantes du match;
 - suppression manuelle avec confirmation;
-- régénération des exports `Programme`, `Banc` et `Texte` à partir du snapshot figé;
-- affichage sommaire des anciennes archives `legacy` quand les données complètes ne sont pas disponibles.
+- état cloud visible et actions `Retirer du cloud` / `Supprimer` quand applicable.
 
 Le partage `Texte` doit suivre l'ordre réel des demi-manches comme la vue spectateur: attaque en début de manche si notre équipe est visiteuse, défense en début de manche si notre équipe est locale.
 
@@ -345,4 +379,19 @@ Améliorations UX à prévoir:
 - publication en ligne;
 - QR code.
 
-Le mode publication en ligne devrait au minimum offrir une vue parents en lecture seule avec des informations limitées.
+Le mode publication en ligne devrait au minimum offrir une vue fans en lecture seule avec des informations limitées.
+
+## Mise à jour v5 multi-match
+
+Le modèle v5 est local-first et multi-match. Pendant la phase de développement, l'application démarre vide si aucune donnée `rallye_cap_qc_v5` valide n'existe. Les anciens modèles de données ne sont pas supportés et ne doivent pas influencer le code applicatif.
+
+`Mes matchs` devient la vue centrale de gestion:
+
+- `Matchs`: matchs non archivés, locaux ou en ligne;
+- `Matchs archivés`: matchs `archived`, ouverts en lecture seule.
+
+Les deux tableaux combinent les matchs locaux et les matchs en ligne du compte connecté. Les doublons sont fusionnés par identifiant cloud. Un match en ligne seulement est importé localement quand l'utilisateur ouvre la ligne, puis l'app navigue vers `Match`.
+
+Les tableaux sont triables par adversaire, date/heure du match, endroit, statut et dernière modification. Le tri par défaut place les matchs les plus récents en premier selon la date et l'heure du match. Les actions sont des icônes avec titres: cloud on/off, dossier d'archivage et suppression.
+
+`Partager` reste contextuel au match actif: `Programme`, `Banc`, `Texte` et `Spectateurs en direct`. Il ne sert plus à reprendre l'édition cloud.
