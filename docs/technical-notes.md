@@ -17,8 +17,10 @@ La première passe utilise:
 - App Check optionnel avec reCAPTCHA v3 quand `appCheckSiteKey` est configuré;
 - `users/{uid}/matches/{matchId}` pour le document privé éditable par l'entraîneur connecté;
 - `publicMatches/{publicId}` pour la projection spectateur publique en lecture seule;
+- `publicTeams/{teamPublicId}` pour la liste publique permanente des matchs publiés d'une équipe;
 - une liste `Mes matchs` pour ouvrir ou supprimer les matchs cloud du compte connecté;
 - un lien `#public/{publicId}` pour la vue spectateur live.
+- un lien `#fans/{teamPublicId}` pour la liste publique des matchs publiés d'une équipe.
 
 App Check est initialisé avant Auth et Firestore quand `firebase-config.js` contient `appCheckSiteKey`, `recaptchaV3SiteKey` ou `appCheck.siteKey`. Le rafraîchissement automatique des tokens est activé. En développement local, `appCheckDebugToken` doit être utilisé pour éviter que les appels `localhost` soient classés comme non vérifiés.
 
@@ -41,6 +43,8 @@ Les documents privés incluent aussi `status` au niveau racine. Les règles Fire
 L'action globale `Réinitialiser` efface l'état local et tente aussi de supprimer le document cloud éditable ainsi que le lien spectateur public courant si l'utilisateur est connecté et que le module Firebase est chargé. La suppression cloud est opportuniste: l'état local est réinitialisé même si le réseau ou Firebase échoue.
 
 Le partage public peut être publié sans mot de passe ou avec un mot de passe optionnel. Quand un mot de passe est fourni, la projection publique est chiffrée côté client avec WebCrypto avant d'être écrite dans Firestore. Le mot de passe n'est pas sauvegardé dans Firestore. Cette approche garde l'app statique et compatible GitHub Pages, mais un mot de passe faible peut être attaqué hors ligne si quelqu'un récupère le document chiffré.
+
+Le partage public d'équipe est un document `publicTeams/{teamPublicId}` qui contient seulement le nom public de l'équipe, une liste de résumés de matchs publiés et l'indicateur `passwordProtected` de chaque match. L'identifiant peut être saisi dans `Équipe`; l'app le normalise en slug public et `publishPublicTeam()` vérifie qu'un document existant n'appartient pas déjà à un autre utilisateur avant d'écrire. Il peut être publié sans mot de passe ou chiffré avec le même mécanisme WebCrypto que `publicMatches`. Les détails d'un match restent servis par son document `publicMatches/{publicId}`. La liste d'équipe est mise à jour quand un lien `Spectateurs en direct` est publié, retiré, sauvegardé ou quand un match publié est terminé. Retirer le document d'équipe désactive seulement l'URL permanente; les liens de match déjà publiés restent actifs jusqu'à leur retrait individuel.
 
 Bug UX connu: Chrome peut interpréter le champ de mot de passe du partage spectateur comme un formulaire de connexion et proposer d'enregistrer le mot de passe en utilisant un autre champ de la page, comme l'endroit du match, comme nom d'utilisateur. Ce n'est pas une authentification Firebase et le mot de passe n'est pas stocké dans Firestore, mais l'expérience est confuse. À corriger en priorité dans l'UI de partage avec des attributs `autocomplete` plus précis, des noms de champs moins ambigus, une séparation claire entre formulaire de match et mot de passe public, ou une interaction qui ne ressemble pas à un formulaire de connexion classique.
 
@@ -233,7 +237,7 @@ Décision durable pendant la phase de développement:
 
 Structure persistée sous `rallye_cap_qc_v5`:
 
-- `teamProfile`: nom de notre équipe;
+- `teamProfile`: nom de notre équipe, `publicSlug` souhaité, `publicId` actif du lien permanent `#fans/{teamPublicId}` et mot de passe local optionnel du lien d'équipe;
 - `roster`: bassin permanent de joueurs, indépendant des matchs;
 - `matches`: liste locale de matchs;
 - `activeMatchId`: match ouvert dans le workflow.

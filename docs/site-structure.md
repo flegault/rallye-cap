@@ -15,6 +15,7 @@ L'application est une SPA avec sept vues applicatives principales accessibles pa
 - `#partager`
 - `#spectateur`
 - `#public/{publicId}` pour le spectateur live public en lecture seule
+- `#fans/{teamPublicId}` pour la liste publique permanente des matchs publiés d'une équipe
 
 La navigation est disponible dans:
 
@@ -87,6 +88,11 @@ Alignement Rallye-Cap
 |   |   +-- Banc
 |   |   +-- Texte
 |   +-- En ligne
+|   +-- Lien permanent d'équipe
+|   |   +-- Utilise l'identifiant public choisi dans Équipe
+|   |   +-- Créer un lien public d'équipe
+|   |   +-- Mot de passe optionnel chiffré côté client
+|   |   +-- Copier ou retirer le lien
 |   +-- Spectateurs en direct
 |   |   +-- Créer un lien public
 |   |   +-- Mot de passe optionnel chiffré côté client
@@ -100,6 +106,10 @@ Alignement Rallye-Cap
     +-- État final de remerciement quand le match est terminé
     +-- Navigation précédent / suivant
     +-- Points de progression
++-- Fans publics (#fans/{teamPublicId})
+    +-- Liste des matchs publiés pour l'équipe
+    +-- Indicateur de match protégé par mot de passe
+    +-- Ouverture du match dans `#public/{publicId}`
 ```
 
 ## Flux principal actuel

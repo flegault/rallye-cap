@@ -2,7 +2,6 @@
 
 ## Maintenant
 
-- Priorité `Spectateurs / Cloud`: concevoir une URL fixe d'équipe pour les fans. Cette URL doit afficher les matchs publics de l'équipe en ordre chronologique et permettre aux parents de conserver le même lien de match en match.
 - Compléter la gestion multi-match restante: actions avancées de reprise/recommencement à partir d'un match archivé.
 - Améliorer les exports et partages: PDF parents responsive.
 - Extraire la logique métier de `app.js` dans des modules testables.
@@ -31,23 +30,18 @@
   - utiliser le `playerId` publié dans la projection publique, sans fallback nom/numéro.
   - Livré: les joueurs dans `Programme`, `Frappeurs` et `Défenseurs` sont cliquables; le favori est mémorisé localement par `playerId` et peut donc suivre le même joueur entre les matchs.
 - URL fixe d'équipe pour les fans:
-  - ajouter une route publique future du type `#fans/{teamPublicId}`;
-  - la page liste les matchs publics de l'équipe en ordre chronologique;
-  - chaque match public mène vers son lien `#public/{publicId}`;
-  - les matchs apparaissent ou disparaissent selon les liens `Spectateurs en direct` créés ou retirés par le coach;
-  - archiver un match privé ne le publie pas automatiquement et ne change pas seul sa visibilité publique;
-  - la visibilité publique reste contrôlée par le lien spectateur du match.
+  - Livré: la route publique `#fans/{teamPublicId}` liste les matchs dont le lien `Spectateurs en direct` est publié pour l'équipe, avec mot de passe optionnel pour la liste.
+  - Livré: chaque match public mène vers son lien `#public/{publicId}` et affiche si un mot de passe est requis.
+  - Livré: les matchs apparaissent ou disparaissent selon les liens `Spectateurs en direct` créés ou retirés par le coach.
+  - La visibilité publique reste contrôlée par le lien spectateur du match.
 - Identifiant public d'équipe:
-  - ajouter éventuellement dans `Équipe` un champ optionnel `Identifiant public`;
+  - Livré: `Équipe` contient un champ optionnel `Identifiant public`;
   - exemple: `expos-rallye-cap`;
-  - l'identifiant doit être unique côté Firestore;
+  - l'identifiant est normalisé en minuscules avec lettres, chiffres et tirets, de 3 à 40 caractères;
+  - l'identifiant doit être unique côté Firestore et l'app refuse d'écraser celui d'une autre équipe;
   - il sert à produire l'URL stable `#fans/{teamPublicId}`;
-  - si des liens publics existent déjà, modifier cet identifiant doit demander confirmation parce que les anciens liens d'équipe pourraient ne plus pointer vers la même page.
-- Complexité estimée: moyenne à élevée.
-  - Ajouter probablement un document public `publicTeams/{teamPublicId}`.
-  - Ajouter `teamPublicId` aux documents `publicMatches`.
-  - Ajouter un résumé public non sensible aux documents `publicMatches`: équipes, date, heure, lieu, statut, indicateur de mot de passe et date de mise à jour.
-  - Les détails protégés par mot de passe peuvent rester chiffrés, mais les métadonnées de liste doivent rester lisibles publiquement pour que la page fixe fonctionne.
+  - Livré: quand le lien permanent est actif, l'identifiant est verrouillé; il faut retirer le lien pour le changer.
+- Livré: un document public `publicTeams/{teamPublicId}` contient la liste publique ou une version chiffrée de cette liste. Les détails protégés par mot de passe restent dans les documents de match chiffrés.
 
 ## Workflow actuel
 

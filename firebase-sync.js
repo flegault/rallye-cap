@@ -204,6 +204,44 @@ export async function publishPublic(publicId, matchId, payload, password) {
   return id;
 }
 
+export async function publishPublicTeam(teamPublicId, payload, password) {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user) throw new Error("Connexion requise.");
+  let id = teamPublicId || randomId(24);
+  let ref = fsMod.doc(firebaseDb, "publicTeams", id);
+  let existing = await fsMod.getDoc(ref);
+  if (existing.exists() && existing.data()?.ownerUid !== user.uid) {
+    throw new Error("Cet identifiant public d'équipe est déjà utilisé.");
+  }
+  let passwordProtected = !!String(password || "").trim();
+  let publicDoc = {
+    ownerUid: user.uid,
+    schemaVersion: 1,
+    updatedAt: fsMod.serverTimestamp(),
+    updatedAtMs: Date.now(),
+    passwordProtected
+  };
+  if (passwordProtected) publicDoc.encryptedPayload = await encryptJson(payload, password);
+  else publicDoc.payload = payload;
+  await fsMod.setDoc(ref, publicDoc);
+  return id;
+}
+
+export async function listenPublicTeam(teamPublicId, callback) {
+  let { fsMod } = await ensureFirebase();
+  return fsMod.onSnapshot(fsMod.doc(firebaseDb, "publicTeams", teamPublicId), snap => {
+    callback(snap.exists() ? { id: snap.id, ...snap.data() } : null);
+  });
+}
+
+export async function deletePublicTeam(teamPublicId) {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user || !teamPublicId) return;
+  await fsMod.deleteDoc(fsMod.doc(firebaseDb, "publicTeams", teamPublicId));
+}
+
 export async function listenPublic(publicId, callback) {
   let { fsMod } = await ensureFirebase();
   return fsMod.onSnapshot(fsMod.doc(firebaseDb, "publicMatches", publicId), snap => {

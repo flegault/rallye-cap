@@ -79,6 +79,7 @@
       </div>
       <div class="grid2 teamSetup">
         <label><span>Nom de notre équipe</span><input id="teamName" placeholder="ex. Expos de Montréal" /></label>
+        <label><span>Identifiant public</span><input id="teamPublicSlug" placeholder="ex. expos-rallye-cap" autocomplete="off" autocapitalize="none" spellcheck="false" /><small class="hint">Optionnel pour le lien permanent: <code id="teamPublicSlugUrl">#fans/expos-rallye-cap</code>.</small></label>
       </div>
       <div class="players" id="teamPlayers"></div>
       <div class="homeActions noPrint"><button class="btn secondary" id="teamMatchBtn" type="button">Préparer un match</button><button class="btn secondary" id="exampleTeamBtn" type="button">Créer une équipe exemple</button></div>
@@ -137,18 +138,18 @@
   <section class="view" id="view-alignement">
     <div class="card">
       <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Prépare l’alignement, suis la progression du match et ajuste les changements au besoin.</p></div></div>
-      <div class="segment lineupModeTabs noPrint" role="tablist" aria-label="Mode d'alignement">
-        <button id="lineupPrepareTab" type="button" data-lineup-mode="preparer">Préparer</button>
-        <button id="lineupPlayTab" type="button" data-lineup-mode="jouer">Jouer</button>
-      </div>
       <div class="row lineupActions noPrint">
+        <div class="segment lineupModeTabs" role="tablist" aria-label="Mode d'alignement">
+          <button id="lineupPrepareTab" type="button" data-lineup-mode="preparer">Préparer</button>
+          <button id="lineupPlayTab" type="button" data-lineup-mode="jouer">Jouer</button>
+        </div>
         <div class="row prepareActions" id="prepareActions">
           <button class="btn secondary" id="shuffleOrderBtn" title="Mélanger l’ordre au bâton">Mélanger</button>
           <button class="btn secondary" id="regenBtn">Optimiser</button>
         </div>
         <div class="row playActions" id="playActions">
           <button class="btn brandBtn" id="advanceHalfBtn">Commencer</button>
-          <button class="btn secondary" id="lineupChangeBtn">Changement de joueurs</button>
+          <button class="btn secondary" id="lineupChangeBtn">Changement</button>
         </div>
       </div>
       <div class="suggestions playWarnings hide" id="playWarnings"></div>
@@ -189,6 +190,17 @@
     <h3 class="shareSectionTitle noPrint">En ligne</h3>
     <div class="grid3 shareGrid cloudShareGrid">
       <div class="card shareCard">
+        <h3>Lien permanent d'équipe</h3>
+        <p class="hint" id="teamPublicShareText">Un seul lien à conserver pour tous les matchs publiés.</p>
+        <label class="publicPasswordField"><span>Mot de passe optionnel</span><input id="teamPublicPassword" name="team-spectator-access-code" type="text" inputmode="text" autocomplete="off" aria-label="Mot de passe du lien permanent d'équipe" placeholder="ex. Youppi!" /></label>
+        <p class="hint hide" id="teamPublicPasswordHint">Ce mot de passe devra être fourni aux fans pour voir la liste.</p>
+        <div class="shareActions">
+          <button class="btn secondary" id="publishTeamPublicBtn">Créer le lien d'équipe</button>
+          <button class="btn secondary" id="copyTeamPublicLinkBtn">Copier le lien</button>
+          <button class="btn danger" id="unpublishTeamPublicBtn">Retirer le lien</button>
+        </div>
+      </div>
+      <div class="card shareCard">
         <h3>Spectateurs en direct</h3>
         <p class="hint" id="publicShareText">Les fans pourront suivre le match en direct!</p>
         <label class="publicPasswordField"><span>Mot de passe optionnel</span><input id="publicPassword" name="spectator-access-code" type="text" inputmode="text" autocomplete="off" aria-label="Mot de passe du lien spectateurs" placeholder="ex. Youppi!" /></label>
@@ -204,7 +216,6 @@
   <section class="view" id="view-spectateur">
     <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn secondary" id="matchCurrent">Manche en cours</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
-<div class="foot noPrint">Fait pour Rallye-Cap • Sauvegarde locale seulement</div>
 </main>
 <div class="modalOverlay" id="modalOverlay"><div class="modal"><h3 id="modalTitle"></h3><p id="modalText"></p><div class="row" id="modalActions"></div></div></div>
 <script src="rules.js"></script>
