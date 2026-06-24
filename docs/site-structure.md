@@ -23,7 +23,7 @@ La navigation est disponible dans:
 - les étapes numérotées du workflow, affichées dans le contenu;
 - certains boutons de continuité entre les vues.
 
-Le menu global regroupe `Accueil`, `Équipe`, `Mes matchs`, `Spectateur` et l'action destructive `Réinitialiser`. L'icône et le titre du site ramènent à `Accueil`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales et en ligne connues. `Partager` n'est plus dans le menu global; il reste contextuel au match actif.
+Le menu global regroupe `Accueil`, `Équipe`, `Mes matchs`, `Spectateur` et l'action destructive `Réinitialiser`. Il contient aussi le sélecteur `Équipe active` et l'action `Nouvelle équipe`, visibles dans la barre du haut pour clarifier le contexte courant. L'icône et le titre du site ramènent à `Accueil`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales et en ligne connues. `Partager` n'est plus dans le menu global; il reste contextuel à l'équipe active et aux exports du match ouvert quand il y en a un.
 
 ## Sitemap actuel
 
@@ -89,7 +89,7 @@ Alignement Rallye-Cap
 |   |   +-- Texte
 |   +-- En ligne
 |   +-- Lien permanent d'équipe
-|   |   +-- Utilise l'identifiant public choisi dans Équipe
+|   |   +-- Utilise l'identifiant public choisi dans Partager
 |   |   +-- Créer un lien public d'équipe
 |   |   +-- Mot de passe optionnel chiffré côté client
 |   |   +-- Copier ou retirer le lien
@@ -136,7 +136,7 @@ Le workflow cible suit la réalité d'un match et évite de devoir revenir dans 
 📅 Match -> 👨‍👩‍👦‍👦 Joueurs -> 📋 Alignement
 ```
 
-`Mes matchs` et `Spectateur` sont des pages non numérotées accessibles dans le menu. `Partager` reste une route non numérotée, mais elle est ouverte depuis le match courant plutôt que depuis le menu global. `Spectateur` est une vue simplifiée en lecture seule. Créer l'équipe ou modifier le bassin permanent ne crée pas de match automatiquement; le match est créé par une action explicite depuis l'accueil.
+`Mes matchs` et `Spectateur` sont des pages non numérotées accessibles dans le menu. `Partager` reste une route non numérotée ouverte depuis les actions du workflow; elle affiche les partages de l'équipe active même si aucun match n'est ouvert, mais les exports exigent un match courant. `Spectateur` est une vue simplifiée en lecture seule. Créer l'équipe ou modifier le bassin permanent ne crée pas de match automatiquement; le match est créé par une action explicite depuis l'accueil.
 
 La gestion durable de notre équipe et de son bassin de joueurs est séparée du workflow de match sans devenir une étape numérotée. Elle vit dans `Équipe` et sert à définir le nom de notre équipe ainsi que les joueurs disponibles pour les matchs futurs. Le workflow `Joueurs` sert seulement à indiquer qui est présent ou absent pour le match courant.
 
@@ -212,7 +212,7 @@ Alignement Rallye-Cap
   - Livré partiellement pour le spectateur public.
 - La vue spectateur devrait éventuellement inclure une première étape `Programme`, puis un état final `Merci, à la prochaine`.
   - Livré pour le spectateur public.
-- `Mes matchs` gère la sauvegarde, l'ouverture et la suppression des matchs cloud. La section `Partager` agit seulement sur le match courant et regroupe les exports (`Programme`, `Banc`, `Texte`) ainsi que `Spectateurs en direct`.
+- `Mes matchs` gère la sauvegarde, l'ouverture et la suppression des matchs cloud. La section `Partager` agit sur l'équipe active: lien permanent d'équipe, matchs partagés et exports (`Programme`, `Banc`, `Texte`) quand un match est ouvert.
 - Les suggestions et validations pourraient être rapprochées du tableau quand l'utilisateur corrige manuellement.
 - Le flux ne distingue pas encore clairement préparation avant-match, ajustement, et consultation pendant le match.
 
@@ -353,9 +353,9 @@ Découpage potentiel:
 La section `Partager` regroupe:
 
 - `Exports`: `Programme`, `Banc` et `Texte`;
-- `En ligne`: `Spectateurs en direct` pour créer un lien public stable que les fans peuvent suivre pendant le match.
+- `En ligne`: `Lien permanent d'équipe` pour gérer l'identifiant public de l'équipe active et `Spectateurs en direct` pour créer un lien public stable que les fans peuvent suivre pendant le match.
 
-La gestion des matchs cloud vit dans `Mes matchs`, pas dans `Partager`.
+`Partager` affiche seulement les liens de l'équipe active. Il liste les documents `publicTeams` liés à l'équipe courante et les matchs déjà partagés pour permettre de copier ou retirer leurs liens. La reprise et la suppression complètes des matchs cloud vivent dans `Mes matchs`.
 
 Les partages locaux doivent rester utilisables sans connexion. Les actions cloud doivent expliquer la connexion requise et proposer de se connecter quand l'utilisateur tente de les utiliser.
 

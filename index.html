@@ -16,6 +16,8 @@
       <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
     </div>
     <nav class="nav" id="nav">
+      <label class="teamSwitchLabel"><span>Équipe active</span><select id="teamSwitcher" aria-label="Équipe active"></select></label>
+      <button type="button" id="newTeamBtn">Nouvelle équipe</button>
       <a href="#accueil" data-nav="accueil">Accueil</a>
       <a href="#equipe" data-nav="equipe">Équipe</a>
       <a href="#mesmatchs" data-nav="mesmatchs">Mes matchs</a>
@@ -79,10 +81,9 @@
       </div>
       <div class="grid2 teamSetup">
         <label><span>Nom de notre équipe</span><input id="teamName" placeholder="ex. Expos de Montréal" /></label>
-        <label><span>Identifiant public</span><input id="teamPublicSlug" placeholder="ex. expos-rallye-cap" autocomplete="off" autocapitalize="none" spellcheck="false" /><small class="hint">Optionnel pour le lien permanent: <code id="teamPublicSlugUrl">#fans/expos-rallye-cap</code>.</small></label>
       </div>
       <div class="players" id="teamPlayers"></div>
-      <div class="homeActions noPrint"><button class="btn secondary" id="teamMatchBtn" type="button">Préparer un match</button><button class="btn secondary" id="exampleTeamBtn" type="button">Créer une équipe exemple</button></div>
+      <div class="homeActions noPrint"><button class="btn secondary" id="teamMatchBtn" type="button">Préparer un match</button><button class="btn secondary" id="exampleTeamBtn" type="button">Créer une équipe exemple</button><button class="btn danger" id="deleteTeamBtn" type="button">Supprimer l'équipe</button></div>
     </div>
     <div class="card" id="teamAddPlayersCard">
       <div class="spaced">
@@ -192,6 +193,7 @@
       <div class="card shareCard">
         <h3>Lien permanent d'équipe</h3>
         <p class="hint" id="teamPublicShareText">Un seul lien à conserver pour tous les matchs publiés.</p>
+        <label><span>Identifiant public</span><input id="teamPublicSlug" placeholder="ex. expos-rallye-cap" autocomplete="off" autocapitalize="none" spellcheck="false" /><small class="hint">Lien permanent: <code id="teamPublicSlugUrl">#fans/expos-rallye-cap</code>.</small></label>
         <label class="publicPasswordField"><span>Mot de passe optionnel</span><input id="teamPublicPassword" name="team-spectator-access-code" type="text" inputmode="text" autocomplete="off" aria-label="Mot de passe du lien permanent d'équipe" placeholder="ex. Youppi!" /></label>
         <p class="hint hide" id="teamPublicPasswordHint">Ce mot de passe devra être fourni aux fans pour voir la liste.</p>
         <div class="shareActions">
@@ -211,6 +213,7 @@
           <button class="btn secondary" id="copyPublicLinkBtn">Copier le lien</button>
           <button class="btn danger" id="unpublishPublicBtn">Retirer le lien</button>
         </div>
+        <div class="onlineMatches" id="sharedMatchesList"></div>
       </div>
     </div>
   </section>

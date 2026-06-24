@@ -2,7 +2,7 @@
 
 ## État
 
-L'état applicatif est sauvegardé dans `localStorage` avec la clé `rallye_cap_qc_v5`.
+L'état applicatif est sauvegardé dans `localStorage` avec la clé `rallye_cap_qc_v5`. Le modèle courant stocke `teams`, `activeTeamId`, `matches`, `activeMatchId` et `route`; les champs de formulaire historiques (`team`, `players`, `cloud`, etc.) sont reconstruits comme alias runtime de l'équipe ou du match actif et ne sont plus la source persistée.
 
 ## Sauvegarde Firebase optionnelle
 
@@ -36,7 +36,7 @@ Les métriques App Check peuvent contenir des requêtes anciennes provenant d'on
 
 Les archives sont des matchs `archived` en lecture seule. Elles peuvent rester locales ou exister en ligne, mais les règles Firestore empêchent leur modification future tout en gardant la suppression permise au propriétaire.
 
-Les documents privés contiennent le `payload` complet pour l'édition, plus des métadonnées top-level (`team`, `opp`, `date`, `time`, `place`, `status`, `started`, `completed`, `currentIndex`, `currentLabel`, `publicId`, `updatedAtMs`) afin d'afficher `Mes matchs` sans dépendre d'un lien d'édition.
+Les documents privés contiennent le `payload` complet pour l'édition, plus des métadonnées top-level (`teamId`, `team`, `opp`, `date`, `time`, `place`, `status`, `started`, `completed`, `currentIndex`, `currentLabel`, `publicId`, `updatedAtMs`) afin d'afficher `Mes matchs` sans dépendre d'un lien d'édition. L'app filtre les matchs locaux et cloud sur le `teamId` de l'équipe active.
 
 Les documents privés incluent aussi `status` au niveau racine. Les règles Firestore interdisent la modification d'un match déjà archivé (`status == archived` ou `payload.status == archived`), mais gardent la suppression permise au propriétaire.
 
@@ -44,9 +44,9 @@ L'action globale `Réinitialiser` efface l'état local et tente aussi de supprim
 
 Le partage public peut être publié sans mot de passe ou avec un mot de passe optionnel. Quand un mot de passe est fourni, la projection publique est chiffrée côté client avec WebCrypto avant d'être écrite dans Firestore. Le mot de passe n'est pas sauvegardé dans Firestore. Cette approche garde l'app statique et compatible GitHub Pages, mais un mot de passe faible peut être attaqué hors ligne si quelqu'un récupère le document chiffré.
 
-Le partage public d'équipe est un document `publicTeams/{teamPublicId}` qui contient le nom public de l'équipe, une projection limitée du bassin permanent (`players` avec `playerId`, `name`, `number`, `label`), une liste de résumés de matchs publiés et l'indicateur `passwordProtected` de chaque match. L'identifiant peut être saisi dans `Équipe`; l'app le normalise en slug public et `publishPublicTeam()` vérifie qu'un document existant n'appartient pas déjà à un autre utilisateur avant d'écrire. Il peut être publié sans mot de passe ou chiffré avec le même mécanisme WebCrypto que `publicMatches`. Les détails d'un match restent servis par son document `publicMatches/{publicId}`. La liste d'équipe est mise à jour quand un lien `Spectateurs en direct` est publié, retiré, sauvegardé ou quand un match publié est terminé, ainsi qu'après les changements de nom d'équipe, de joueurs ou de numéros quand le lien d'équipe est actif. Retirer le document d'équipe désactive seulement l'URL permanente; les liens de match déjà publiés restent actifs jusqu'à leur retrait individuel.
+Le partage public d'équipe est un document `publicTeams/{teamPublicId}` qui contient le nom public de l'équipe active, une projection limitée de son bassin permanent (`players` avec `playerId`, `name`, `number`, `label`), une liste de résumés de matchs publiés pour cette même équipe et l'indicateur `passwordProtected` de chaque match. L'identifiant se gère dans `Partager`; l'app le normalise en slug public et `publishPublicTeam()` vérifie qu'un document existant n'appartient pas déjà à un autre utilisateur avant d'écrire. Il peut être publié sans mot de passe ou chiffré avec le même mécanisme WebCrypto que `publicMatches`. Les détails d'un match restent servis par son document `publicMatches/{publicId}`. La liste d'équipe est mise à jour quand un lien `Spectateurs en direct` est publié, retiré, sauvegardé ou quand un match publié est terminé, ainsi qu'après les changements de nom d'équipe, de joueurs ou de numéros quand le lien d'équipe est actif. Retirer le document d'équipe désactive seulement l'URL permanente; les liens de match déjà publiés restent actifs jusqu'à leur retrait individuel.
 
-L'app liste aussi les documents `publicTeams` dont `ownerUid` correspond au compte connecté. Cette liste permet de copier ou supprimer un lien d'équipe depuis `Partager` même si le navigateur courant a perdu `teamProfile.publicId`, par exemple après une réinitialisation locale ou sur un autre appareil. La suppression utilise l'identifiant précis du document listé et ne dépend pas de l'état local actif.
+L'app liste aussi les documents `publicTeams` dont `ownerUid` correspond au compte connecté, puis les affiche dans `Partager` pour l'équipe active quand le titre public correspond ou quand le document est le lien actif local. Cette liste permet de copier ou supprimer un lien d'équipe depuis `Partager` même si le navigateur courant a perdu `teamProfile.publicId`, par exemple après une réinitialisation locale ou sur un autre appareil. La suppression utilise l'identifiant précis du document listé et ne dépend pas de l'état local actif.
 
 Les favoris des fans restent privés au navigateur. La clé `localStorage` est `rallye_cap_public_favorite_players:{teamPublicId}` et contient un tableau JSON de `playerId`; le contexte `global` sert de repli quand un match public n'a pas encore de `teamPublicId`.
 
@@ -105,7 +105,7 @@ Le workflow cible remplace l'ancien onglet `Jouer` par une gestion directe dans 
 
 `#alignement` démarre le match avec confirmation si la progression est encore au début. La cible produit bloque le démarrage si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que l'horaire est incomplet ou que des règles ne sont pas respectées, l'app avertit sans bloquer et demande confirmation. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
 
-Le menu du haut est un menu global unique qui regroupe `Accueil`, `Équipe`, `Mes matchs`, `Spectateur` et `Réinitialiser`. `Partager` reste une route contextuelle du match courant, mais n'est plus un item du menu global. Les étapes `Match`, `Joueurs` et `Alignement` restent visibles dans le contenu via le workflow numéroté, pas dans le header. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
+Le menu du haut est un menu global unique qui regroupe `Accueil`, `Équipe`, `Mes matchs`, `Spectateur` et `Réinitialiser`, avec un sélecteur d'équipe active. `Partager` reste une route contextuelle de l'équipe active, mais n'est plus un item du menu global; les exports de cette section exigent quand même un match courant. Les étapes `Match`, `Joueurs` et `Alignement` restent visibles dans le contenu via le workflow numéroté, pas dans le header. La création d'équipe exemple vit seulement dans `#equipe` et reste bloquée pendant un match débuté.
 
 La route `#spectateur` ajoute une classe `spectatorRoute` sur `body` pour masquer l'en-tête global et le workflow numéroté sans dupliquer la structure HTML.
 

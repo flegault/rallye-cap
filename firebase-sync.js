@@ -130,6 +130,7 @@ function matchSummary(payload, extra = {}) {
     date: payload?.date || "",
     time: payload?.time || "",
     place: payload?.place || "",
+    teamId: payload?.teamId || null,
     started: payload?.started === true,
     status: payload?.status || (completed ? "completed" : payload?.started === true ? "active" : "draft"),
     completed,
