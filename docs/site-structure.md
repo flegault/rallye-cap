@@ -93,6 +93,7 @@ Alignement Rallye-Cap
 |   |   +-- Créer un lien public d'équipe
 |   |   +-- Mot de passe optionnel chiffré côté client
 |   |   +-- Copier ou retirer le lien
+|   |   +-- Liste des liens d'équipe du compte connecté, pour copier ou retirer un lien même si la référence locale est perdue
 |   +-- Spectateurs en direct
 |   |   +-- Créer un lien public
 |   |   +-- Mot de passe optionnel chiffré côté client

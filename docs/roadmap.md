@@ -33,6 +33,7 @@
   - Livré: la route publique `#fans/{teamPublicId}` affiche les joueurs de l'équipe et liste les matchs dont le lien `Spectateurs en direct` est publié, avec mot de passe optionnel pour la liste.
   - Livré: chaque match public mène vers son lien `#public/{publicId}` et affiche si un mot de passe est requis.
   - Livré: les matchs apparaissent ou disparaissent selon les liens `Spectateurs en direct` créés ou retirés par le coach.
+  - Livré: `Partager` liste les liens d'équipe du compte connecté afin de copier ou retirer un document `publicTeams` même si la référence locale est perdue.
   - La visibilité publique reste contrôlée par le lien spectateur du match.
 - Identifiant public d'équipe:
   - Livré: `Équipe` contient un champ optionnel `Identifiant public`;

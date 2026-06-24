@@ -235,6 +235,17 @@ export async function listenPublicTeam(teamPublicId, callback) {
   });
 }
 
+export async function listPublicTeams() {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user) throw new Error("Connexion requise.");
+  let ref = fsMod.collection(firebaseDb, "publicTeams");
+  let q = fsMod.query(ref, fsMod.where("ownerUid", "==", user.uid));
+  let snap = await fsMod.getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    .sort((a, b) => (b.updatedAtMs || 0) - (a.updatedAtMs || 0));
+}
+
 export async function deletePublicTeam(teamPublicId) {
   let { fsMod } = await ensureFirebase();
   let user = firebaseAuth.currentUser;
