@@ -43,9 +43,10 @@
   - il sert à produire l'URL stable `#fans/{teamPublicId}`;
   - Livré: quand le lien permanent est actif, l'identifiant est verrouillé; il faut retirer le lien pour le changer.
 - Multi-équipe locale:
-  - Livré: la barre du haut affiche l'équipe active, permet de changer d'équipe et de créer une nouvelle équipe;
+  - Livré: l'accueil affiche l'équipe active, permet de changer d'équipe et de créer une nouvelle équipe;
   - Livré: les matchs, joueurs et liens publics sont séparés par équipe avec `teamId`; il n'y a pas de déplacement de matchs entre équipes;
-  - Livré: `Mes matchs` et `Partager` affichent seulement les données de l'équipe active.
+  - Livré: `Matchs` et `Partages` affichent seulement les données de l'équipe active.
+  - Livré: le menu global est réduit à `Accueil`, `Partages`, `Connexion` et `Réinitialiser`; `Matchs` s'ouvre depuis l'accueil, `Spectateur` depuis les lignes de match, et les routes désuètes `#equipe` / `#mesmatchs` ne sont pas maintenues.
 - Livré: un document public `publicTeams/{teamPublicId}` contient la liste publique ou une version chiffrée de cette liste. Les détails protégés par mot de passe restent dans les documents de match chiffrés.
 
 ## Workflow actuel
@@ -56,21 +57,18 @@ Le workflow livré est maintenant:
 Match -> Joueurs -> Alignement
 ```
 
-`Mes matchs` et `Spectateur` sont des vues hors étapes numérotées accessibles dans le menu. `Partager` est une route contextuelle de l'équipe active; ses exports exigent un match courant.
+`Matchs` et `Spectateur` sont des vues hors étapes numérotées et hors menu global. `Matchs` est accessible depuis l'accueil; `Spectateur` s'ouvre depuis une ligne de match admissible. `Partages` est une route du menu global centrée sur l'équipe active; ses exports exigent un match courant.
 
 ### Navigation
 
 - Livré: le header est simplifié en un menu global unique avec statut compact du match; les étapes `Match`, `Joueurs` et `Alignement` restent dans le contenu plutôt que dans la barre du haut.
-- `#accueil`: porte d'entrée contextuelle; création de l'équipe si elle manque, création explicite d'un match si l'équipe existe sans match actif, ou reprise du match courant.
-- `#equipe`: gestion hors workflow de notre équipe et du bassin permanent de joueurs.
+- `#accueil`: porte d'entrée contextuelle; création/sélection de l'équipe, gestion du bassin permanent de joueurs, création explicite d'un match si l'équipe existe sans match actif, ou reprise du match courant.
 - `#match`: informations du match, côté local/visiteur, adversaire, date, heure et endroit.
 - `#joueurs`: liste des joueurs du match et présence/absence avant le début.
 - `#alignement`: frappe fixe, ordre des frappeurs, optimisation défensive, progression du match, validations, suggestions, statistiques et changements de joueurs.
-- `#mesmatchs`: sauvegarde, ouverture et suppression des matchs cloud du compte connecté.
-- `#partager`: lien permanent d'équipe, liste des matchs partagés de l'équipe active, exports `Banc`, `Programme` et `Texte` quand un match est ouvert, plus `Spectateurs en direct` pour créer le lien public du match courant. Le partage courriel et le spectateur autonome sont retirés.
+- `#matchs`: sauvegarde, ouverture et suppression des matchs locaux et cloud du compte connecté, incluant l'accès `Spectateur` par ligne.
+- `#partager`: `Partages`, lien permanent d'équipe, liste des matchs partagés de l'équipe active, exports `Banc`, `Programme` et `Texte` quand un match est ouvert, plus `Spectateurs en direct` pour créer le lien public du match courant. Le partage courriel et le spectateur autonome sont retirés.
 - `#spectateur`: vue simplifiée en lecture seule.
-- Anciennes routes:
-  - `#jouer` redirige vers `#alignement`.
 
 ### Alignement
 

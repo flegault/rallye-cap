@@ -16,13 +16,9 @@
       <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
     </div>
     <nav class="nav" id="nav">
-      <label class="teamSwitchLabel"><span>Équipe active</span><select id="teamSwitcher" aria-label="Équipe active"></select></label>
-      <button type="button" id="newTeamBtn">Nouvelle équipe</button>
       <a href="#accueil" data-nav="accueil">Accueil</a>
-      <a href="#equipe" data-nav="equipe">Équipe</a>
-      <a href="#mesmatchs" data-nav="mesmatchs">Mes matchs</a>
-      <a href="#spectateur" data-nav="spectateur">Spectateur</a>
-      <button id="cloudAccountBtn">Connexion cloud</button>
+      <a href="#partager" data-nav="partager">Partages</a>
+      <button id="cloudAccountBtn">Connexion</button>
       <button class="dangerMenu" id="resetBtn">Réinitialiser</button>
     </nav>
   </div>
@@ -41,11 +37,11 @@
       </div>
       <div class="card">
         <div class="mini">
-          <a class="metric metricLink miniTeam" href="#equipe">
+          <a class="metric metricLink miniTeam" href="#accueil">
             <strong id="miniTeamName">Équipe à définir</strong>
             <span class="label">Équipe</span>
           </a>
-          <a class="metric metricLink" href="#equipe">
+          <a class="metric metricLink" href="#accueil">
             <div class="big" id="miniPlayers">0</div>
             <div class="label">joueurs</div>
           </a>
@@ -69,17 +65,17 @@
       </div>
     </section>
     <div class="card homeCard" id="homeCard"></div>
-  </section>
-  <section class="view" id="view-equipe">
     <div class="card">
       <div class="spaced">
         <div>
-          <h2>Équipe</h2>
-          <p class="hint">Définis ton équipe et le bassin de joueurs réutilisé pour les prochains matchs. Cette page n'est pas une étape du workflow.</p>
+          <h2>Équipe courante</h2>
+          <p class="hint">Définis ton équipe et le bassin de joueurs réutilisé pour les prochains matchs.</p>
         </div>
         <span class="tag" id="teamCountTag">0 joueur</span>
       </div>
       <div class="grid2 teamSetup">
+        <label class="teamSwitchLabel"><span>Équipe active</span><select id="teamSwitcher" aria-label="Équipe active"></select></label>
+        <button class="btn secondary" type="button" id="newTeamBtn">Nouvelle équipe</button>
         <label><span>Nom de notre équipe</span><input id="teamName" placeholder="ex. Expos de Montréal" /></label>
       </div>
       <div class="players" id="teamPlayers"></div>
@@ -91,11 +87,10 @@
       </div>
       <button class="btn brandBtn" id="addTeamNames" type="button">Ajouter des joueurs</button>
     </div>
-    <div class="stepActions noPrint"><a class="btn brandBtn" href="#accueil">Retour à l'accueil</a></div>
   </section>
-  <section class="view" id="view-mesmatchs">
+  <section class="view" id="view-matchs">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>Mes matchs</h2><p class="hint">Ouvre, trie, archive, supprime ou synchronise tes matchs locaux et en ligne.</p></div></div>
+      <div class="spaced"><div><h2>Matchs</h2><p class="hint">Ouvre, trie, archive, supprime ou synchronise tes matchs locaux et en ligne.</p></div></div>
       <div class="shareActions">
         <button class="btn brandBtn hide" id="newMatchFromListBtn" type="button">Créer un match</button>
         <button class="btn secondary" id="refreshCloudMatchesBtn">Actualiser</button>
@@ -109,7 +104,7 @@
       <div class="spaced"><div><h2>1. Match</h2></div></div>
       <h3 class="formSectionTitle">Équipes</h3>
       <div class="matchTeamsGrid">
-        <label class="teamLinkLabel"><span>Notre équipe</span><a class="teamField teamFieldLink" href="#equipe"><strong id="matchTeamName">Équipe à définir</strong></a></label>
+        <label class="teamLinkLabel"><span>Notre équipe</span><a class="teamField teamFieldLink" href="#accueil"><strong id="matchTeamName">Équipe à définir</strong></a></label>
         <div class="sideSwap" aria-label="Côtés du match"><span id="teamSideLabel">Visiteur</span><button class="icon soft swapBtn" id="swapSidesBtn" title="Inverser local et visiteur" aria-label="Inverser local et visiteur">⇄</button><span id="oppSideLabel">Local</span></div>
         <label><span>Adversaire</span><input id="opp" placeholder="ex. Padres de San Diego" /></label>
       </div>
@@ -160,11 +155,10 @@
     <div class="card"><h3>Validation</h3><div class="alerts" id="validations"></div></div>
     <div class="card suggestionsCard" id="suggestionsCard"><h3>Suggestions</h3><div class="suggestions" id="suggestions"></div></div>
     <div class="card statsCard"><h3>Statistiques et équité</h3><div class="scores" id="scores"></div><div class="tableWrap statTable" id="stats"></div></div>
-    <div class="stepActions noPrint"><a class="btn secondary" href="#partager">Partager</a></div>
   </section>
   <section class="view" id="view-partager">
     <div class="card noPrint">
-      <div class="spaced"><div><h2>Partage</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode spectateur.</p></div></div>
+      <div class="spaced"><div><h2>Partages</h2><p class="hint">Regroupe les sorties utiles pour les entraîneurs, les parents et le mode spectateur.</p></div></div>
     </div>
     <h3 class="shareSectionTitle noPrint">Exports</h3>
     <div class="grid3 shareGrid">
