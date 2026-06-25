@@ -33,14 +33,19 @@
   - Livré: la route publique `#fans/{teamPublicId}` affiche les joueurs de l'équipe et liste les matchs dont le lien `Spectateurs en direct` est publié, avec mot de passe optionnel pour la liste.
   - Livré: chaque match public mène vers son lien `#public/{publicId}` et affiche si un mot de passe est requis.
   - Livré: les matchs apparaissent ou disparaissent selon les liens `Spectateurs en direct` créés ou retirés par le coach.
+  - Livré: `Partager` liste les liens d'équipe de l'équipe active et les matchs partagés de cette équipe afin de copier ou retirer les liens publics.
   - La visibilité publique reste contrôlée par le lien spectateur du match.
 - Identifiant public d'équipe:
-  - Livré: `Équipe` contient un champ optionnel `Identifiant public`;
+  - Livré: `Partager` contient le champ optionnel `Identifiant public`;
   - exemple: `expos-rallye-cap`;
   - l'identifiant est normalisé en minuscules avec lettres, chiffres et tirets, de 3 à 40 caractères;
   - l'identifiant doit être unique côté Firestore et l'app refuse d'écraser celui d'une autre équipe;
   - il sert à produire l'URL stable `#fans/{teamPublicId}`;
   - Livré: quand le lien permanent est actif, l'identifiant est verrouillé; il faut retirer le lien pour le changer.
+- Multi-équipe locale:
+  - Livré: la barre du haut affiche l'équipe active, permet de changer d'équipe et de créer une nouvelle équipe;
+  - Livré: les matchs, joueurs et liens publics sont séparés par équipe avec `teamId`; il n'y a pas de déplacement de matchs entre équipes;
+  - Livré: `Mes matchs` et `Partager` affichent seulement les données de l'équipe active.
 - Livré: un document public `publicTeams/{teamPublicId}` contient la liste publique ou une version chiffrée de cette liste. Les détails protégés par mot de passe restent dans les documents de match chiffrés.
 
 ## Workflow actuel
@@ -51,7 +56,7 @@ Le workflow livré est maintenant:
 Match -> Joueurs -> Alignement
 ```
 
-`Mes matchs` et `Spectateur` sont des vues hors étapes numérotées accessibles dans le menu. `Partager` est une route contextuelle du match courant.
+`Mes matchs` et `Spectateur` sont des vues hors étapes numérotées accessibles dans le menu. `Partager` est une route contextuelle de l'équipe active; ses exports exigent un match courant.
 
 ### Navigation
 
@@ -62,7 +67,7 @@ Match -> Joueurs -> Alignement
 - `#joueurs`: liste des joueurs du match et présence/absence avant le début.
 - `#alignement`: frappe fixe, ordre des frappeurs, optimisation défensive, progression du match, validations, suggestions, statistiques et changements de joueurs.
 - `#mesmatchs`: sauvegarde, ouverture et suppression des matchs cloud du compte connecté.
-- `#partager`: exports `Banc`, `Programme` et `Texte`, plus `Spectateurs en direct` pour créer le lien public du match courant. Le partage courriel et le spectateur autonome sont retirés.
+- `#partager`: lien permanent d'équipe, liste des matchs partagés de l'équipe active, exports `Banc`, `Programme` et `Texte` quand un match est ouvert, plus `Spectateurs en direct` pour créer le lien public du match courant. Le partage courriel et le spectateur autonome sont retirés.
 - `#spectateur`: vue simplifiée en lecture seule.
 - Anciennes routes:
   - `#jouer` redirige vers `#alignement`.
@@ -91,8 +96,8 @@ Match -> Joueurs -> Alignement
 - En cours: intégration Firebase optionnelle pour sauvegarder le match courant, publier un lien spectateur live et ouvrir le match sur mobile avec un compte courriel/Google.
 - En cours: mot de passe public optionnel avec projection spectateur chiffrée côté client.
 - L'accès à `Spectateur` reste possible même si certains exports devront éventuellement être bloqués selon la validité du match.
-- Livré: `Mes matchs` est dans le menu global, tandis que `Partager` est une action contextuelle du match courant.
-- Livré: `Partager` présente maintenant `Exports` (`Programme`, `Banc`, `Texte`) avant `En ligne` (`Spectateurs en direct`).
+- Livré: `Mes matchs` est dans le menu global, tandis que `Partager` est une action contextuelle de l'équipe active.
+- Livré: `Partager` présente maintenant `Exports` (`Programme`, `Banc`, `Texte`) avant `En ligne` (`Lien permanent d'équipe`, `Spectateurs en direct`).
 - Livré: `Mes matchs` permet d'ouvrir ou supprimer les matchs cloud du compte connecté sans lien d'édition.
 - À clarifier: les actions cloud doivent indiquer quand une connexion est requise et proposer la connexion au moment où l'utilisateur tente une action qui en dépend.
   - Livré: les actions cloud ouvrent la connexion quand elle est requise et affichent des états plus explicites.

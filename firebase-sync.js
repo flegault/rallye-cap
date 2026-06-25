@@ -130,6 +130,7 @@ function matchSummary(payload, extra = {}) {
     date: payload?.date || "",
     time: payload?.time || "",
     place: payload?.place || "",
+    teamId: payload?.teamId || null,
     started: payload?.started === true,
     status: payload?.status || (completed ? "completed" : payload?.started === true ? "active" : "draft"),
     completed,
@@ -233,6 +234,17 @@ export async function listenPublicTeam(teamPublicId, callback) {
   return fsMod.onSnapshot(fsMod.doc(firebaseDb, "publicTeams", teamPublicId), snap => {
     callback(snap.exists() ? { id: snap.id, ...snap.data() } : null);
   });
+}
+
+export async function listPublicTeams() {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user) throw new Error("Connexion requise.");
+  let ref = fsMod.collection(firebaseDb, "publicTeams");
+  let q = fsMod.query(ref, fsMod.where("ownerUid", "==", user.uid));
+  let snap = await fsMod.getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    .sort((a, b) => (b.updatedAtMs || 0) - (a.updatedAtMs || 0));
 }
 
 export async function deletePublicTeam(teamPublicId) {
