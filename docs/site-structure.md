@@ -11,7 +11,6 @@ L'application est une SPA avec les vues applicatives principales suivantes acces
 - `#match`
 - `#joueurs`
 - `#alignement`
-- `#partager`
 - `#spectateur`
 - `#public/{publicId}` pour le spectateur live public en lecture seule
 - `#fans/{teamPublicId}` pour la liste publique permanente des matchs publiés d'une équipe
@@ -22,7 +21,7 @@ La navigation est disponible dans:
 - les étapes numérotées du workflow, affichées dans le contenu;
 - certains boutons de continuité entre les vues.
 
-Le menu global regroupe `Accueil`, `Partages`, `Connexion` et l'action destructive `Réinitialiser`. L'icône et le titre du site ramènent à `Accueil`. Le sélecteur `Équipe active` et l'action `Nouvelle équipe` vivent dans `Accueil`, près des informations d'équipe. `Matchs` n'est pas dans le menu global; la page reste accessible depuis l'accueil. `Spectateur` n'est pas dans le menu global; il s'ouvre depuis une ligne admissible de `Matchs`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales et en ligne connues.
+Le menu global regroupe `Accueil`, `Connexion` et l'action destructive `Réinitialiser`. L'icône et le titre du site ramènent à `Accueil`. Le changement d'équipe vit dans `Accueil`, via une modale ouverte depuis la carte d'équipe. `Matchs` n'est pas dans le menu global; la page reste accessible depuis l'accueil. `Spectateur` n'est pas dans le menu global; il s'ouvre depuis une ligne admissible de `Matchs`. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales et en ligne connues.
 
 ## Sitemap actuel
 
@@ -30,9 +29,10 @@ Le menu global regroupe `Accueil`, `Partages`, `Connexion` et l'action destructi
 Alignement Rallye-Cap
 +-- Accueil (#accueil)
 |   +-- Si aucune équipe: appel à créer l'équipe
-|   +-- Créer une équipe exemple seulement si aucune équipe n'existe
-|   +-- Sélection / création d'équipe
-|   +-- Nom de notre équipe
+|   +-- Créer une équipe exemple seulement si aucune équipe n'existe, dans la section de création
+|   +-- Changer d'équipe par modale
+|   +-- Nom de notre équipe éditable directement
+|   +-- Lien public d'équipe par modale ouverte depuis l'icône de lien
 |   +-- Joueurs du bassin permanent
 |   +-- Si équipe créée sans match actif: créer explicitement un nouveau match
 |   +-- Si match courant non archivé: cartes workflow `Match`, `Joueurs`, `Alignement` ou `Jouer`
@@ -46,7 +46,7 @@ Alignement Rallye-Cap
 |   |   +-- Matchs locaux et matchs en ligne non archivés
 |   |   +-- Tri par adversaire, date/heure, endroit, statut, modification
 |   |   +-- Ligne cliquable pour ouvrir
-|   |   +-- Icônes: spectateur, mettre en ligne, retirer du cloud, archiver, supprimer
+|   |   +-- Actions: partager, spectateur, mettre en ligne, retirer du cloud, archiver, supprimer
 |   +-- Tableau Matchs archivés
 |   |   +-- Archives locales en lecture seule
 |   |   +-- Matchs archivés en ligne du compte connecté
@@ -78,22 +78,14 @@ Alignement Rallye-Cap
 |   +-- Validation
 |   +-- Suggestions, seulement quand une action est proposée
 |   +-- Statistiques et équité
-+-- Partages (#partager)
-|   +-- Exports
-|   |   +-- Programme
-|   |   +-- Banc
-|   |   +-- Texte
-|   +-- En ligne
-|   +-- Lien permanent d'équipe
-|   |   +-- Utilise l'identifiant public choisi dans Partages
-|   |   +-- Créer un lien public d'équipe
-|   |   +-- Mot de passe optionnel chiffré côté client
-|   |   +-- Copier ou retirer le lien
-|   |   +-- Liste des liens d'équipe du compte connecté, pour copier ou retirer un lien même si la référence locale est perdue
-|   +-- Spectateurs en direct
-|   |   +-- Créer un lien public
-|   |   +-- Mot de passe optionnel chiffré côté client
-|   |   +-- Copier ou retirer le lien
++-- Modale Partager le match
+|   +-- Exports: Programme, Banc, Texte
+|   +-- Mettre le match en ligne
+|   +-- Spectateurs en direct: créer, copier ou retirer le lien public du match
++-- Modale Lien d'équipe
+|   +-- Créer, copier ou retirer le lien public permanent de l'équipe active
+|   +-- Mot de passe optionnel chiffré côté client
+|   +-- Liste des liens d'équipe du compte connecté
 +-- Spectateur (#spectateur)
     +-- Accessible depuis une ligne admissible de `Matchs`
     +-- Programme ou alignement à venir
@@ -133,7 +125,7 @@ Le workflow cible suit la réalité d'un match et évite de devoir revenir dans 
 📅 Match -> 👨‍👩‍👦‍👦 Joueurs -> 📋 Alignement
 ```
 
-`Matchs` et `Spectateur` sont des pages non numérotées hors menu global. `Matchs` s'ouvre depuis l'accueil. `Spectateur` s'ouvre depuis une ligne admissible de `Matchs`. `Partages` est une route non numérotée du menu global; elle affiche les partages de l'équipe active même si aucun match n'est ouvert, mais les exports exigent un match courant. Créer l'équipe ou modifier le bassin permanent ne crée pas de match automatiquement; le match est créé par une action explicite depuis l'accueil.
+`Matchs` et `Spectateur` sont des pages non numérotées hors menu global. `Matchs` s'ouvre depuis l'accueil. `Spectateur` s'ouvre depuis une ligne admissible de `Matchs`. `Partager` est une action non numérotée liée au match courant: elle ouvre une modale qui regroupe exports, mise en ligne et lien spectateur. Créer l'équipe ou modifier le bassin permanent ne crée pas de match automatiquement; le match est créé par une action explicite depuis l'accueil.
 
 La gestion durable de notre équipe et de son bassin de joueurs est séparée du workflow de match sans devenir une étape numérotée. Elle vit dans `Accueil` et sert à définir le nom de notre équipe ainsi que les joueurs disponibles pour les matchs futurs. Le workflow `Joueurs` sert seulement à indiquer qui est présent ou absent pour le match courant.
 
@@ -178,8 +170,11 @@ Alignement Rallye-Cap
 |   +-- Alerte de positions défensives futures incomplètes
 |   |   +-- Clic sur cellule `BANC` en surbrillance
 |   |   +-- Action `Remplir les positions possibles`
-+-- Partages
++-- Modale Partager le match
 |   +-- Exports disponibles seulement si le match respecte les règles de base
+|   +-- Publication du match et lien spectateur public
++-- Modale Lien d'équipe
+|   +-- Lien public permanent de l'équipe active
 +-- Spectateur
     +-- Vue simplifiée en lecture seule
     +-- Suivi en direct du déroulement à explorer plus tard
@@ -191,7 +186,7 @@ Alignement Rallye-Cap
 - Optimiser l'alignement.
 - Ajouter ou retirer une manche si le contexte réel change.
 - Corriger des problèmes à partir des suggestions.
-- Exporter depuis la section `Partages`.
+- Exporter depuis la modale `Partager le match`.
 - Utiliser la vue spectateur comme écran de consultation pendant la partie.
 
 ## Frictions connues
@@ -210,7 +205,7 @@ Alignement Rallye-Cap
   - Livré partiellement pour le spectateur public.
 - La vue spectateur devrait éventuellement inclure une première étape `Programme`, puis un état final `Merci, à la prochaine`.
   - Livré pour le spectateur public.
-- `Matchs` gère la sauvegarde, l'ouverture et la suppression des matchs cloud. La section `Partages` agit sur l'équipe active: lien permanent d'équipe, matchs partagés et exports (`Programme`, `Banc`, `Texte`) quand un match est ouvert.
+- `Matchs` gère la sauvegarde, l'ouverture et la suppression des matchs cloud. La modale `Partager le match` agit sur le match sélectionné ou courant: exports (`Programme`, `Banc`, `Texte`), publication et lien spectateur. La modale `Lien d'équipe` agit sur l'équipe active.
 - Les suggestions et validations pourraient être rapprochées du tableau quand l'utilisateur corrige manuellement.
 - Le flux ne distingue pas encore clairement préparation avant-match, ajustement, et consultation pendant le match.
 
@@ -261,11 +256,11 @@ Découpage potentiel:
 - Quel patron d'interaction est le plus rapide sur téléphone pour corriger une position défensive manquante après un retrait de joueur: clic sur `BANC`, zone `Positions non assignées`, ou menu d'action par manche?
 - Comment faire évoluer le raccourci rapide près du menu sans surcharger le header si d'autres actions globales apparaissent?
 - Le bouton `Sauvegarder` de `Équipe` doit-il être retiré au profit d'une sauvegarde automatique, ou étendu comme action explicite cohérente ailleurs?
-- Pour la frappe non fixe, quelle interaction minimale permettrait de saisir le dernier frappeur d'une manche sans transformer `Spectateur` en outil d'édition complet?
+- Si la frappe non fixe revient dans les besoins terrain, quel outil coach devrait porter le suivi du dernier frappeur sans transformer `Spectateur` en outil d'édition?
 
 ## Décisions UX prises
 
-- Le workflow cible est `Match`, `Joueurs`, `Alignement`; `Partager` et `Spectateur` ne sont pas des étapes numérotées.
+- Le workflow cible est `Match`, `Joueurs`, `Alignement`; `Partager` et `Spectateur` ne sont pas des étapes numérotées. `Partager` reste visible comme action de match non numérotée quand un match courant existe.
 - `Match` reste avant `Joueurs`, parce que les présences et absences sont confirmées dans le contexte d'un match daté.
 - `Accueil` est la porte d'entrée contextuelle: configuration de l'équipe si elle manque, création explicite d'un match si aucun match n'est actif, ou reprise du match en cours.
 - Le hero de présentation apparaît seulement dans `Accueil`.
@@ -280,14 +275,14 @@ Découpage potentiel:
 - Les suggestions d'action ne doivent viser que les demi-manches non jouées.
 - Le mode match actuel devient `Spectateur`, une vue simplifiée en lecture seule accessible par le menu.
 - `Spectateur` n'affiche pas l'en-tête global ni le workflow numéroté. Les contrôles visibles sont limités à la navigation précédente/suivante et au retour vers la manche en cours.
-- L'exemple vit seulement dans `Équipe` sous forme de création d'équipe exemple. Il ne doit pas apparaître dans `Accueil` ni dans le menu principal.
+- L'exemple vit seulement dans `Accueil`, comme action secondaire de création d'équipe quand aucune équipe n'existe.
 - La gestion de notre équipe et du bassin permanent de joueurs doit être séparée du workflow de match, mais ne doit pas devenir une étape numérotée.
 - La préparation du match se limite aux informations du match courant, aux présences et à l'alignement.
 - L'ordre des frappeurs se modifie dans le tableau principal de l'alignement, en glissant les joueurs dans la première colonne.
 - Garder la possibilité de désactiver temporairement un joueur sans le supprimer.
 - Garder la possibilité d'ajuster l'ordre des frappeurs manuellement.
 - Les changements de vue doivent ramener l'utilisateur en haut de la page.
-- Le tableau de contexte de l'accueil affiche l'état de l'équipe, les joueurs enregistrés et les matchs archivés; il ne doit pas afficher les manches, le côté local/visiteur ou l'équité.
+- Le tableau de contexte de l'accueil affiche l'équipe active, les joueurs, le total des matchs et l'accès au partage; il ne doit pas afficher les manches, le côté local/visiteur ou l'équité.
 - La préparation du match est séparée en deux groupes avec entêtes: `Équipes` pour notre équipe/côtés/adversaire, puis `Détails` pour date/heure/endroit. `Notre équipe` ressemble à un champ de formulaire et reste cliquable vers `Équipe`.
 - L'état du match dans l'accueil doit utiliser `Aucun match prévu`, `En préparation` et `En cours`, avec la demi-manche courante quand le match est commencé.
 - Dans le détail de match de l'accueil, afficher date, heure et endroit.
@@ -301,13 +296,12 @@ Découpage potentiel:
 - Avant le début du match, l'arrivée sur `Alignement` optimise automatiquement après ajout, suppression ou changement de présence des joueurs.
 - L'ajout et le retrait de manches sont des icônes `-` et `+` dans l'en-tête de la dernière manche.
 - Les validations et l'équité doivent être affichées après le tableau principal.
-- L'écran `Alignement` ne doit pas avoir de bouton `Partages` si la navigation principale donne déjà accès à `Partages`.
-- L'écran `Partages` ne doit pas avoir de bouton `Ouvrir le spectateur`; `Spectateur` s'ouvre depuis une ligne de `Matchs`.
-- L'écran `Spectateur` ne doit pas avoir de bouton `Partages` si la navigation principale donne déjà accès à `Partages`.
+- `Partager` ouvre une modale liée au match courant, accessible depuis le workflow et depuis une ligne de `Matchs`.
+- `Spectateur` s'ouvre depuis une ligne de `Matchs` ou depuis le lien public créé dans la modale de partage.
 - Chaque étape du flux principal doit avoir un bouton `Continuer` en bas pour soutenir le flux guidé.
-- Regrouper les exports et publications dans une section séparée `Partages`.
-- La section `Partages` doit utiliser des conventions UI faciles à reconnaître: impression/PDF, copier, image, texte, lien, QR code.
-- Les exports de la section `Partages` sont présentés comme des cartes de même niveau visuel. L'ancien export spectateur autonome est retiré; le partage spectateur externe cible un futur lien en ligne.
+- Regrouper les exports et publications dans la modale `Partager le match`.
+- Les actions de partage doivent utiliser des conventions UI faciles à reconnaître: impression/PDF, copier, image, texte, lien, QR code.
+- Les exports de la modale `Partager le match` sont présentés comme des actions de même niveau visuel. L'ancien export spectateur autonome est retiré; le partage spectateur externe passe par le lien en ligne du match.
 - Retirer la vue terrain de l'expérience principale.
 - L'ajout et le retrait de manche doivent rester possibles en cours de match, parce qu'une 5e manche peut être ajoutée si le temps le permet.
 - L'ajout/retrait de manche est accessible clairement dans l'écran d'alignement.
@@ -346,14 +340,15 @@ Découpage potentiel:
 - Si l'entraîneur modifie manuellement l'ordre après un mélange, ce nouvel ordre devient l'ordre courant.
 - Désactiver temporairement un joueur le retire du match courant, mais ne supprime pas le joueur de la liste.
 
-## Section Partages
+## Modales de partage
 
-La section `Partages` regroupe:
+La modale `Partager le match` regroupe:
 
-- `Exports`: `Programme`, `Banc` et `Texte`;
-- `En ligne`: `Lien permanent d'équipe` pour gérer l'identifiant public de l'équipe active et `Spectateurs en direct` pour créer un lien public stable que les fans peuvent suivre pendant le match.
+- `Programme`, `Banc` et `Texte`;
+- `Mettre en ligne`;
+- `Spectateurs en direct` pour créer, copier ou retirer un lien public stable que les fans peuvent suivre pendant le match.
 
-`Partages` affiche seulement les liens de l'équipe active. Il liste les documents `publicTeams` liés à l'équipe courante et les matchs déjà partagés pour permettre de copier ou retirer leurs liens. La reprise et la suppression complètes des matchs cloud vivent dans `Matchs`.
+La modale `Lien d'équipe` vit dans la carte d'équipe de l'accueil. Elle permet de créer, copier ou retirer le lien public permanent `#fans/{teamPublicId}` de l'équipe active, et liste les documents `publicTeams` liés au compte connecté pour copier ou retirer un lien même si la référence locale est perdue. La reprise et la suppression complètes des matchs cloud vivent dans `Matchs`.
 
 Les partages locaux doivent rester utilisables sans connexion. Les actions cloud doivent expliquer la connexion requise et proposer de se connecter quand l'utilisateur tente de les utiliser.
 
@@ -396,4 +391,4 @@ Les deux tableaux combinent les matchs locaux et les matchs en ligne du compte c
 
 Les tableaux sont triables par adversaire, date/heure du match, endroit, statut et dernière modification. Le tri par défaut place les matchs les plus récents en premier selon la date et l'heure du match. Les actions sont des icônes avec titres: cloud on/off, dossier d'archivage et suppression.
 
-`Partages` agit sur l'équipe active: `Programme`, `Banc`, `Texte`, lien permanent d'équipe, matchs partagés et `Spectateurs en direct` pour le match actif. Il ne sert plus à reprendre l'édition cloud.
+La modale `Partager le match` agit sur le match actif ou sélectionné: `Programme`, `Banc`, `Texte`, mise en ligne et `Spectateurs en direct`. La modale `Lien d'équipe` agit sur l'équipe active et son lien permanent. Aucune de ces modales ne sert à reprendre l'édition cloud.

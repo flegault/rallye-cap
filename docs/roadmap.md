@@ -9,8 +9,8 @@
 
 ## Priorité Spectateurs / Cloud
 
-- Équipe privée dans le cloud pour l'entraîneur:
-  - sauvegarder le profil d'équipe et le `roster` permanent dans Firestore, séparément des matchs;
+- Synchronisation privée du profil d'équipe et du bassin de joueurs:
+  - futur: sauvegarder le profil d'équipe et le `roster` permanent dans Firestore, séparément des matchs;
   - permettre de reprendre la préparation sur mobile sans devoir transférer manuellement les joueurs;
   - garder ces données privées au compte connecté, sans exposition aux fans;
   - clarifier comment synchroniser les changements d'équipe avec les matchs en préparation seulement, sans modifier les matchs commencés, terminés ou archivés;
@@ -45,8 +45,8 @@
 - Multi-équipe locale:
   - Livré: l'accueil affiche l'équipe active, permet de changer d'équipe et de créer une nouvelle équipe;
   - Livré: les matchs, joueurs et liens publics sont séparés par équipe avec `teamId`; il n'y a pas de déplacement de matchs entre équipes;
-  - Livré: `Matchs` et `Partages` affichent seulement les données de l'équipe active.
-  - Livré: le menu global est réduit à `Accueil`, `Partages`, `Connexion` et `Réinitialiser`; `Matchs` s'ouvre depuis l'accueil, `Spectateur` depuis les lignes de match, et les routes désuètes `#equipe` / `#mesmatchs` ne sont pas maintenues.
+  - Livré: `Matchs` affiche seulement les données de l'équipe active.
+  - Livré: le menu global est réduit à `Accueil`, `Connexion` et `Réinitialiser`; `Matchs` s'ouvre depuis l'accueil, `Spectateur` depuis les lignes de match, et les routes désuètes `#equipe` / `#mesmatchs` / `#partager` ne sont pas maintenues.
 - Livré: un document public `publicTeams/{teamPublicId}` contient la liste publique ou une version chiffrée de cette liste. Les détails protégés par mot de passe restent dans les documents de match chiffrés.
 
 ## Workflow actuel
@@ -57,7 +57,7 @@ Le workflow livré est maintenant:
 Match -> Joueurs -> Alignement
 ```
 
-`Matchs` et `Spectateur` sont des vues hors étapes numérotées et hors menu global. `Matchs` est accessible depuis l'accueil; `Spectateur` s'ouvre depuis une ligne de match admissible. `Partages` est une route du menu global centrée sur l'équipe active; ses exports exigent un match courant.
+`Matchs` et `Spectateur` sont des vues hors étapes numérotées et hors menu global. `Matchs` est accessible depuis l'accueil; `Spectateur` s'ouvre depuis une ligne de match admissible. Le partage est une action non numérotée du match courant, accessible depuis le workflow et depuis `Matchs`.
 
 ### Navigation
 
@@ -67,7 +67,7 @@ Match -> Joueurs -> Alignement
 - `#joueurs`: liste des joueurs du match et présence/absence avant le début.
 - `#alignement`: frappe fixe, ordre des frappeurs, optimisation défensive, progression du match, validations, suggestions, statistiques et changements de joueurs.
 - `#matchs`: sauvegarde, ouverture et suppression des matchs locaux et cloud du compte connecté, incluant l'accès `Spectateur` par ligne.
-- `#partager`: `Partages`, lien permanent d'équipe, liste des matchs partagés de l'équipe active, exports `Banc`, `Programme` et `Texte` quand un match est ouvert, plus `Spectateurs en direct` pour créer le lien public du match courant. Le partage courriel et le spectateur autonome sont retirés.
+- Action `Partager`: modale de match avec `Programme`, `Banc`, `Texte`, mise en ligne et `Spectateurs en direct`. Le lien d'équipe `#fans` vit dans la carte équipe.
 - `#spectateur`: vue simplifiée en lecture seule.
 
 ### Alignement
@@ -131,7 +131,7 @@ Match -> Joueurs -> Alignement
   - Livré partiellement: à la fin de la dernière demi-manche, l'application propose d'archiver ou non, ferme le match courant, conserve l'équipe et les joueurs, puis retourne à l'accueil.
 - Ajouter les archives à l'accueil contextuel quand la gestion multi-match sera disponible.
   - Redécoupé: les archives vivent maintenant dans `Mes matchs`; l'accueil se concentre sur le match courant non archivé.
-- Importer et exporter une liste de joueurs.
+- Rejeté pour l'instant: importer/exporter une liste de joueurs.
 - Normaliser automatiquement la casse des noms de joueurs à l'ajout, par exemple `marquis grissom` -> `Marquis Grissom`.
 - Livré: ajouter un champ optionnel de numéro de chandail à 2 chiffres dans les cartes joueurs de `Équipe`. Le numéro est éditable seulement hors match, comme le nom du joueur. Il apparaît en pastille dans l'alignement et reste disponible pour `Programme`, `Banc`, `Texte`, `Spectateur` et les futurs partages parents/fans.
 - Optimiser automatiquement l'alignement la première fois qu'on arrive sur `Alignement` après des changements de joueurs, parce que les ajouts/retraits ne sont pas toujours bien reflétés avant optimisation.
@@ -155,7 +155,7 @@ Match -> Joueurs -> Alignement
   - Livré: le spectateur public affiche un état final quand toutes les demi-manches sont complétées.
 - Dans `Spectateur`, permettre d'ouvrir ou générer le `Programme` depuis la vue spectateur.
 - Explorer une action explicite pour publier ou mettre à jour l'alignement visible dans le spectateur live, afin d'éviter de publier des informations incomplètes par accident.
-- En frappe non fixe, permettre à l'entraîneur d'indiquer manuellement le dernier frappeur d'une manche pour aider la vue spectateur à annoncer les prochains frappeurs probables.
+- Rejeté pour l'instant: saisir le dernier frappeur côté spectateur; Rallye-Cap utilise normalement la frappe fixe et ce besoin appartiendrait plutôt aux outils coach.
 - L'URL permanente d'équipe est remontée en priorité `Spectateurs / Cloud` sous la forme `#fans/{teamPublicId}`.
 - Rejeté pour l'instant: dupliquer un match existant. L'usage réel ne justifie pas cette action dans la première version.
 - Ajouter un écran de résumé avant impression.
@@ -219,7 +219,7 @@ Améliorations UX à prévoir:
 ## Alignement
 
 - L'ordre des frappeurs se modifie directement dans le tableau principal en glissant les joueurs.
-- L'option `Frappe fixe` doit migrer vers l'écran `Match`, car elle fait partie des paramètres du match courant.
+- Livré: `Frappe fixe` vit dans l'écran `Match`, car elle fait partie des paramètres du match courant.
 - L'interface doit indiquer que `Frappe fixe` est normalement activée en Rallye-Cap.
 - Les validations et l'équité suivent le tableau principal pour servir de rétroaction après l'ajustement.
 - Simplifier la densité de l'écran `Alignement`:
@@ -287,13 +287,13 @@ Points à définir avant implémentation:
 - durée de conservation ou suppression manuelle;
 - comportement hors ligne quand un match publié ne peut pas être synchronisé.
 
-## Partages parents et vues fans
+## Partage parents et vues fans
 
 À explorer:
 
 - `Programme`: ajouter une première page style poster avec les équipes, date, heure, joueurs présents et numéros de chandail, avec une composition visuelle baseball en arrière-plan.
 - Évaluer si le `Programme` doit devenir un PDF multi-page plutôt qu'une seule image quand on ajoute une page poster et que le contenu doit éviter les coupures.
-- Future vue fan joueur: vue centrée sur un joueur, montrant quelles manches il frappe, défend ou encourage.
+- Livré: les favoris joueur dans les vues publiques couvrent l'intention de suivre un joueur précis.
 - La vue fan joueur est probablement une vue partageable en ligne ou une extension de `Spectateur`; la forme exacte reste à explorer plus tard.
 
 ## Sortie Texte
@@ -491,7 +491,7 @@ Questions fermées:
 - Boutons `Continuer` ajoutés en bas des étapes du flux principal.
 - Affichage `Visiteur` / `Locale` intégré près des noms d'équipes, avec inversion automatique entre l'équipe et l'adversaire.
 - Gestion séparée de l'ordre retirée; l'ordre se modifie dans le tableau principal de l'alignement.
-- Option `Frappe fixe` déplacée dans l'écran `Joueurs`, avec l'indication que le mode est normalement activé en Rallye-Cap. Cible suivante: la déplacer dans `Match`.
+- Option `Frappe fixe` déplacée dans l'écran `Match`, avec l'indication que le mode est normalement activé en Rallye-Cap.
 - `Alignement` consolidé: les actions principales sont au-dessus du tableau, sans pill de statut ni sous-titre `Tableau principal`.
 - `Optimiser` conserve maintenant l'ordre de frappe courant au lieu de revenir à l'ordre initial des joueurs enregistrés.
 - Bouton shuffle ajouté près de `Optimiser` pour mélanger l'ordre de frappe avant match et optimiser les positions automatiquement.
