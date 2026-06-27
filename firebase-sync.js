@@ -205,16 +205,12 @@ export async function publishPublic(publicId, matchId, payload, password) {
   return id;
 }
 
-export async function publishPublicTeam(teamPublicId, payload, password) {
+export async function publishPublicTeam(teamPublicId, payload, password, createOnly = false) {
   let { fsMod } = await ensureFirebase();
   let user = firebaseAuth.currentUser;
   if (!user) throw new Error("Connexion requise.");
   let id = teamPublicId || randomId(24);
   let ref = fsMod.doc(firebaseDb, "publicTeams", id);
-  let existing = await fsMod.getDoc(ref);
-  if (existing.exists() && existing.data()?.ownerUid !== user.uid) {
-    throw new Error("Cet identifiant public d'équipe est déjà utilisé.");
-  }
   let passwordProtected = !!String(password || "").trim();
   let publicDoc = {
     ownerUid: user.uid,
@@ -225,6 +221,18 @@ export async function publishPublicTeam(teamPublicId, payload, password) {
   };
   if (passwordProtected) publicDoc.encryptedPayload = await encryptJson(payload, password);
   else publicDoc.payload = payload;
+  if (createOnly) {
+    await fsMod.runTransaction(firebaseDb, async transaction => {
+      let existing = await transaction.get(ref);
+      if (existing.exists()) throw new Error("Cet identifiant public d'équipe est déjà utilisé.");
+      transaction.set(ref, publicDoc);
+    });
+    return id;
+  }
+  let existing = await fsMod.getDoc(ref);
+  if (existing.exists() && existing.data()?.ownerUid !== user.uid) {
+    throw new Error("Cet identifiant public d'équipe est déjà utilisé.");
+  }
   await fsMod.setDoc(ref, publicDoc);
   return id;
 }

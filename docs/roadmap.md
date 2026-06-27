@@ -46,7 +46,7 @@
   - Livré: l'accueil affiche l'équipe active, permet de changer d'équipe et de créer une nouvelle équipe;
   - Livré: les matchs, joueurs et liens publics sont séparés par équipe avec `teamId`; il n'y a pas de déplacement de matchs entre équipes;
   - Livré: `Matchs` affiche seulement les données de l'équipe active.
-  - Livré: le menu global est réduit à `Accueil`, `Connexion` et `Réinitialiser`; `Matchs` s'ouvre depuis l'accueil, `Spectateur` depuis les lignes de match, et les routes désuètes `#equipe` / `#mesmatchs` / `#partager` ne sont pas maintenues.
+  - Livré: le menu global est réduit à `Accueil`, `Connexion` et `Réinitialiser`; `Matchs` s'ouvre depuis l'accueil, la route interne `Spectateur` n'a plus d'accès visible, et les routes désuètes `#equipe` / `#mesmatchs` / `#partager` ne sont pas maintenues.
 - Livré: un document public `publicTeams/{teamPublicId}` contient la liste publique ou une version chiffrée de cette liste. Les détails protégés par mot de passe restent dans les documents de match chiffrés.
 
 ## Workflow actuel
@@ -57,7 +57,7 @@ Le workflow livré est maintenant:
 Match -> Joueurs -> Alignement
 ```
 
-`Matchs` et `Spectateur` sont des vues hors étapes numérotées et hors menu global. `Matchs` est accessible depuis l'accueil; `Spectateur` s'ouvre depuis une ligne de match admissible. Le partage est une action non numérotée du match courant, accessible depuis le workflow et depuis `Matchs`.
+`Matchs` et `Spectateur` sont des vues hors étapes numérotées et hors menu global. `Matchs` est accessible depuis l'accueil; `Spectateur` est conservé sans accès visible en attendant sa refonte comme vue coach. Le partage est une action non numérotée du match courant, accessible depuis le workflow et depuis `Matchs`.
 
 ### Navigation
 
@@ -66,8 +66,8 @@ Match -> Joueurs -> Alignement
 - `#match`: informations du match, côté local/visiteur, adversaire, date, heure et endroit.
 - `#joueurs`: liste des joueurs du match et présence/absence avant le début.
 - `#alignement`: frappe fixe, ordre des frappeurs, optimisation défensive, progression du match, validations, suggestions, statistiques et changements de joueurs.
-- `#matchs`: sauvegarde, ouverture et suppression des matchs locaux et cloud du compte connecté, incluant l'accès `Spectateur` par ligne.
-- Action `Partager`: modale de match avec `Programme`, `Banc`, `Texte`, mise en ligne et `Spectateurs en direct`. Le lien d'équipe `#fans` vit dans la carte équipe.
+- `#matchs`: ouverture, partage, archivage et suppression des matchs locaux et cloud du compte connecté; l'actualisation et la gestion cloud sont centralisées automatiquement ou dans `Partager`.
+- Action `Partager`: modale de match avec `Lien Match`, `Gérer en ligne` pour l'édition/synchronisation privée, puis les exports `Programme`, `Banc` et `Texte`. Le lien d'équipe `#fans` vit dans la carte équipe.
 - `#spectateur`: vue simplifiée en lecture seule.
 
 ### Alignement
@@ -91,11 +91,11 @@ Match -> Joueurs -> Alignement
 
 - `Partager` et `Spectateur` ne font plus partie du chemin numéroté.
 - Le spectateur autonome est retiré de `Partager`; la cible de partage externe devient un futur lien en ligne en lecture seule.
-- En cours: intégration Firebase optionnelle pour sauvegarder le match courant, publier un lien spectateur live et ouvrir le match sur mobile avec un compte courriel/Google.
-- En cours: mot de passe public optionnel avec projection spectateur chiffrée côté client.
+- Livré: intégration Firebase optionnelle pour sauvegarder le match courant, publier un lien spectateur live et ouvrir le match sur mobile avec un compte courriel/Google.
+- Livré: mot de passe public optionnel avec projection spectateur chiffrée côté client.
 - L'accès à `Spectateur` reste possible même si certains exports devront éventuellement être bloqués selon la validité du match.
-- Livré: `Mes matchs` est dans le menu global, tandis que `Partager` est une action contextuelle de l'équipe active.
-- Livré: `Partager` présente maintenant `Exports` (`Programme`, `Banc`, `Texte`) avant `En ligne` (`Lien permanent d'équipe`, `Spectateurs en direct`).
+- Livré: `Matchs` est hors menu global et accessible depuis le contexte d'accueil, tandis que `Partager` est une action contextuelle du match courant.
+- Livré: `Partager le match` présente maintenant `Lien Match`, `Gérer en ligne` et `Exports` dans cet ordre; le lien permanent d'équipe vit dans la carte équipe.
 - Livré: `Mes matchs` permet d'ouvrir ou supprimer les matchs cloud du compte connecté sans lien d'édition.
 - À clarifier: les actions cloud doivent indiquer quand une connexion est requise et proposer la connexion au moment où l'utilisateur tente une action qui en dépend.
   - Livré: les actions cloud ouvrent la connexion quand elle est requise et affichent des états plus explicites.
@@ -197,6 +197,9 @@ Améliorations UX à prévoir:
   - `En cours`, avec la demi-manche courante affichée.
 - dans le détail du match, afficher date, heure et endroit;
 - Livré: l'accueil utilise `Aucun match prévu`, `Préparer un match`, `Match en préparation` et `En cours` avec la demi-manche courante, et affiche date, heure et endroit quand disponibles.
+- Livré: la carte de contexte `Équipe active` affiche `Aucune équipe` quand aucune équipe n'existe et ouvre la modale pour changer ou créer une équipe.
+- Livré: la boîte d'équipe permet d'éditer le nom directement dans son titre, met `Ajouter des joueurs` en action primaire et ne contient plus de bouton `Préparer un match`.
+- Livré: la boîte d'équipe ne répète plus le compteur de joueurs dans son en-tête.
 - Livré: quand un match courant non archivé existe, l'accueil affiche trois cartes workflow cliquables: `Match`, `Joueurs`, puis `Alignement` ou `Jouer`.
 
 ## Équipe et joueurs
@@ -412,7 +415,7 @@ Irritants UX à corriger:
 - Retirer l'icône du lien `Partage` dans le menu global.
 - Dans `Match`, retirer le texte d'aide redondant `Crée le contexte du match courant.`
 - Dans `Équipe`, clarifier le modèle du bouton `Sauvegarder`: soit sauvegarde automatique cohérente partout, soit action explicite cohérente, avec une décision particulière pour la sauvegarde cloud.
-- Livré: le modal `Réinitialiser` avertit que l'équipe, les joueurs, les matchs locaux, les archives, les données cloud connues et les liens spectateur seront supprimés quand c'est possible.
+- Livré: `Réinitialiser` utilise le message `Toutes tes équipes, joueurs et matchs seront supprimés pour toujours. Continuer?`
 - Livré: `Mes matchs` sert à la sauvegarde et à la reprise des matchs cloud; `Spectateurs en direct` dans `Partager` sert au lien pour les fans.
 - Livré: les actions disponibles localement sont dans `Exports`; les actions qui exigent une connexion sont dans `En ligne`.
 - Dans `Spectateur`, afficher les deux lanceurs sur deux lignes séparées pour obtenir 6 éléments visuels comme l'ordre de frappe.
@@ -522,6 +525,14 @@ Questions fermées:
 - Le menu du haut est maintenant un menu global unique avec `Accueil`, `Équipe`, `Archives`, `Partage`, `Spectateur` et `Réinitialiser`.
 - Les entêtes de demi-manche du tableau principal gardent seulement les icônes bâton et gant.
 - Le bloc `Ajouter des joueurs` est déplacé dans `Équipe`, hors workflow.
+- Livré: supprimer une équipe supprime aussi ses matchs locaux et tente de retirer les liens cloud/public connus.
+- Livré: les modales de partage en ligne bloquent les champs de lien et de mot de passe avant connexion, affichent `Connexion` en vert, et utilisent `Créer le lien` comme action primaire quand connecté.
+- Livré: l'inventaire des boutons documente les couleurs vert primaire, blanc secondaire et rouge danger.
+- Livré: la modale `Lien d'équipe` est réduite à deux états sans boîte intermédiaire: lien existant avec copier/retirer, ou création avec identifiant obligatoire, mot de passe optionnel et bouton `Créer le lien`.
+- Livré: la carte du match courant sur `Accueil` expose les icônes lien et poubelle pour partager ou supprimer le match courant.
+- Livré: la modale `Partager le match` est réorganisée en `Lien Match`, `Gérer en ligne` pour l'édition/synchronisation cloud privée, puis `Exports` avec descriptions sous chaque document.
+- Livré: les descriptions précisent que `Lien Match` peut être partagé directement ou apparaître dans le lien d'équipe, tandis que `Gérer en ligne` sert au coach pour l'alignement et la synchronisation.
+- Livré: dans `Joueurs`, l'ajout d'un joueur est placé sous les listes de présence et la mention redondante sur la suppression est retirée.
 - La création d'équipe exemple est bloquée pendant un match débuté.
 - Le démarrage de la progression du match bloque si le nombre de joueurs actifs n'est pas entre 6 et 12. Les autres problèmes d'alignement ou de règles affichent un avertissement avec confirmation.
 - Le refactor du workflow a retiré l'onglet `Jouer`; `Alignement` porte maintenant la progression du match, les validations, les suggestions et les changements de joueurs.
@@ -535,7 +546,13 @@ Questions fermées:
 - Livré: `Mes matchs` utilise maintenant un seul tableau triable pour tous les statuts.
 - Les matchs locaux et cloud sont fusionnés dans les tableaux; les matchs seulement en ligne sont importés localement à l'ouverture.
 - Les lignes de `Mes matchs` sont cliquables pour ouvrir le match; les actions sont des icônes avec titres accessibles.
-- Les actions livrées sont `Mettre en ligne`, `Retirer du cloud`, `Archiver` et `Supprimer`.
+- Livré: les actions de ligne sont simplifiées à `Partager`, `Archiver` quand applicable et `Supprimer` avec une poubelle; `Actualiser`, `Mettre en ligne`, `Retirer du cloud` et l'accès direct `Spectateur` ont été centralisés ou retirés.
+- Redécoupé: le bouton interne `Spectateur` est retiré de `Partager le match`. La route existante est conservée sans accès visible et devra devenir une vue simple de gestion du match destinée au coach.
+- Livré: un match terminé est affiché comme tel sur l'accueil et ne verrouille plus l'édition de l'équipe permanente.
+- Livré: la création d'un lien d'équipe refuse transactionnellement tout identifiant déjà existant, même pour le même compte.
+- Corrigé: un identifiant d'équipe refusé ne peut plus être affiché localement comme un lien actif et l'erreur Firestore n'est plus remplacée par la réouverture de la modale.
+- Corrigé: les créations, mises à jour et suppressions de liens sont isolées par équipe active; les doublons locaux issus du bug précédent sont nettoyés sans supprimer le document de l'équipe propriétaire.
+- Corrigé: une erreur de création de lien d'équipe reste affichée dans la modale sans fermer le formulaire ni persister les champs.
 - Les archives sont maintenant des matchs `archived` en lecture seule.
 - Stabilisé: l'action `Archiver` est disponible seulement pour les matchs terminés; un match en préparation ou en cours doit être terminé ou supprimé.
 - `Partager` reste limité au match actif et ne contient plus de reprise d'édition cloud.
