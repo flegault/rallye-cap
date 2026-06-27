@@ -25,17 +25,17 @@ Le workflow cible suit la réalité du match et limite les retours en arrière u
 3. `📋 Alignement`: optimiser, ajuster manuellement, suivre la progression du match, appliquer les suggestions et gérer les changements de joueurs.
 4. `Partager`: action non numérotée du match courant; elle ouvre une modale pour les exports et le lien spectateur.
 
-Le mode spectateur est une vue simplifiée en lecture seule accessible depuis une ligne admissible de `Matchs`. Il n'est plus une étape du workflow principal.
+Le mode spectateur est une vue simplifiée en lecture seule accessible depuis `Partager le match` quand le match sélectionné est admissible. Il n'est plus une étape du workflow principal.
 
 `Accueil` est une porte d'entrée contextuelle hors workflow. Si aucune équipe n'est définie, l'accueil dirige vers la création de l'équipe. Créer ou modifier l'équipe ne crée jamais automatiquement un match. Quand l'équipe existe mais qu'aucun match courant non archivé n'existe, l'accueil affiche `Aucun match prévu` et propose explicitement de préparer un match. Sinon, il présente le workflow du match courant en trois cartes: `Match`, `Joueurs` et `Alignement` ou `Jouer` selon le statut. Les états affichés doivent être formulés comme `Aucun match prévu`, `En préparation`, `En cours` et `Match terminé`, avec la demi-manche courante quand un match est commencé.
 
-Le hero de présentation apparaît seulement sur `Accueil`. Quand un match courant non archivé existe, les cartes de l'accueil suivent le workflow: la carte `Match` résume adversaire, date, heure et endroit; la carte `Joueurs` résume présents et absents; la carte `Alignement` ou `Jouer` ouvre le tableau. L'accueil doit afficher un seul bouton d'action principal selon l'état courant.
+Le hero de présentation apparaît seulement sur `Accueil`. Quand un match courant non archivé existe, les cartes de l'accueil suivent le workflow: la carte `Informations` résume adversaire, date, heure et endroit; la carte `Joueurs` résume présents et absents; la carte `Alignement` ou `Jouer` ouvre le tableau. La carte du match courant expose aussi deux actions compactes: lien pour ouvrir `Partager le match`, et poubelle pour supprimer le match courant avec ses données en ligne connues et son lien spectateur. L'accueil doit afficher un seul bouton d'action principal selon l'état courant.
 
-La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs. Ces champs se sauvegardent automatiquement localement; il n'y a pas de bouton `Enregistrer` dans la boîte d'équipe. Le numéro de chandail est optionnel, limité à 2 chiffres, et se modifie dans la boîte d'équipe, avant le match, comme le nom du joueur. Quand il est défini, il est affiché près du nom dans l'alignement et inclus dans les exports. Pendant un match commencé, l'équipe permanente est verrouillée et l'interface doit expliquer que les joueurs ne peuvent pas être modifiés avant la fin ou l'archivage du match.
+La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs. Le nom de l'équipe est éditable directement dans le titre de la boîte d'équipe. Ces champs se sauvegardent automatiquement localement; il n'y a pas de bouton `Enregistrer` dans la boîte d'équipe. Le numéro de chandail est optionnel, limité à 2 chiffres, et se modifie dans la boîte d'équipe, avant le match, comme le nom du joueur. Quand il est défini, il est affiché près du nom dans l'alignement et inclus dans les exports. Pendant un match commencé, l'équipe permanente est verrouillée et l'interface doit expliquer que les joueurs ne peuvent pas être modifiés avant la fin ou l'archivage du match.
 
-Depuis la boîte d'équipe dans `Accueil`, l'utilisateur peut préparer un nouveau match quand aucun match non archivé n'est actif. Depuis `Matchs`, une action `Créer un match` doit être offerte quand l'équipe est complète et qu'aucun match non archivé n'est actif.
+Depuis `Accueil`, l'utilisateur peut préparer un nouveau match dans la carte de match quand aucun match non archivé n'est actif. Depuis `Matchs`, une action `Créer un match` doit être offerte quand l'équipe est complète et qu'aucun match non archivé n'est actif.
 
-L'ajout de joueurs utilise le même modal depuis la boîte d'équipe dans `Accueil` et depuis l'étape `Joueurs`. Le numéro de chandail peut être saisi en même temps avec des formats simples comme `#27 Émile`, `27 Émile` ou `Émile #27`. Depuis la boîte d'équipe, le joueur est ajouté seulement au bassin permanent. Dans `Joueurs`, avant le début du match, le raccourci `Ajouter un joueur à l'équipe` ajoute le joueur au bassin permanent et au match courant. Si moins de 12 joueurs sont présents, le joueur est ajouté comme présent; sinon il est ajouté comme absent. La suppression et le renommage restent gérés dans la boîte d'équipe.
+L'ajout de joueurs utilise le même modal depuis la boîte d'équipe dans `Accueil` et depuis l'étape `Joueurs`. Le numéro de chandail peut être saisi en même temps avec des formats simples comme `#27 Émile`, `27 Émile` ou `Émile #27`. Depuis la boîte d'équipe, le joueur est ajouté seulement au bassin permanent. Dans `Joueurs`, avant le début du match, le raccourci `Ajouter un joueur à l'équipe` est placé sous les listes `Présents` et `Absents`; il ajoute le joueur au bassin permanent et au match courant. Si moins de 12 joueurs sont présents, le joueur est ajouté comme présent; sinon il est ajouté comme absent. La suppression et le renommage restent gérés dans la boîte d'équipe.
 
 Hiérarchie des actions:
 
@@ -44,12 +44,18 @@ Hiérarchie des actions:
 - `danger`: actions destructives ou irréversibles comme réinitialiser, retirer un lien public ou supprimer.
 - Icônes seules: actions répétitives ou compactes dans les tableaux, avec `title` et `aria-label` explicites.
 - `Accueil`: les actions de création d'équipe ou de préparation d'un nouveau match peuvent être primaires. Quand un match actif existe, les cartes de workflow servent de navigation principale.
-- Boîte d'équipe dans `Accueil`: `Préparer un match` est primaire seulement quand aucun match non archivé n'est actif; `Ajouter des joueurs` reste secondaire et la suppression d'équipe reste une icône destructive discrète.
+- Boîte d'équipe dans `Accueil`: `Ajouter des joueurs` est primaire. La suppression d'équipe reste une icône destructive discrète dans l'en-tête de la boîte, près du lien public.
 - `Matchs`: `Créer un match` peut être primaire seulement quand aucun match non archivé n'est actif. Les actions de ligne restent en icônes.
 - `Match` et `Joueurs`: `Continuer` est primaire parce qu'il suit le workflow.
 - `Alignement`: `Commencer` ou l'action d'avancement du match est primaire. `Mélanger`, `Optimiser` et `Changement de joueurs` restent secondaires.
-- `Partager le match`: `Programme`, `Banc`, `Texte`, `Mettre en ligne`, `Créer un lien` et `Copier le lien` restent secondaires; `Retirer le lien` est danger.
+- `Partager le match`: `Créer le lien` et `Connexion` sont primaires quand ils sont l'action attendue; `Programme`, `Banc`, `Texte`, `Copier`, `Fermer` et la navigation du toggle `Gérer en ligne` restent secondaires; `Retirer le lien` est danger.
 - `Spectateurs en direct`: la navigation reste simple; `Suivant` peut être primaire, tandis que `Précédent` et `Manche en cours` restent secondaires.
+
+Inventaire des boutons et couleurs:
+
+- Vert primaire: `Créer une équipe`, `Créer un match`, `Ajouter des joueurs`, `Continuer`, `Commencer`, `Suivant`, `Créer le lien`, `Connexion`, `Confirmer` quand l'action crée un exemple.
+- Blanc secondaire: `Annuler`, `Fermer`, `Copier`, `Programme`, `Banc`, `Texte`, le toggle `Gérer en ligne`, `Mélanger`, `Optimiser`, `Changement`, navigation non destructive.
+- Rouge danger: `Supprimer`, `Retirer le lien`, `Réinitialiser`, confirmations destructives.
 
 Observations UX à explorer:
 
@@ -123,7 +129,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Le champ d'heure devrait proposer des intervalles de 5 minutes.
 - L'écran `Match` doit rester direct et ne pas répéter un texte d'aide générique comme `Crée le contexte du match courant.` quand les champs expliquent déjà l'action.
 - L'action destructive globale garde le libellé `Réinitialiser`, parce qu'elle efface vraiment toutes les données locales.
-- Réinitialiser doit être confirmé clairement et expliquer que l'équipe, les joueurs, les matchs locaux, les archives, les données cloud connues et les liens spectateur sont supprimés quand c'est possible.
+- Réinitialiser doit être confirmé avec le message: `Toutes tes équipes, joueurs et matchs seront supprimés pour toujours. Continuer?`
 - Terminer un match doit permettre de conserver la liste des joueurs pour préparer un nouveau match.
 
 ## Progression du match dans l'alignement
@@ -139,6 +145,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - L'action `Optimiser` existe seulement avant le début réel du match dans `Alignement`.
 - `Alignement` contient deux modes locaux sans nouvelle route: `Préparer` et `Jouer`.
 - Avant match, `Préparer` affiche les actions d'ajustement de l'alignement (`Mélanger`, `Optimiser`) et `Jouer` affiche l'action de démarrage.
+- Ce mode d'affichage n'est pas persisté. Dès que le match commence, `Jouer` est forcé; le statut durable reste porté par le match.
 - Quand le match est commencé, le mode `Jouer` est forcé et contient la progression de demi-manche ainsi que `Changement de joueurs`.
 - Le tableau principal sépare chaque manche en deux demi-manches: la colonne gauche est toujours le début et la colonne droite est toujours la fin.
 - L'en-tête de chaque demi-manche indique seulement le type de jeu pour notre équipe: `🏏` pour l'attaque et `🧤` pour la défensive. L'ordre dépend du statut visiteur/local.
@@ -213,22 +220,24 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Le partage externe du mode spectateur cible un futur lien en ligne en lecture seule avec informations limitées, plutôt qu'un fichier HTML autonome.
 - Le partage externe du mode spectateur est maintenant conçu comme un lien Firestore `#public/{publicId}`. Il publie une projection limitée du match courant, en lecture seule, et peut se mettre à jour en direct pendant le match.
 - Le lien public peut être protégé par un mot de passe optionnel. Dans ce cas, la projection publique est chiffrée côté client avant sauvegarde dans Firestore; le mot de passe n'est pas stocké. Si un mot de passe est saisi, l'interface doit indiquer qu'il devra être fourni aux fans.
-- Après création du lien `Spectateurs en direct`, le champ de mot de passe est verrouillé. Pour changer le mot de passe, l'entraîneur doit retirer le lien puis en créer un nouveau.
+- Après création du `Lien Match`, le champ de mot de passe est verrouillé. Pour changer le mot de passe, l'entraîneur doit retirer le lien puis en créer un nouveau.
 - Avant le début du match, la synchronisation automatique en ligne ne doit pas publier l'alignement. Les informations du match et le lien public peuvent être créés ou mis à jour, mais le payload cloud reste limité au contexte du match. L'alignement complet est synchronisé au démarrage du match, puis pendant la progression du match.
 - La synchronisation en ligne sert aux matchs explicitement mis en ligne. Un match archivé est figé: il reste supprimable, mais ne doit plus être modifiable côté app ou côté Firestore.
-- Les partages en ligne doivent être distingués des exports. `Spectateurs en direct` crée un lien public stable pour les fans depuis la modale `Partager le match`; les données derrière ce lien se mettent ensuite à jour automatiquement quand le match en ligne sauvegarde. La sauvegarde et la reprise des matchs cloud vivent dans `Matchs`.
+- Les partages en ligne doivent être distingués des exports. Dans la modale `Partager le match`, `Lien Match` explique que le match apparaîtra dans le lien d'équipe si un tel lien existe, ou que son lien direct peut être partagé. `Gérer en ligne` sert à la gestion de l'alignement et à la synchronisation du match pour le coach. Le toggle ne crée pas et ne retire pas le lien Match; celui-ci doit être retiré avant de retirer la sauvegarde privée. Les exports `Programme`, `Banc` et `Texte` sont présentés après ces sections, avec leur description sous le titre de chaque action. Les champs de lien et de mot de passe des partages en ligne sont indisponibles tant que l'entraîneur n'est pas connecté; la modale affiche alors une action primaire verte `Connexion`.
   - Livré: les exports et le lien spectateur sont regroupés dans une modale de match.
-- Le champ de mot de passe de `Spectateurs en direct` ne doit pas être assimilé à un mot de passe de connexion par le navigateur. Il est affiché comme champ texte avec `autocomplete="off"` pour éviter les propositions de sauvegarde de Chrome.
-- `Matchs` affiche un seul tableau triable qui contient les matchs en préparation, en cours, terminés et archivés. Les colonnes sont `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Une ligne cliquée ouvre le match, sauf si l'utilisateur clique une action. `Modifié` utilise le format `YYYY-MM-DD HH:mm`. Les actions sont représentées par des icônes avec titres accessibles: mettre en ligne, retirer du cloud, archiver et supprimer.
+- Le champ de mot de passe du `Lien Match` ne doit pas être assimilé à un mot de passe de connexion par le navigateur. Il est affiché comme champ texte avec `autocomplete="off"` pour éviter les propositions de sauvegarde de Chrome.
+- `Matchs` affiche un seul tableau triable qui contient les matchs en préparation, en cours, terminés et archivés. Les colonnes sont `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Une ligne cliquée ouvre le match, sauf si l'utilisateur clique une action. `Modifié` utilise le format `YYYY-MM-DD HH:mm`. Les actions sont `Partager`, `Archiver` quand applicable et `Supprimer` avec une icône poubelle. La page recharge automatiquement les matchs cloud à son ouverture; elle n'affiche pas d'action manuelle `Actualiser`.
+- Un match `completed` est affiché comme terminé sur l'accueil même si son indicateur historique `started` demeure vrai. Il ne verrouille plus le nom ni le bassin permanent de l'équipe.
+- La suppression d'un match utilise le message commun: `Le match et ses données seront supprimés. Continuer?`
 - Si une action de partage ou sauvegarde cloud exige une connexion, l'app doit proposer la connexion au moment de l'action et expliquer ce qui deviendra disponible.
   - Livré: les actions cloud ouvrent la connexion quand nécessaire.
 - L'export `Texte` affiche le texte dans une zone éditable avant la copie. Les modifications manuelles ne sont pas sauvegardées dans le match; elles servent seulement à ajuster l'impression de dernière minute.
 - Les numéros de chandail, quand ils existent, sont affichés dans l'alignement avec une pastille près du nom et inclus dans `Programme`, `Banc`, `Texte`, `Spectateur` et les exports régénérés depuis les archives.
 - Une évolution du `Programme` pourrait ajouter une première page style poster avec équipes, date, heure, joueurs présents, numéros et visuel baseball. Si cette évolution dépasse une page image fiable, un export PDF multi-page pourrait être plus approprié.
 - Livré: les favoris joueur dans les vues publiques couvrent l'intention de suivre un joueur précis sans créer une vue fan séparée.
-- L'app peut gérer plusieurs équipes locales. `Accueil` affiche l'équipe active dans sa boîte d'équipe et le bouton `Changer` ouvre une modale pour passer à une autre équipe ou en créer une nouvelle. Les bassins de joueurs, les matchs, les liens publics d'équipe et les liens spectateur sont séparés par équipe; `Matchs` affiche seulement les matchs de l'équipe active.
-- Une URL permanente d'équipe permet aux parents de conserver un même lien `#fans/{teamPublicId}`. L'identifiant public se gère depuis la modale `Lien d'équipe` de la carte équipe, par exemple `expos-rallye-cap`; il est normalisé en minuscules avec lettres, chiffres et tirets, doit contenir de 3 à 40 caractères, et doit être unique côté Firestore. Quand le lien permanent est actif, l'identifiant est verrouillé; il faut retirer le lien pour le changer. Cette URL peut être publiée sans mot de passe ou avec un mot de passe optionnel qui chiffre la liste côté client. Cette page publique affiche l'équipe et ses joueurs afin que les parents puissent choisir plusieurs favoris privés dans leur navigateur, puis liste les matchs dont le lien `Spectateurs en direct` est publié pour l'équipe. Elle indique si un match demande son propre mot de passe et ouvre le lien de match `#public/{publicId}`. Retirer le lien public d'un match le retire de la liste d'équipe; retirer le lien permanent d'équipe ne supprime pas les liens de match déjà créés.
-- Dans la modale `Lien d'équipe`, l'entraîneur connecté peut voir les liens publics d'équipe associés à l'équipe courante, copier le lien actif ou retirer un document `publicTeams/{teamPublicId}`. Les liens publics de match sont gérés dans la modale `Partager le match`.
+- L'app peut gérer plusieurs équipes locales. `Accueil` affiche l'équipe active dans le contexte; cliquer cette carte ouvre une modale pour passer à une autre équipe ou en créer une nouvelle. Les bassins de joueurs, les matchs, les liens publics d'équipe et les liens spectateur sont séparés par équipe; `Matchs` affiche seulement les matchs de l'équipe active. Supprimer une équipe supprime aussi ses matchs locaux et tente de retirer les liens cloud/public connus.
+- Une URL permanente d'équipe permet aux parents de conserver un même lien `#fans/{teamPublicId}`. L'identifiant public se gère depuis la modale `Lien d'équipe` de la carte équipe, par exemple `expos-rallye-cap`; il est obligatoire à la création, normalisé en minuscules avec lettres, chiffres et tirets, doit contenir de 3 à 40 caractères, et doit être unique côté Firestore. La saisie ne devient un lien actif qu'après une création Firestore réussie; un identifiant refusé ne doit jamais apparaître comme lié à l'équipe. En cas d'erreur, la modale reste ouverte, affiche le message dans le formulaire et ne persiste aucune valeur saisie. La modale n'a pas de boîte intermédiaire: quand le lien permanent est actif, elle affiche seulement le lien avec `Copier` et `Retirer`; il faut retirer le lien pour changer l'identifiant. Quand aucun lien n'existe, elle affiche directement `Identifiant public`, `Mot de passe optionnel` et `Créer le lien`. Cette URL peut être publiée sans mot de passe ou avec un mot de passe optionnel qui chiffre la liste côté client. Cette page publique affiche l'équipe et ses joueurs afin que les parents puissent choisir plusieurs favoris privés dans leur navigateur, puis liste les matchs dont le lien `Spectateurs en direct` est publié pour l'équipe. Elle indique si un match demande son propre mot de passe et ouvre le lien de match `#public/{publicId}`. Retirer le lien public d'un match le retire de la liste d'équipe; retirer le lien permanent d'équipe ne supprime pas les liens de match déjà créés.
+- La modale `Lien d'équipe` n'affiche plus la liste des documents Firestore `publicTeams`; les liens publics de match sont gérés dans la modale `Partager le match`.
 
 ## Archives
 
@@ -258,8 +267,8 @@ L'application conserve maintenant une liste de matchs plutôt qu'un seul match c
 
 Actions cloud:
 
-- `Mettre en ligne` sauvegarde le match dans Firestore et associe la copie locale au document cloud;
-- `Retirer du cloud` supprime la copie cloud privée et le lien spectateur public, mais garde le match local;
+- `Gérer en ligne: Oui` sauvegarde le match dans Firestore et associe la copie locale au document cloud;
+- `Gérer en ligne: Non` supprime la copie cloud privée après confirmation, mais garde le match local; le lien spectateur doit être retiré séparément au préalable;
 - `Supprimer` retire le match partout où l'app le connaît, localement et en ligne, après confirmation claire.
 
 Archives:
