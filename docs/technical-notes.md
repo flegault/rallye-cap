@@ -20,6 +20,7 @@ La première passe utilise:
 - `publicTeams/{teamPublicId}` pour la liste publique permanente des matchs publiés d'une équipe;
 - une liste `Matchs` pour ouvrir ou supprimer les matchs cloud du compte connecté;
 - un lien `#public/{publicId}` pour la vue spectateur live.
+- un lien `#banc/{publicId}` pour la vue Banc des jeunes automatique et sans contrôles;
 - un lien `#fans/{teamPublicId}` pour la liste publique des matchs publiés d'une équipe.
 
 App Check est initialisé avant Auth et Firestore quand `firebase-config.js` contient `appCheckSiteKey`, `recaptchaV3SiteKey` ou `appCheck.siteKey`. Le rafraîchissement automatique des tokens est activé. En développement local, `appCheckDebugToken` doit être utilisé pour éviter que les appels `localhost` soient classés comme non vérifiés.
@@ -36,7 +37,9 @@ Les métriques App Check peuvent contenir des requêtes anciennes provenant d'on
 
 Les archives sont des matchs `archived` en lecture seule. Elles peuvent rester locales ou exister en ligne, mais les règles Firestore empêchent leur modification future tout en gardant la suppression permise au propriétaire.
 
-Les documents privés contiennent le `payload` complet pour l'édition, plus des métadonnées top-level (`teamId`, `team`, `opp`, `date`, `time`, `place`, `status`, `started`, `completed`, `currentIndex`, `currentLabel`, `publicId`, `updatedAtMs`) afin d'afficher `Matchs` sans dépendre d'un lien d'édition. L'app filtre les matchs locaux et cloud sur le `teamId` de l'équipe active.
+Les équipes privées vivent dans `users/{uid}/teams/{teamId}` et contiennent le nom, le bassin permanent, les références publiques non secrètes, `updatedAtMs` et `updatedByClientId`. Elles sont chargées avant les matchs afin de préserver le même `teamId` sur tous les appareils. Les conflits utilisent la règle de la dernière modification gagnante; une équipe distante plus récente remplace le profil local, sans modifier les snapshots des matchs existants.
+
+Les documents privés de match contiennent le `payload` complet pour l'édition, plus des métadonnées top-level (`teamId`, `team`, `opp`, `date`, `time`, `place`, `status`, `started`, `completed`, `currentIndex`, `currentLabel`, `publicId`, `updatedAtMs`) afin d'afficher `Matchs` sans dépendre d'un lien d'édition. L'app filtre les matchs locaux et cloud sur le `teamId` de l'équipe active.
 
 Les documents privés incluent aussi `status` au niveau racine. Les règles Firestore interdisent la modification d'un match déjà archivé (`status == archived` ou `payload.status == archived`), mais gardent la suppression permise au propriétaire.
 
@@ -57,6 +60,8 @@ La politique de conflit v1 est volontairement simple: dernière sauvegarde gagne
 Le document privé cloud contient le match complet pour permettre l'édition sur un autre appareil avant ou pendant le match. La limitation avant match s'applique au partage public: le spectateur peut voir le contexte et l'état `Alignement à venir`, mais l'expérience publique ne doit pas présenter l'alignement complet avant le début du match.
 
 La projection publique contient aussi des métadonnées de présentation pour le spectateur: `publicStage`, `programme`, `fanMessage`, `currentIndex` et `phases`. La vue publique ajoute une étape `Programme` avant les demi-manches, affiche `Alignement à venir` avant le début du match, puis affiche un état final quand toutes les demi-manches sont terminées. Si le spectateur consulte la demi-manche courante, la vue suit automatiquement la progression. S’il a navigué ailleurs, `publicPromptedIndex` garantit qu’un popup est affiché une seule fois pour chaque nouvel index courant; la progression suivante peut déclencher un nouveau popup.
+
+La route Banc lit exactement le même document `publicMatches/{publicId}` et partage la clé de session du mot de passe spectateur. `bench-view.js` transforme purement la projection en modèle `waiting`, `playing` ou `final`, calcule la prochaine demi-manche et deux listes distinctes de joueurs au banc. Une mission unique est choisie déterministement par index de demi-manche et partagée par tous les joueurs de cette liste. La défense utilise une grille textuelle adaptative et les mêmes caractères `🧢` et `🧤` que les autres vues. Firestore conserve naturellement le dernier snapshot pendant une coupure; les événements `online` et `offline` mettent seulement à jour le point d'état, dont le libellé demeure accessible sans être visible.
 
 Le champ `fanMessage` est une courte note destinée aux fans. Le rendu HTML utilise un mini-Markdown interne sans dépendance: le texte est échappé avant transformation, puis seuls `**gras**`, `*italique*`, les retours de ligne et les listes `- item` sont reconnus. L'export SVG `Programme` convertit ce mini-Markdown en lignes de texte lisibles et augmente la hauteur de l'image au besoin.
 
@@ -117,7 +122,7 @@ Les modales `Partager le match` et `Lien d'équipe` ne permettent pas de saisir 
 
 La création depuis `Lien d'équipe` fournit un gestionnaire d'erreur à `savePublicTeam()`. Les erreurs sont rendues dans la modale existante plutôt que par `modal()`, afin de ne pas remplacer le formulaire. Les champs de création restent temporaires jusqu'au succès de la transaction.
 
-La modale `Partager le match` sépare trois responsabilités. `Lien Match` gère le lien public `#public/{publicId}` et précise qu'il apparaîtra dans un lien d'équipe existant ou peut être partagé directement. `Gérer en ligne` contrôle la gestion de l'alignement et la synchronisation privée du match pour le coach. Le toggle `Gérer en ligne` appelle `saveCloudMatch(false)` quand il passe à `Oui`; pour passer à `Non`, il retire la sauvegarde privée seulement si aucun lien Match n'est actif. `Exports` reste hors cloud et liste `Programme`, `Banc` et `Texte` avec leur description sous le titre. La liste `#matchs` recharge automatiquement les documents cloud à son ouverture et n'expose plus les raccourcis de synchronisation ou d'actualisation.
+La modale `Partager le match` sépare trois responsabilités. `Lien Match` gère directement le document public `#public/{publicId}` et continue de le mettre à jour depuis la copie locale, même sans sauvegarde privée. `Gérer en ligne` contrôle la synchronisation privée du match et exige que le contrôle équivalent de l'équipe soit actif; sinon, une erreur ouvre la modale `Lien d'équipe`. Cette modale contient désormais deux sections distinctes, `Lien public` et `Gérer en ligne`, sur le même modèle que le partage d'un match. Passer un match à `Non` retire seulement son document privé. Passer une équipe à `Non` retire son document privé et ceux de ses matchs, sans retirer les liens publics. `Exports` reste hors cloud et liste `Programme`, `Banc` et `Texte` avec leur description sous le titre.
 
 Les routes `#fans/{id}` et `#public/{id}` suspendent l'écoute du document privé du coach et n'affichent donc pas `Version distante reçue`. Leurs abonnements publics restent actifs en temps réel. La vue `#match-en-cours` conserve l’écoute privée comme `#match`, `#joueurs` et `#alignement`.
 

@@ -185,6 +185,49 @@ export async function deleteMatch(matchId) {
   await fsMod.deleteDoc(fsMod.doc(firebaseDb, "users", user.uid, "matches", matchId));
 }
 
+export async function saveTeam(teamId, payload, clientId) {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user) throw new Error("Connexion requise.");
+  if (!teamId) throw new Error("Identifiant d'équipe requis.");
+  let ref = fsMod.doc(firebaseDb, "users", user.uid, "teams", teamId);
+  await fsMod.setDoc(ref, {
+    ownerUid: user.uid,
+    schemaVersion: 1,
+    updatedAt: fsMod.serverTimestamp(),
+    updatedAtMs: Date.now(),
+    updatedByClientId: clientId || null,
+    payload
+  });
+  return teamId;
+}
+
+export async function listTeams() {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user) throw new Error("Connexion requise.");
+  let ref = fsMod.collection(firebaseDb, "users", user.uid, "teams");
+  let q = fsMod.query(ref, fsMod.orderBy("updatedAtMs", "desc"));
+  let snap = await fsMod.getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+export async function listenTeam(teamId, callback) {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user) throw new Error("Connexion requise.");
+  return fsMod.onSnapshot(fsMod.doc(firebaseDb, "users", user.uid, "teams", teamId), snap => {
+    callback(snap.exists() ? { id: snap.id, ...snap.data() } : null);
+  });
+}
+
+export async function deleteTeam(teamId) {
+  let { fsMod } = await ensureFirebase();
+  let user = firebaseAuth.currentUser;
+  if (!user || !teamId) return;
+  await fsMod.deleteDoc(fsMod.doc(firebaseDb, "users", user.uid, "teams", teamId));
+}
+
 export async function publishPublic(publicId, matchId, payload, password) {
   let { fsMod } = await ensureFirebase();
   let user = firebaseAuth.currentUser;

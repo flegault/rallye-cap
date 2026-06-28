@@ -89,9 +89,9 @@ Les règles obligatoires sont traitées comme des erreurs à corriger, pas comme
 
 L'application fonctionne sans Firebase.
 
-Firebase sert seulement à ajouter une couche de synchronisation en ligne pour les matchs explicitement mis en ligne et les liens publics spectateurs.
+Firebase sert seulement à ajouter une couche de synchronisation en ligne pour les équipes et matchs explicitement gérés en ligne, ainsi que les liens publics spectateurs.
 
-Les données privées de l'entraîneur restent locales par défaut. Les documents cloud servent aux matchs mis en ligne, aux liens publics `#public/...` et aux liens permanents d'équipe `#fans/...`.
+Les données privées de l'entraîneur restent locales par défaut. Une équipe peut être gérée en ligne pour synchroniser son nom et son bassin entre appareils; ses matchs peuvent ensuite être activés séparément. Les liens publics `#public/...` et `#fans/...` restent indépendants de cette gestion privée.
 
 Dans `Partager`:
 

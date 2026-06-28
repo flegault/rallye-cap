@@ -10,11 +10,10 @@
 ## Priorité Spectateurs / Cloud
 
 - Synchronisation privée du profil d'équipe et du bassin de joueurs:
-  - futur: sauvegarder le profil d'équipe et le `roster` permanent dans Firestore, séparément des matchs;
-  - permettre de reprendre la préparation sur mobile sans devoir transférer manuellement les joueurs;
-  - garder ces données privées au compte connecté, sans exposition aux fans;
-  - clarifier comment synchroniser les changements d'équipe avec les matchs en préparation seulement, sans modifier les matchs commencés, terminés ou archivés;
-  - complexité estimée: moyenne, parce qu'il faut gérer la fusion local/cloud du roster et les conflits possibles entre deux appareils.
+  - Livré: les équipes explicitement gérées en ligne vivent séparément des matchs dans Firestore et sont récupérées avant eux sur un nouvel appareil;
+  - Livré: le nom et le bassin utilisent la dernière modification gagnante sans réécrire les snapshots des matchs existants;
+  - Livré: désactiver la gestion privée d'une équipe retire ses matchs privés, mais conserve les copies locales et les liens spectateurs indépendants.
+  - Livré: le contrôle privé de l'équipe vit dans la modale `Lien d'équipe`; un match refuse son activation privée tant que celle de l'équipe n'est pas active.
 - Polish visible par les fans:
   - rendre l'écran `Spectateurs en direct` plus lisible avant partage public large;
   - remplacer les titres génériques par les noms des équipes quand possible;
@@ -563,3 +562,9 @@ Questions fermées:
 - Stabilisé: les tableaux `Mes matchs` utilisent les colonnes `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié`, `Actions`; `Modifié` est formaté `YYYY-MM-DD HH:mm`.
 
 Dette restante: nettoyer le code mort hérité des anciennes archives et extraire la couche d'état v5 hors de `app.js` quand le modèle sera validé manuellement.
+
+## Livré: Banc des jeunes en direct
+
+- Ajout du lien `#banc/{publicId}`, synchronisé avec le lien Match et protégé par le même mot de passe.
+- Ajout des panneaux `Maintenant`, `Ensuite` et `Mission encouragement`, d'une grille défensive adaptative avec noms de positions complets et des états d'attente, dernière manche, fin et hors ligne.
+- Ajout de tests navigateur ciblés dans `tests/bench.html`.

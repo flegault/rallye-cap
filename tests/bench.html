@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tests vue Banc Rallye-Cap</title>
+<style>body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;margin:24px;color:#162033}main{max-width:860px;margin:auto}.result{border:1px solid #dbe5ef;border-radius:12px;padding:12px;margin:10px 0}.ok{background:#e6f7ed}.bad{background:#ffe7ea}pre{white-space:pre-wrap}</style>
+</head>
+<body><main><h1>Tests vue Banc Rallye-Cap</h1><div id="results"></div></main>
+<script src="../bench-view.js"></script>
+<script>
+const players=Array.from({length:8},(_,i)=>({playerId:'p'+(i+1),name:'Joueur '+(i+1),number:String(i+1)}));
+const defense=['L1','L2','AC','1B','2B','3B'].map((pos,i)=>({playerId:'p'+(i+1),name:'Joueur '+(i+1),number:String(i+1),pos:pos+(pos[0]==='L'?' 🧢':'')}));
+const batters=players.slice(1).map((p,i)=>({...p,rank:i+1}));
+const playing={team:'Équipe',opp:'Adversaire',started:true,currentIndex:0,phases:[{inning:0,type:'defense',label:'Début 1'},{inning:0,type:'attaque',label:'Fin 1'}],programme:{players},defense:{0:defense},batters:{0:batters}};
+const tests=[
+  ['attente avant le début',()=>RallyeCapBench.buildModel({started:false}).status==='waiting'],
+  ['défense courante et attaque suivante',()=>{let m=RallyeCapBench.buildModel(playing);return m.current.type==='defense'&&m.next.type==='attaque'}],
+  ['normalise les positions avec casque',()=>RallyeCapBench.positionCode('L1 🧢')==='L1'],
+  ['sépare le banc courant du banc suivant',()=>{let m=RallyeCapBench.buildModel(playing);return m.currentBench.length===2&&m.currentBench[0].playerId==='p7'&&m.nextBench.length===2&&m.nextBench[0].playerId==='p1'}],
+  ['donne la même mission à toute la demi-manche',()=>{let m=RallyeCapBench.buildModel(playing);return m.currentBench[0].mission===m.currentBench[1].mission&&m.nextBench[0].mission===m.nextBench[1].mission}],
+  ['mission stable pour une même demi-manche',()=>RallyeCapBench.missionFor('p7',2,0)===RallyeCapBench.missionFor('p7',2,0)],
+  ['ordre de frappe complet',()=>RallyeCapBench.phaseRows(playing,playing.phases[1]).length===6],
+  ['dernière demi-manche sans aperçu suivant',()=>{let view={...playing,currentIndex:1};return RallyeCapBench.buildModel(view).next===null}],
+  ['état final après toutes les demi-manches',()=>RallyeCapBench.buildModel({...playing,currentIndex:2}).status==='final']
+];
+const results=document.querySelector('#results');let passed=0;
+tests.forEach(([name,run])=>{let ok=false,error='';try{ok=!!run()}catch(e){error=e.stack||String(e)}if(ok)passed++;let el=document.createElement('div');el.className='result '+(ok?'ok':'bad');el.innerHTML='<strong>'+(ok?'✓ ':'✗ ')+name+'</strong>'+(error?'<pre>'+error.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</pre>':'');results.appendChild(el)});
+document.title=passed+'/'+tests.length+' — '+document.title;
+</script></body></html>
