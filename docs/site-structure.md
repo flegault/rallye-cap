@@ -96,7 +96,7 @@ Alignement Rallye-Cap
     +-- Changement rapide de joueurs
     +-- Alerte d’équité future avec retour vers Alignement
     +-- Suggestions futures repliées, applicables après confirmation
-    +-- Joueurs inactifs dans une section repliée
+    +-- Joueurs présents au banc dans une section repliée
 +-- Fans publics (#fans/{teamPublicId})
     +-- Équipe publiée
     |   +-- Liste des joueurs
@@ -304,7 +304,7 @@ Découpage potentiel:
 - L'ajout et le retrait de manches sont des icônes `-` et `+` dans l'en-tête de la dernière manche.
 - Les validations et l'équité doivent être affichées après le tableau principal.
 - `Partager` ouvre une modale liée au match courant, accessible depuis le workflow et depuis une ligne de `Matchs`.
-- La pastille `Match en cours` de l’en-tête et un bouton secondaire du même nom dans `Alignement` ouvrent `#match-en-cours`. Au démarrage depuis Alignement, `Commencer ici` est primaire et `Commencer dans Match en cours` est secondaire. La vue propose la progression, les changements rapides, les joueurs inactifs repliés, les problèmes d’équité futurs et une section de suggestions applicables après confirmation.
+- La pastille `Match en cours` de l’en-tête et un bouton secondaire du même nom dans `Alignement` ouvrent `#match-en-cours`. Au démarrage depuis Alignement, `Commencer ici` est primaire et `Commencer dans Match en cours` est secondaire. La vue propose la progression, les changements rapides, les joueurs présents au banc pour la demi-manche consultée, les problèmes d’équité futurs et une section de suggestions applicables après confirmation. Les absents ne sont pas affichés comme joueurs au banc.
 - Chaque étape du flux principal doit avoir un bouton `Continuer` en bas pour soutenir le flux guidé.
 - Regrouper les exports et publications dans la modale `Partager le match`.
 - Les actions de partage doivent utiliser des conventions UI faciles à reconnaître: impression/PDF, copier, image, texte, lien, QR code.

@@ -830,6 +830,13 @@ function coachHalfCard(ph,stateClass){
   let title=ph.type==='attaque'?'🏏 À l’attaque':'🧤 En défensive',body=ph.type==='attaque'?renderMatchBatters(ph.inning):renderMatchDefense(ph.inning);
   return '<div class="coachHalfCard '+stateClass+'"><div class="coachHalfLabel">'+esc(ph.label)+'</div><h3>'+title+'</h3><div class="matchList">'+body+'</div></div>';
 }
+function coachBenchPlayers(ph){
+  if(!ph)return[];
+  let playingIds=ph.type==='defense'
+    ?new Set(Object.keys(state.schedule[ph.inning]?.pos||{}))
+    :new Set((state.fixed?batters(ph.inning):active()).map(p=>p.id));
+  return active().filter(p=>!playingIds.has(p.id))
+}
 function coachFutureEquityIssues(){
   if(!isMatchStarted()||currentPlayIndex()>=halfSequence().length||active().length<MIN)return[];
   analyze();let out=new Set();
@@ -861,8 +868,8 @@ function renderCoachMatch(){
   suggestionsBox.classList.toggle('hide',!suggestions.length);suggestionsSummary.textContent='Suggestions ('+suggestions.length+')';
   suggestionsList.innerHTML=suggestions.map((s,i)=>'<div class="coachSuggestion"><div><b>'+esc(s.title)+'</b><p>'+esc(s.text)+'</p></div>'+(s.action?'<button class="btn secondary" type="button" data-coach-suggestion="'+i+'">Appliquer</button>':'<a class="btn secondary" href="#alignement">Voir dans l’alignement</a>')+'</div>').join('');
   $$('[data-coach-suggestion]').forEach(button=>button.onclick=()=>confirmCoachSuggestion(suggestions[Number(button.dataset.coachSuggestion)]));
-  let inactive=state.players.filter(p=>!p.on),summary=$('#coachInactiveSummary'),list=$('#coachInactiveList');
-  summary.textContent='Joueurs inactifs ('+inactive.length+')';list.innerHTML=inactive.length?inactive.map(p=>'<div class="coachInactivePlayer">'+playerBadgeHtml(p)+'<b>'+esc(p.name)+'</b></div>').join(''):'<div class="hint">Aucun joueur inactif.</div>';
+  let bench=coachBenchPlayers(shown),summary=$('#coachInactiveSummary'),list=$('#coachInactiveList');
+  summary.textContent='Joueurs au banc ('+bench.length+')';list.innerHTML=bench.length?bench.map(p=>'<div class="coachInactivePlayer">'+playerBadgeHtml(p)+'<b>'+esc(p.name)+'</b></div>').join(''):'<div class="hint">Aucun joueur au banc.</div>';
 }
 function matchHeaderText(){let t=state.team||'Équipe';let o=state.opp?' vs '+state.opp:'';let d=state.date?' • '+formatDate(state.date):'';let tm=state.time?' • '+state.time:'';let p=state.place?' • '+state.place:'';return t+o+d+tm+p}
 function formatDate(d){try{let out=new Date(d+'T12:00:00').toLocaleDateString('fr-CA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});return out?out.charAt(0).toUpperCase()+out.slice(1):out}catch(e){return d}}
