@@ -56,7 +56,7 @@ La politique de conflit v1 est volontairement simple: dernière sauvegarde gagne
 
 Le document privé cloud contient le match complet pour permettre l'édition sur un autre appareil avant ou pendant le match. La limitation avant match s'applique au partage public: le spectateur peut voir le contexte et l'état `Alignement à venir`, mais l'expérience publique ne doit pas présenter l'alignement complet avant le début du match.
 
-La projection publique contient aussi des métadonnées de présentation pour le spectateur: `publicStage`, `programme`, `fanMessage`, `currentIndex` et `phases`. La vue publique ajoute une étape `Programme` avant les demi-manches, affiche `Alignement à venir` avant le début du match, puis affiche un état final quand toutes les demi-manches sont terminées. Si le spectateur consulte la demi-manche courante, la vue suit automatiquement la progression; s'il a navigué ailleurs, l'app affiche plutôt une notification de nouvelle demi-manche.
+La projection publique contient aussi des métadonnées de présentation pour le spectateur: `publicStage`, `programme`, `fanMessage`, `currentIndex` et `phases`. La vue publique ajoute une étape `Programme` avant les demi-manches, affiche `Alignement à venir` avant le début du match, puis affiche un état final quand toutes les demi-manches sont terminées. Si le spectateur consulte la demi-manche courante, la vue suit automatiquement la progression. S’il a navigué ailleurs, `publicPromptedIndex` garantit qu’un popup est affiché une seule fois pour chaque nouvel index courant; la progression suivante peut déclencher un nouveau popup.
 
 Le champ `fanMessage` est une courte note destinée aux fans. Le rendu HTML utilise un mini-Markdown interne sans dépendance: le texte est échappé avant transformation, puis seuls `**gras**`, `*italique*`, les retours de ligne et les listes `- item` sont reconnus. L'export SVG `Programme` convertit ce mini-Markdown en lignes de texte lisibles et augmente la hauteur de l'image au besoin.
 
@@ -99,7 +99,7 @@ Le workflow cible remplace l'ancien onglet `Jouer` par une gestion directe dans 
 - `#alignement`: édition de l'alignement avant match, suivi de progression pendant le match, validations, suggestions, statistiques et changements de joueurs;
 - `#accueil`: porte d'entrée contextuelle selon l'état local, gestion hors workflow du nom de notre équipe et du bassin de joueurs;
 - `#matchs`: tableaux des matchs locaux et cloud, incluant les matchs archivés en lecture seule;
-- `#spectateur`: vue en lecture seule dérivée du même état;
+- `#match-en-cours`: vue coach locale dérivée du même état;
 
 `#alignement` démarre le match avec confirmation si la progression est encore au début. La cible produit bloque le démarrage si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que l'horaire est incomplet ou que des règles ne sont pas respectées, l'app avertit sans bloquer et demande confirmation. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
 
@@ -107,7 +107,9 @@ Le menu du haut est un menu global unique qui regroupe `Accueil`, `Connexion` et
 
 Pendant le développement, les routes désuètes ne sont pas maintenues. `#equipe`, `#mesmatchs` et `#partager` ne sont pas des alias: comme toute route inconnue, elles retournent à `#accueil`.
 
-La route `#spectateur` ajoute une classe `spectatorRoute` sur `body` pour masquer l'en-tête global et le workflow numéroté sans dupliquer la structure HTML.
+Les routes publiques `#public/{publicId}` et `#fans/{teamPublicId}` utilisent seules `view-spectateur` et la classe `spectatorRoute`. La vue locale du coach possède un conteneur distinct, `view-match-en-cours`, afin de ne jamais exposer les commandes de progression ou de changement aux spectateurs. Elle réutilise les rendus des frappeurs et défenseurs et les validations existantes, sans nouveau modèle de données.
+
+Les objets de suggestion portent explicitement leur index `inning`. La vue coach filtre sur cet index et sur l’état de la demi-manche défensive avant l’affichage, puis `applySuggestion` revérifie le verrouillage au moment de l’application. Cette double vérification empêche une suggestion affichée avant une progression d’altérer ensuite l’historique joué.
 
 Le libellé durable pour l'action destructive globale est `Réinitialiser`. Sa confirmation est: `Toutes tes équipes, joueurs et matchs seront supprimés pour toujours. Continuer?`
 
@@ -117,7 +119,7 @@ La création depuis `Lien d'équipe` fournit un gestionnaire d'erreur à `savePu
 
 La modale `Partager le match` sépare trois responsabilités. `Lien Match` gère le lien public `#public/{publicId}` et précise qu'il apparaîtra dans un lien d'équipe existant ou peut être partagé directement. `Gérer en ligne` contrôle la gestion de l'alignement et la synchronisation privée du match pour le coach. Le toggle `Gérer en ligne` appelle `saveCloudMatch(false)` quand il passe à `Oui`; pour passer à `Non`, il retire la sauvegarde privée seulement si aucun lien Match n'est actif. `Exports` reste hors cloud et liste `Programme`, `Banc` et `Texte` avec leur description sous le titre. La liste `#matchs` recharge automatiquement les documents cloud à son ouverture et n'expose plus les raccourcis de synchronisation ou d'actualisation.
 
-Les routes `#spectateur`, `#fans/{id}` et `#public/{id}` suspendent l'écoute du document privé du coach et n'affichent donc pas `Version distante reçue`. Les abonnements publics de `#fans` et `#public` restent actifs en temps réel. L'écoute privée reprend à l'entrée dans `#match`, `#joueurs` ou `#alignement`.
+Les routes `#fans/{id}` et `#public/{id}` suspendent l'écoute du document privé du coach et n'affichent donc pas `Version distante reçue`. Leurs abonnements publics restent actifs en temps réel. La vue `#match-en-cours` conserve l’écoute privée comme `#match`, `#joueurs` et `#alignement`.
 
 État transitoire: l'onglet `Jouer` n'est plus visible et l'ancienne route `#jouer` est redirigée vers `#alignement`. Le modèle interne utilise encore `started` et `locks.halves`; il devrait éventuellement être remplacé par un index monotone de demi-manche complétée ou courante, par exemple `currentHalfIndex` ou `completedHalfCount`. Les demi-manches passées deviendraient alors de l'historique non modifiable, la demi-manche courante serait mise en évidence, et les demi-manches futures resteraient modifiables dans `Alignement`.
 

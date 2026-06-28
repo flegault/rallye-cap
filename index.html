@@ -111,7 +111,7 @@
   </section>
   <section class="view" id="view-alignement">
     <div class="card">
-      <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Prépare l’alignement, suis la progression du match et ajuste les changements au besoin.</p></div></div>
+      <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Prépare un alignement équitable, suis le match et ajuste les joueurs et les positions au besoin.</p></div></div>
       <div class="row lineupActions noPrint">
         <div class="segment lineupModeTabs" role="tablist" aria-label="Mode d'alignement">
           <button id="lineupPrepareTab" type="button" data-lineup-mode="preparer">Préparer</button>
@@ -124,6 +124,7 @@
         <div class="row playActions" id="playActions">
           <button class="btn brandBtn" id="advanceHalfBtn">Commencer</button>
           <button class="btn secondary" id="lineupChangeBtn">Changement</button>
+          <a class="btn secondary" href="#match-en-cours" id="openLiveMatchBtn">Match en cours</a>
         </div>
       </div>
       <div class="suggestions playWarnings hide" id="playWarnings"></div>
@@ -133,6 +134,18 @@
     <div class="card"><h3>Validation</h3><div class="alerts" id="validations"></div></div>
     <div class="card suggestionsCard" id="suggestionsCard"><h3>Suggestions</h3><div class="suggestions" id="suggestions"></div></div>
     <div class="card statsCard"><h3>Statistiques et équité</h3><div class="scores" id="scores"></div><div class="tableWrap statTable" id="stats"></div></div>
+  </section>
+  <section class="view" id="view-match-en-cours">
+    <div class="coachMatchShell">
+      <div class="coachMatchHead"><div><button class="matchPill current coachCurrentPill" id="coachMatchStatus" type="button">Match en cours</button><p class="hint" id="coachMatchMeta"></p></div></div>
+      <div id="coachCurrentHalf"></div>
+      <div class="dots" id="coachMatchDots"></div>
+      <div class="coachMatchActions"><button class="btn brandBtn" id="coachAdvanceBtn">Commencer</button><button class="btn secondary" id="coachChangeBtn">Changement de joueurs</button></div>
+      <div id="coachEquityWarning"></div>
+      <details class="coachSuggestions hide" id="coachSuggestions"><summary id="coachSuggestionsSummary">Suggestions</summary><div class="coachSuggestionList" id="coachSuggestionList"></div></details>
+      <details class="coachInactive"><summary id="coachInactiveSummary">Joueurs inactifs</summary><div class="coachInactiveList" id="coachInactiveList"></div></details>
+      <a class="btn secondary coachFullLineup" href="#alignement">Voir l’alignement complet</a>
+    </div>
   </section>
   <section class="view" id="view-spectateur">
     <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn secondary" id="matchCurrent">Manche en cours</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
