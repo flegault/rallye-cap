@@ -112,7 +112,7 @@ Le menu du haut est un menu global unique qui regroupe `Accueil`, `Connexion` et
 
 Pendant le développement, les routes désuètes ne sont pas maintenues. `#equipe`, `#mesmatchs` et `#partager` ne sont pas des alias: comme toute route inconnue, elles retournent à `#accueil`.
 
-Les routes publiques `#public/{publicId}` et `#fans/{teamPublicId}` utilisent seules `view-spectateur` et la classe `spectatorRoute`. La vue locale du coach possède un conteneur distinct, `view-match-en-cours`, afin de ne jamais exposer les commandes de progression ou de changement aux spectateurs. Elle réutilise les rendus des frappeurs et défenseurs et les validations existantes, sans nouveau modèle de données.
+Les routes publiques `#public/{publicId}` et `#fans/{teamPublicId}` utilisent seules `view-spectateur` et la classe `spectatorRoute`. La vue locale du coach possède un conteneur distinct, `view-match-en-cours`, afin de ne jamais exposer les commandes de progression ou de changement aux spectateurs. Elle réutilise les rendus des frappeurs et défenseurs et les validations existantes, sans nouveau modèle de données. Son banc est dérivé de `active()`: les absents sont exclus, puis les joueurs affichés dans la demi-manche consultée sont retirés selon les positions défensives ou les frappeurs de la manche.
 
 Les objets de suggestion portent explicitement leur index `inning`. La vue coach filtre sur cet index et sur l’état de la demi-manche défensive avant l’affichage, puis `applySuggestion` revérifie le verrouillage au moment de l’application. Cette double vérification empêche une suggestion affichée avant une progression d’altérer ensuite l’historique joué.
 
