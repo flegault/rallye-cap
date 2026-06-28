@@ -44,7 +44,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
-          cp index.html app.js rules.js firebase-sync.js styles.css favicon.ico dist/
+          cp index.html app.js bench-view.js team-sync.js rules.js firebase-sync.js styles.css favicon.ico dist/
           node -e '
             const fs = require("fs");
             const config = {

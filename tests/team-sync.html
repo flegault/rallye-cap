@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="fr-CA">
+<head><meta charset="utf-8"><title>Tests synchronisation des équipes</title></head>
+<body><main><h1>Tests synchronisation des équipes</h1><div id="results"></div></main>
+<script src="../team-sync.js"></script>
+<script>
+const tests=[
+  ['la version distante plus récente gagne',()=>RallyeCapTeamSync.decideVersion(10,20)==='remote'],
+  ['la version locale plus récente est poussée',()=>RallyeCapTeamSync.decideVersion(30,20)==='local'],
+  ['des versions identiques ne déclenchent rien',()=>RallyeCapTeamSync.decideVersion(20,20)==='equal'],
+  ['la désactivation regroupe les matchs locaux et cloud sans doublon',()=>{
+    let local=[{teamId:'t1',cloud:{matchId:'m1'}},{teamId:'t2',cloud:{matchId:'m2'}}];
+    let remote=[{id:'m1',teamId:'t1'},{id:'m3',payload:{teamId:'t1'}}];
+    return RallyeCapTeamSync.privateMatchIds('t1',local,remote).sort().join(',')==='m1,m3'
+  }]
+let box=document.querySelector('#results'),failed=0;
+tests.forEach(([name,run])=>{let ok=false;try{ok=!!run()}catch(e){}if(!ok)failed++;let p=document.createElement('p');p.textContent=(ok?'✓ ':'✗ ')+name;box.appendChild(p)});
+let summary=document.createElement('strong');summary.textContent=failed?failed+' test(s) échoué(s)':'Tous les tests passent';box.prepend(summary);
+</script>
+</body></html>

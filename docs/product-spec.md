@@ -196,6 +196,16 @@ Les corrections automatiques encore applicables sont aussi présentées dans une
 
 ## Exports et partage
 
+### Banc des jeunes en direct
+
+- Le lien public d'un match offre aussi une route `#banc/{publicId}` destinée à une tablette fixe sur la clôture. Cette route réutilise le document public et son mot de passe, mais ne contient aucune navigation, aucun favori et aucune action de progression.
+- La vue suit automatiquement la demi-manche courante. `Maintenant` montre l'ordre de frappe complet avec casques et bâtons en attaque, ou une grille des six positions en défense. `Ensuite` montre la prochaine demi-manche dans un format compact.
+- Les positions défensives utilisent leurs noms complets: `Lanceur Gauche`, `Lanceur Droite`, `Arrêt-court`, `Premier but`, `Deuxième but` et `Troisième but`. Les lanceurs portent les mêmes icônes `🧢` et `🧤` que les autres vues.
+- `Maintenant` et `Ensuite` ont chacun leur propre liste d'encouragement agrandie. Tous les joueurs au banc d'une même demi-manche reçoivent la même mission, affichée seulement par `👏`, `🎉`, `🎵` ou `🙌`, sur une ligne avec leur nom. Les joueurs absents ne sont jamais affichés.
+- La vue minimise la lecture: elle retire les libellés `Ordre de frappe`, `Positions défensives` et le texte de synchronisation. Seuls la demi-manche, les rôles nécessaires, les noms, les icônes et un point d'état réseau demeurent visibles.
+- Avant le début, la vue indique que le match commencera bientôt. À la dernière demi-manche, elle invite à encourager l'équipe; après la fin, elle affiche un message de félicitations.
+- En cas de perte de connexion, le dernier alignement reçu demeure affiché avec un indicateur hors ligne. Le maintien de l'écran éveillé relève du mode kiosque ou des réglages de la tablette.
+
 - Les exports parents doivent rester lisibles avec beaucoup de joueurs et avec des noms longs. La mise en page doit s'adapter au contenu au lieu de couper ou de superposer les textes.
 - Le partage `Programme` correspond à l'image parents.
 - Le partage `Banc` est un tableau imprimable simple avec une ligne par joueur et deux sous-colonnes par manche: `🏏` pour le rang de frappe local `1` à `6`, et `🧤` pour la position défensive. Les présences au banc y sont affichées avec `👏 Applaudi`, `🎉 Encourage` ou `🎵 Chante` au lieu du mot `BANC`. Quand la frappe fixe est désactivée, les cellules `🏏` restent vides pour annotation manuscrite.
@@ -229,7 +239,7 @@ Les corrections automatiques encore applicables sont aussi présentées dans une
 - Après création du `Lien Match`, le champ de mot de passe est verrouillé. Pour changer le mot de passe, l'entraîneur doit retirer le lien puis en créer un nouveau.
 - Avant le début du match, la synchronisation automatique en ligne ne doit pas publier l'alignement. Les informations du match et le lien public peuvent être créés ou mis à jour, mais le payload cloud reste limité au contexte du match. L'alignement complet est synchronisé au démarrage du match, puis pendant la progression du match.
 - La synchronisation en ligne sert aux matchs explicitement mis en ligne. Un match archivé est figé: il reste supprimable, mais ne doit plus être modifiable côté app ou côté Firestore.
-- Les partages en ligne doivent être distingués des exports. Dans la modale `Partager le match`, `Lien Match` explique que le match apparaîtra dans le lien d'équipe si un tel lien existe, ou que son lien direct peut être partagé. `Gérer en ligne` sert à la gestion de l'alignement et à la synchronisation du match pour le coach. Le toggle ne crée pas et ne retire pas le lien Match; celui-ci doit être retiré avant de retirer la sauvegarde privée. Les exports `Programme`, `Banc` et `Texte` sont présentés après ces sections, avec leur description sous le titre de chaque action. Les champs de lien et de mot de passe des partages en ligne sont indisponibles tant que l'entraîneur n'est pas connecté; la modale affiche alors une action primaire verte `Connexion`.
+- Les partages en ligne doivent être distingués des exports. Dans la modale `Partager le match`, `Lien Match` publie une projection spectateur indépendante de la sauvegarde privée. `Gérer en ligne` sert à la gestion de l'alignement et à la synchronisation du match pour le coach; il exige que l'équipe soit elle-même gérée en ligne. Retirer la sauvegarde privée conserve la copie locale et le lien Match. Les exports `Programme`, `Banc` et `Texte` sont présentés après ces sections, avec leur description sous le titre de chaque action. Les champs de lien et de mot de passe des partages en ligne sont indisponibles tant que l'entraîneur n'est pas connecté; la modale affiche alors une action primaire verte `Connexion`.
   - Livré: les exports et le lien spectateur sont regroupés dans une modale de match.
 - Le champ de mot de passe du `Lien Match` ne doit pas être assimilé à un mot de passe de connexion par le navigateur. Il est affiché comme champ texte avec `autocomplete="off"` pour éviter les propositions de sauvegarde de Chrome.
 - `Matchs` affiche un seul tableau triable qui contient les matchs en préparation, en cours, terminés et archivés. Les colonnes sont `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Une ligne cliquée ouvre le match, sauf si l'utilisateur clique une action. `Modifié` utilise le format `YYYY-MM-DD HH:mm`. Les actions sont `Partager`, `Archiver` quand applicable et `Supprimer` avec une icône poubelle. La page recharge automatiquement les matchs cloud à son ouverture; elle n'affiche pas d'action manuelle `Actualiser`.
@@ -273,8 +283,9 @@ L'application conserve maintenant une liste de matchs plutôt qu'un seul match c
 
 Actions cloud:
 
-- `Gérer en ligne: Oui` sauvegarde le match dans Firestore et associe la copie locale au document cloud;
-- `Gérer en ligne: Non` supprime la copie cloud privée après confirmation, mais garde le match local; le lien spectateur doit être retiré séparément au préalable;
+- La modale `Lien d'équipe` contient une section `Lien public`, puis le contrôle privé `Gérer en ligne`: `Oui` synchronise le nom et le bassin; `Non` retire l'équipe et ses matchs privés après confirmation, mais conserve les copies locales et les liens publics;
+- `Gérer en ligne: Oui` sur un match exige une équipe déjà gérée en ligne, sauvegarde le match dans Firestore et associe la copie locale au document cloud;
+- `Gérer en ligne: Non` supprime la copie cloud privée après confirmation, mais garde le match local et son lien spectateur;
 - `Supprimer` retire le match partout où l'app le connaît, localement et en ligne, après confirmation claire.
 
 Archives:

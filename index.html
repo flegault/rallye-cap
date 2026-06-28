@@ -150,9 +150,14 @@
   <section class="view" id="view-spectateur">
     <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn secondary" id="matchCurrent">Manche en cours</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
+  <section class="view" id="view-banc" aria-live="polite">
+    <div id="youngBench" class="youngBench"><div class="benchLoading"><span>⚾</span><strong>Préparation du banc…</strong></div></div>
+  </section>
 </main>
 <div class="modalOverlay" id="modalOverlay"><div class="modal"><h3 id="modalTitle"></h3><p id="modalText"></p><div class="row" id="modalActions"></div></div></div>
 <script src="rules.js"></script>
+<script src="bench-view.js"></script>
+<script src="team-sync.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

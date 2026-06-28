@@ -57,9 +57,12 @@ erDiagram
 Chemins:
 
 ```text
+users/{uid}/teams/{teamId}
 users/{uid}/matches/{matchId}
 publicMatches/{publicId}
 ```
+
+L'équipe privée contient son nom, son bassin permanent et ses références publiques non secrètes. Elle possède le même `teamId` sur tous les appareils et doit être gérée en ligne avant qu'un de ses matchs puisse l'être. Les équipes sont chargées avant les matchs lors de la connexion.
 
 Le document privé contient le match complet pour l'édition, incluant `status` au niveau racine et dans `payload.status`. Le document public contient seulement ce que la vue spectateur doit afficher.
 
@@ -96,9 +99,11 @@ sequenceDiagram
   participant Auth as Firebase Auth
   participant FS as Firestore privé
 
-  Desktop->>FS: Sauvegarde users/{uid}/matches/{matchId}
+  Desktop->>FS: Sauvegarde équipe puis match privés
   Mobile->>Auth: Connexion courriel ou Google
   Auth-->>Mobile: uid
+  Mobile->>FS: Liste users/{uid}/teams
+  FS-->>Mobile: Équipes privées
   Mobile->>FS: Liste users/{uid}/matches
   FS-->>Mobile: Mes matchs
   Mobile->>FS: Ouvre users/{uid}/matches/{matchId}

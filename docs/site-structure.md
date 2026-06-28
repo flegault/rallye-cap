@@ -13,6 +13,7 @@ L'application est une SPA avec les vues applicatives principales suivantes acces
 - `#alignement`
 - `#match-en-cours` pour la gestion simplifiée du match par le coach
 - `#public/{publicId}` pour le spectateur live public en lecture seule
+- `#banc/{publicId}` pour la tablette du banc en lecture seule et sans navigation
 - `#fans/{teamPublicId}` pour la liste publique permanente des matchs publiés d'une équipe
 
 La navigation est disponible dans:
@@ -103,6 +104,12 @@ Alignement Rallye-Cap
     +-- Liste des matchs publiés pour l'équipe
     +-- Indicateur de match protégé par mot de passe
     +-- Ouverture du match dans `#public/{publicId}`
++-- Banc des jeunes (#banc/{publicId})
+    +-- Même publication et même mot de passe que le lien Match
+    +-- `Maintenant`: liste des positions défensives ou ordre de frappe complet
+    +-- `Ensuite`: prochaine demi-manche compacte
+    +-- Missions d'encouragement pour les joueurs présents hors de l'action
+    +-- Suivi automatique sans boutons, balayage ni navigation
 ```
 
 ## Flux principal actuel
@@ -394,4 +401,4 @@ Les deux tableaux combinent les matchs locaux et les matchs en ligne du compte c
 
 Le tableau est triable par adversaire, date/heure du match, endroit, statut et dernière modification. Le tri par défaut place les matchs les plus récents en premier selon la date et l'heure du match. Les actions sont `Partager`, le dossier d'archivage quand applicable et la poubelle de suppression. Les données cloud sont rechargées automatiquement à l'ouverture de la page, sans bouton `Actualiser`.
 
-La modale `Partager le match` agit sur le match actif ou sélectionné avec trois sections: `Lien Match`; `Gérer en ligne` pour l'édition et la synchronisation cloud privée; puis `Exports` (`Programme`, `Banc`, `Texte`). La modale `Lien d'équipe` agit sur l'équipe active et son lien permanent.
+La modale `Partager le match` agit sur le match actif ou sélectionné avec trois sections: `Lien Match`; `Gérer en ligne` pour l'édition et la synchronisation cloud privée; puis `Exports` (`Programme`, `Banc`, `Texte`). La modale `Lien d'équipe` reprend la même séparation avec `Lien public`, puis `Gérer en ligne` pour la synchronisation privée de l'équipe. Sur un nouvel appareil, la connexion charge les équipes privées avant leurs matchs. Un match privé ne peut être activé que si son équipe l'est déjà; une tentative affiche une erreur avec un accès direct à la modale `Lien d'équipe`. Les liens publics restent actifs quand les copies privées sont retirées.
