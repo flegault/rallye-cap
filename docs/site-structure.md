@@ -11,7 +11,7 @@ L'application est une SPA avec les vues applicatives principales suivantes acces
 - `#match`
 - `#joueurs`
 - `#alignement`
-- `#spectateur`
+- `#match-en-cours` pour la gestion simplifiée du match par le coach
 - `#public/{publicId}` pour le spectateur live public en lecture seule
 - `#fans/{teamPublicId}` pour la liste publique permanente des matchs publiés d'une équipe
 
@@ -87,16 +87,15 @@ Alignement Rallye-Cap
 |   +-- Créer, copier ou retirer le lien public permanent de l'équipe active
 |   +-- Mot de passe optionnel chiffré côté client
 |   +-- Liste des liens d'équipe du compte connecté
-+-- Spectateur (#spectateur)
-    +-- Accessible depuis une ligne admissible de `Matchs`
-    +-- Programme ou alignement à venir
-    +-- Carte de manche courante
-    |   +-- Attaque: frappeurs de la manche si la frappe fixe est activée
-    |   +-- Attaque: rappel de suivre l'ordre au banc si la frappe fixe est désactivée
-    |   +-- Défense: positions défensives
-    +-- État final de remerciement quand le match est terminé
-    +-- Navigation précédent / suivant
-    +-- Points de progression
++-- Match en cours (#match-en-cours)
+    +-- Accès par la pastille de l’en-tête ou depuis Alignement
+    +-- Une demi-manche à la fois, navigable par glissement horizontal
+    +-- Pastille ramenant à la demi-manche courante
+    +-- Progression active seulement sur la demi-manche courante
+    +-- Changement rapide de joueurs
+    +-- Alerte d’équité future avec retour vers Alignement
+    +-- Suggestions futures repliées, applicables après confirmation
+    +-- Joueurs inactifs dans une section repliée
 +-- Fans publics (#fans/{teamPublicId})
     +-- Équipe publiée
     |   +-- Liste des joueurs
@@ -189,20 +188,18 @@ Alignement Rallye-Cap
 - Ajouter ou retirer une manche si le contexte réel change.
 - Corriger des problèmes à partir des suggestions.
 - Exporter depuis la modale `Partager le match`.
-- Utiliser la vue spectateur comme écran de consultation pendant la partie.
+- Utiliser `Match en cours` comme écran terrain simplifié du coach.
 
 ## Frictions connues
 
 - L'écran `Alignement` contient beaucoup de sections et peut paraître dense.
 - La fin de match offre une sortie de base avec archive complète en lecture seule, mais les actions avancées de reprise/recommencement restent à simplifier.
-- La vue spectateur pourrait mieux anticiper la prochaine action utile:
+- La vue publique pourrait mieux anticiper la prochaine action utile:
   - en attaque: prochains lanceurs à préparer si applicable;
   - en défense: deux premiers frappeurs de la prochaine présence offensive si applicable.
-- La vue spectateur affiche les deux lanceurs sur deux lignes séparées pour présenter 6 éléments défensifs, comme les 6 frappeurs en attaque.
-- La route `#spectateur` masque l'en-tête global et le workflow numéroté pour donner une vue plein écran simplifiée.
-- La vue spectateur locale indique `En cours`, `Terminée` et `À venir`, et offre un bouton `Manche en cours`.
-- La vue spectateur pourrait informer qu'une nouvelle demi-manche est disponible sans déplacer automatiquement l'utilisateur qui consulte une autre étape.
-  - Livré pour le spectateur public.
+- La vue publique affiche les deux lanceurs sur deux lignes séparées pour présenter 6 éléments défensifs, comme les 6 frappeurs en attaque.
+- La route coach `#match-en-cours` conserve l’en-tête, masque le workflow numéroté et présente une demi-manche à la fois dans un carrousel tactile.
+- La vue publique suit automatiquement la progression si le spectateur regarde le direct. S’il consulte une autre étape, chaque nouvelle demi-manche déclenche une seule fois un popup proposant de l’afficher ou de rester sur place.
 - La vue spectateur ne devrait pas répéter `Lecture seule` ni afficher `À venir` si ces libellés nuisent à la simplicité.
   - Livré partiellement pour le spectateur public.
 - La vue spectateur devrait éventuellement inclure une première étape `Programme`, puis un état final `Merci, à la prochaine`.
@@ -276,7 +273,7 @@ Découpage potentiel:
 - Les changements de joueurs pendant la partie sont accessibles dans `Alignement` par un bouton unique. L'entraîneur choisit la demi-manche précise à partir de laquelle appliquer l'action.
 - Les suggestions d'action ne doivent viser que les demi-manches non jouées.
 - Le mode match actuel devient `Spectateur`, une vue simplifiée en lecture seule accessible par le menu.
-- `Spectateur` n'affiche pas l'en-tête global ni le workflow numéroté. Les contrôles visibles sont limités à la navigation précédente/suivante et au retour vers la manche en cours.
+- `Match en cours` masque le workflow numéroté et la pastille redondante de l’en-tête. La navigation entre les demi-manches se fait par glissement ou par les points de progression; sa propre pastille ramène à la demi-manche courante.
 - L'exemple vit seulement dans `Accueil`, comme action secondaire de création d'équipe quand aucune équipe n'existe.
 - La gestion de notre équipe et du bassin permanent de joueurs doit être séparée du workflow de match, mais ne doit pas devenir une étape numérotée.
 - La préparation du match se limite aux informations du match courant, aux présences et à l'alignement.
@@ -300,7 +297,7 @@ Découpage potentiel:
 - L'ajout et le retrait de manches sont des icônes `-` et `+` dans l'en-tête de la dernière manche.
 - Les validations et l'équité doivent être affichées après le tableau principal.
 - `Partager` ouvre une modale liée au match courant, accessible depuis le workflow et depuis une ligne de `Matchs`.
-- La route interne `Spectateur` est conservée sans bouton visible en attendant une refonte comme vue simple de gestion du match pour le coach.
+- La pastille `Match en cours` de l’en-tête et un bouton secondaire du même nom dans `Alignement` ouvrent `#match-en-cours`. Au démarrage depuis Alignement, `Commencer ici` est primaire et `Commencer dans Match en cours` est secondaire. La vue propose la progression, les changements rapides, les joueurs inactifs repliés, les problèmes d’équité futurs et une section de suggestions applicables après confirmation.
 - Chaque étape du flux principal doit avoir un bouton `Continuer` en bas pour soutenir le flux guidé.
 - Regrouper les exports et publications dans la modale `Partager le match`.
 - Les actions de partage doivent utiliser des conventions UI faciles à reconnaître: impression/PDF, copier, image, texte, lien, QR code.

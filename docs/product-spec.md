@@ -169,6 +169,12 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 
 ## Changements de joueurs pendant un match
 
+La vue locale `Match en cours` est l’écran terrain simplifié du coach. Elle affiche une demi-manche à la fois et permet de parcourir toutes les demi-manches par glissement horizontal. La pastille de progression ramène à la demi-manche courante. Les actions de progression et de changement sont désactivées lorsqu’une autre demi-manche est consultée. Les joueurs inactifs restent dans une section repliée. `Alignement` demeure la vue complète pour consulter l’équité et toutes les manches. Au démarrage depuis Alignement, la modale propose `Commencer ici` comme action primaire ou `Commencer dans Match en cours` comme action secondaire. Depuis la vue simplifiée, le démarrage conserve la confirmation existante sans demander de destination.
+
+Si les validations détectent un problème dans une demi-manche défensive encore modifiable, `Match en cours` affiche une alerte non bloquante avec le nombre de problèmes et un lien vers `Alignement`. Les écarts limités à l’historique déjà joué ne déclenchent pas cette alerte.
+
+Les corrections automatiques encore applicables sont aussi présentées dans une section `Suggestions` repliée. Chaque application exige une confirmation qui décrit la modification et rappelle sa synchronisation publique. Après application, les validations et suggestions sont recalculées. Les problèmes sans action automatique renvoient vers `Alignement`.
+
 - Les changements rapides sur téléphone sont prioritaires, mais les opérations qui changent beaucoup l'alignement doivent demander confirmation.
 - Les changements de joueurs en cours de match sont accessibles depuis `Alignement` par un seul bouton de changement de joueurs.
 - Le changement demande toujours la demi-manche précise à partir de laquelle l'action s'applique, par exemple `Début 3e` ou `Fin 3e`.
@@ -206,8 +212,8 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Dans la vue spectateur, les deux lanceurs doivent être affichés sur deux lignes séparées afin que la défensive présente 6 éléments visuels, comme l'ordre de frappe.
 - La vue spectateur doit utiliser la même palette visuelle que le reste du site.
 - La vue spectateur ne doit pas répéter inutilement `Lecture seule` dans les libellés visibles.
-- La vue spectateur devrait éviter de déplacer automatiquement l'utilisateur quand une nouvelle demi-manche devient disponible; elle devrait plutôt informer qu'une mise à jour existe, ou rendre ce comportement très prévisible.
-  - Livré pour le spectateur public: la vue suit automatiquement si le parent est sur la manche courante, sinon elle affiche une notification.
+- La vue spectateur évite de déplacer automatiquement l'utilisateur quand une nouvelle demi-manche devient disponible. Elle suit automatiquement si le parent regarde la demi-manche courante; sinon, un popup nomme la nouvelle demi-manche et propose `Afficher` ou `Rester ici`. Un refus est mémorisé pour cette progression seulement.
+- Dans la liste défensive publique, les libellés `L1 🧢` et `L2 🧢` restent sur une seule ligne, y compris sur téléphone.
 - Les manches futures dans `Spectateur` ne devraient pas afficher un libellé `À venir` si ce texte alourdit la lecture.
 - Une évolution de `Spectateur` devrait ajouter une étape initiale `Programme`. Si aucune donnée de manche n'est encore publiée, cette étape indique `Alignement à venir` et reste la seule étape visible.
   - Livré pour le spectateur public: l'étape `Programme` précède les manches et sert d'état d'attente avant publication complète.

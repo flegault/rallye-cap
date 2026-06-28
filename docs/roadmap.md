@@ -68,7 +68,7 @@ Match -> Joueurs -> Alignement
 - `#alignement`: frappe fixe, ordre des frappeurs, optimisation défensive, progression du match, validations, suggestions, statistiques et changements de joueurs.
 - `#matchs`: ouverture, partage, archivage et suppression des matchs locaux et cloud du compte connecté; l'actualisation et la gestion cloud sont centralisées automatiquement ou dans `Partager`.
 - Action `Partager`: modale de match avec `Lien Match`, `Gérer en ligne` pour l'édition/synchronisation privée, puis les exports `Programme`, `Banc` et `Texte`. Le lien d'équipe `#fans` vit dans la carte équipe.
-- `#spectateur`: vue simplifiée en lecture seule.
+- `#match-en-cours`: vue simplifiée de gestion pour le coach; les vues spectateurs en lecture seule passent par les routes publiques.
 
 ### Alignement
 
@@ -144,7 +144,7 @@ Match -> Joueurs -> Alignement
 - Pour `Spectateur`, explorer plus tard un suivi en direct du déroulement du match basé sur la progression courante.
 - Dans `Spectateur`, indiquer clairement quand le match n'est pas commencé et placer la vue au début dans ce cas.
 - Dans `Spectateur`, informer qu'une nouvelle demi-manche est disponible sans forcément déplacer automatiquement l'utilisateur s'il consultait autre chose.
-  - Livré pour le spectateur public: l'utilisateur qui consulte autre chose reçoit une notification au lieu d'être déplacé.
+  - Livré pour le spectateur public: un popup dynamique apparaît une seule fois par nouvelle demi-manche si l’utilisateur consulte une autre étape; il peut afficher le direct ou rester sur place.
 - Dans `Spectateur`, retirer les libellés visibles qui répètent `Lecture seule`; le contexte doit suffire.
   - Livré partiellement: les messages publics ne répètent plus `Lecture seule`.
 - Dans `Spectateur`, retirer `À venir` des manches futures si le libellé alourdit la lecture.
@@ -419,7 +419,8 @@ Irritants UX à corriger:
 - Livré: `Mes matchs` sert à la sauvegarde et à la reprise des matchs cloud; `Spectateurs en direct` dans `Partager` sert au lien pour les fans.
 - Livré: les actions disponibles localement sont dans `Exports`; les actions qui exigent une connexion sont dans `En ligne`.
 - Dans `Spectateur`, afficher les deux lanceurs sur deux lignes séparées pour obtenir 6 éléments visuels comme l'ordre de frappe.
-  - Livré: `L1` et `L2` sont affichés sur deux lignes distinctes dans `Spectateur`.
+- Livré: `L1` et `L2` sont affichés sur deux lignes distinctes dans `Spectateur`.
+- Livré: les libellés `L1 🧢` et `L2 🧢` ne se coupent plus sur deux lignes dans les cartes publiques mobiles.
 - Livré: le bouton d'échange `Local` / `Visiteur` reste stable quand on inverse les côtés.
 - Livré: les actions des cartes joueurs restent sur une seule ligne.
 - Livré: le curseur de glisser-déposer des joueurs utilise une main.
@@ -547,7 +548,8 @@ Questions fermées:
 - Les matchs locaux et cloud sont fusionnés dans les tableaux; les matchs seulement en ligne sont importés localement à l'ouverture.
 - Les lignes de `Mes matchs` sont cliquables pour ouvrir le match; les actions sont des icônes avec titres accessibles.
 - Livré: les actions de ligne sont simplifiées à `Partager`, `Archiver` quand applicable et `Supprimer` avec une poubelle; `Actualiser`, `Mettre en ligne`, `Retirer du cloud` et l'accès direct `Spectateur` ont été centralisés ou retirés.
-- Redécoupé: le bouton interne `Spectateur` est retiré de `Partager le match`. La route existante est conservée sans accès visible et devra devenir une vue simple de gestion du match destinée au coach.
+- Livré: l’ancienne route interne `Spectateur` est remplacée par `#match-en-cours`, une vue coach simplifiée accessible par la pastille de l’en-tête et par `Alignement`. Elle parcourt les demi-manches par glissement, ramène au présent par sa pastille, limite les actions à la demi-manche courante, expose les joueurs inactifs et signale les problèmes d’équité futurs avec retour vers l’alignement complet.
+- Livré: le démarrage depuis Alignement propose de rester sur place en action primaire ou d’ouvrir `Match en cours`; les suggestions futures sont disponibles dans une section repliée et exigent une confirmation avant application et synchronisation.
 - Livré: un match terminé est affiché comme tel sur l'accueil et ne verrouille plus l'édition de l'équipe permanente.
 - Livré: la création d'un lien d'équipe refuse transactionnellement tout identifiant déjà existant, même pour le même compte.
 - Corrigé: un identifiant d'équipe refusé ne peut plus être affiché localement comme un lien actif et l'erreur Firestore n'est plus remplacée par la réouverture de la modale.
