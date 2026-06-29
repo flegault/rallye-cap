@@ -53,25 +53,25 @@
 Le workflow livré est maintenant:
 
 ```text
-Match -> Joueurs -> Alignement
+Match -> Joueurs -> Alignement -> Jouer
 ```
 
 `Matchs` et `Spectateur` sont des vues hors étapes numérotées et hors menu global. `Matchs` est accessible depuis l'accueil; `Spectateur` est conservé sans accès visible en attendant sa refonte comme vue coach. Le partage est une action non numérotée du match courant, accessible depuis le workflow et depuis `Matchs`.
 
 ### Navigation
 
-- Livré: le header est simplifié en un menu global unique avec statut compact du match; les étapes `Match`, `Joueurs` et `Alignement` restent dans le contenu plutôt que dans la barre du haut.
+- Livré: le header est simplifié en un menu global unique avec statut compact du match; les quatre étapes restent dans le contenu.
 - `#accueil`: porte d'entrée contextuelle; création/sélection de l'équipe, gestion du bassin permanent de joueurs, création explicite d'un match si l'équipe existe sans match actif, ou reprise du match courant.
 - `#match`: informations du match, côté local/visiteur, adversaire, date, heure et endroit.
 - `#joueurs`: liste des joueurs du match et présence/absence avant le début.
-- `#alignement`: frappe fixe, ordre des frappeurs, optimisation défensive, progression du match, validations, suggestions, statistiques et changements de joueurs.
+- `#alignement`: ordre des frappeurs, optimisation défensive, validations, suggestions, statistiques et confirmation `Prêt à jouer`.
 - `#matchs`: ouverture, partage, archivage et suppression des matchs locaux et cloud du compte connecté; l'actualisation et la gestion cloud sont centralisées automatiquement ou dans `Partager`.
 - Action `Partager`: modale de match avec `Lien Match`, `Gérer en ligne` pour l'édition/synchronisation privée, puis les exports `Programme`, `Banc` et `Texte`. Le lien d'équipe `#fans` vit dans la carte équipe.
-- `#match-en-cours`: vue simplifiée de gestion pour le coach; les vues spectateurs en lecture seule passent par les routes publiques.
+- `#jouer`: quatrième étape de gestion pour le coach, avec vues complète et simple; les vues spectateurs en lecture seule passent par les routes publiques.
 
 ### Alignement
 
-- `Alignement` remplace l'ancienne séparation `Alignement partant` / `Jouer`.
+- `Alignement` prépare l’horaire et `Jouer` gère la partie sans dupliquer le tableau complet.
 - `Optimiser` recalcule les positions défensives sans modifier l'ordre de frappe courant.
 - Le bouton shuffle près de `Optimiser` mélange l'ordre de frappe des joueurs actifs, puis optimise les positions.
 - L'ordre peut encore être modifié manuellement par glisser-déposer avant le début du match.
@@ -83,7 +83,7 @@ Match -> Joueurs -> Alignement
 - Le match avance seulement vers l'avant, une demi-manche à la fois.
 - Les demi-manches passées sont historiques et non modifiables.
 - Les informations de match, la liste des joueurs, la frappe fixe, le shuffle et `Optimiser` sont bloqués ou masqués quand le match est commencé.
-- `Changement de joueurs` dans `Alignement` ouvre `Retirer`, `Remplacer` ou `Ajouter`, puis demande la demi-manche d'effet.
+- `Changement de joueurs` dans `Jouer` ouvre `Retirer`, `Remplacer` ou `Ajouter`, puis demande la demi-manche d'effet.
 - Les suggestions et les corrections automatiques doivent viser seulement les demi-manches non jouées.
 
 ### Partage et spectateur
@@ -366,7 +366,7 @@ Il n'est pas nécessaire de distinguer les raisons dans l'app. Une absence, un r
 
 Comportement livré:
 
-- progression de match directement dans `Alignement`;
+- progression de match directement dans `Jouer`;
 - bouton `Commencer le match`, puis action simple pour terminer la demi-manche courante;
 - avancement seulement vers l'avant, sans retour arrière dans l'interface principale;
 - tableau principal séparé en demies-manches `Début` / `Fin` avec icônes `🏏` attaque et `🧤` défensive selon visiteur/local;
@@ -443,7 +443,7 @@ Questions fermées:
 
 ## Bugs et dettes connues
 
-- Pas encore de suite automatisée CLI. La couverture actuelle est une page de tests navigateur dans `tests/rules.html`.
+- La couverture CLI reste partielle: `tests/workflow-smoke.js` vérifie les contrats statiques du workflow, mais la génération, la progression, les exports et les projections publiques demandent encore une vraie suite automatisée.
 - Les exports peuvent diverger de l'affichage principal parce qu'ils reconstruisent leur propre HTML.
 - Livré: le champ de mot de passe de `Spectateurs en direct` utilise maintenant un champ texte avec `autocomplete="off"` et des noms d'inputs dédiés afin de réduire les propositions de sauvegarde du gestionnaire de mots de passe Chrome.
 - À surveiller: Chrome peut encore proposer de sauvegarder le code si le navigateur détecte malgré tout un flux d'authentification; dans ce cas, il faudra remplacer le champ par un contrôle encore plus personnalisé.
@@ -508,7 +508,7 @@ Questions fermées:
 - Les cartes d'équité sont harmonisées entre les modes avec `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` apparaît seulement en frappe fixe.
 - `Temps de jeu` inclut les présences au bâton en frappe fixe, mais seulement la défensive en frappe variable.
 - En mode frappe variable, les présences au bâton sont retirées des scores d'équité et les colonnes `AB` / `Total` sont retirées des statistiques.
-- Workflow simplifié livré: `Match`, `Joueurs`, `Alignement`; `Partage` et `Spectateur` restent hors étapes numérotées.
+- Workflow livré: `Match`, `Joueurs`, `Alignement`, `Jouer`; `Partager` reste une action non numérotée.
 - `Accueil` contextuel livré pour créer l'équipe initiale, reprendre un match ou créer un nouveau match.
 - `Équipe` hors workflow livré pour gérer le nom de notre équipe et le bassin de joueurs.
 - Le hero de présentation apparaît seulement dans `Accueil`.
@@ -517,7 +517,7 @@ Questions fermées:
 - `Partager` et `Spectateur` sont sortis des étapes numérotées.
 - `Spectateur` masque maintenant l'en-tête global et le workflow numéroté, et utilise la palette visuelle du site.
 - L'exemple est retiré de l'accueil et du menu principal; il reste seulement dans `Équipe` comme création d'équipe exemple.
-- L'ancienne route `#jouer` redirige vers `#alignement`.
+- La route officielle `#jouer` porte la gestion active; aucune ancienne route n’est maintenue par redirection.
 - `Alignement` affiche la demi-manche courante et permet d'avancer seulement vers la prochaine demi-manche.
 - Les informations de match, la liste des joueurs et l'alignement partant sont verrouillés après le début du match.
 - L'étape `Joueurs` permet de basculer `Présent` / `Absent` en cliquant directement la carte du joueur; l'ajout, le renommage et la suppression de joueurs sont déplacés dans `Équipe`.
@@ -535,7 +535,7 @@ Questions fermées:
 - Livré: dans `Joueurs`, l'ajout d'un joueur est placé sous les listes de présence et la mention redondante sur la suppression est retirée.
 - La création d'équipe exemple est bloquée pendant un match débuté.
 - Le démarrage de la progression du match bloque si le nombre de joueurs actifs n'est pas entre 6 et 12. Les autres problèmes d'alignement ou de règles affichent un avertissement avec confirmation.
-- Le refactor du workflow a retiré l'onglet `Jouer`; `Alignement` porte maintenant la progression du match, les validations, les suggestions et les changements de joueurs.
+- Le workflow possède une quatrième étape `Jouer`; `Alignement` se limite à la préparation et devient en lecture seule après le départ.
 
 ## Livré: refactor multi-match v5
 
@@ -547,8 +547,8 @@ Questions fermées:
 - Les matchs locaux et cloud sont fusionnés dans les tableaux; les matchs seulement en ligne sont importés localement à l'ouverture.
 - Les lignes de `Mes matchs` sont cliquables pour ouvrir le match; les actions sont des icônes avec titres accessibles.
 - Livré: les actions de ligne sont simplifiées à `Partager`, `Archiver` quand applicable et `Supprimer` avec une poubelle; `Actualiser`, `Mettre en ligne`, `Retirer du cloud` et l'accès direct `Spectateur` ont été centralisés ou retirés.
-- Livré: l’ancienne route interne `Spectateur` est remplacée par `#match-en-cours`, une vue coach simplifiée accessible par la pastille de l’en-tête et par `Alignement`. Elle parcourt les demi-manches par glissement, ramène au présent par sa pastille, limite les actions à la demi-manche courante, expose les joueurs présents au banc sans inclure les absents et signale les problèmes d’équité futurs avec retour vers l’alignement complet.
-- Livré: le démarrage depuis Alignement propose de rester sur place en action primaire ou d’ouvrir `Match en cours`; les suggestions futures sont disponibles dans une section repliée et exigent une confirmation avant application et synchronisation.
+- Livré: `Jouer` est une quatrième étape officielle. `Prêt à jouer` valide et fige un état `ready`; la publication facultative et le démarrage se font ensuite dans `Jouer`. La vue complète réutilise le tableau unique et la vue simple reprend le suivi par demi-manche. `Alignement` devient lecture seule après le départ et aucune ancienne route n’est redirigée.
+- Livré: `Prêt à jouer` ouvre `Jouer`, seule étape qui démarre et avance la partie; la Vue simple masque le workflow et les détails superflus.
 - Livré: un match terminé est affiché comme tel sur l'accueil et ne verrouille plus l'édition de l'équipe permanente.
 - Livré: la création d'un lien d'équipe refuse transactionnellement tout identifiant déjà existant, même pour le même compte.
 - Corrigé: un identifiant d'équipe refusé ne peut plus être affiché localement comme un lien actif et l'erreur Firestore n'est plus remplacée par la réouverture de la modale.
@@ -568,3 +568,6 @@ Dette restante: nettoyer le code mort hérité des anciennes archives et extrair
 - Ajout du lien `#banc/{publicId}`, synchronisé avec le lien Match et protégé par le même mot de passe.
 - Ajout des panneaux `Maintenant`, `Ensuite` et `Mission encouragement`, d'une grille défensive adaptative avec noms de positions complets et des états d'attente, dernière manche, fin et hors ligne.
 - Ajout de tests navigateur ciblés dans `tests/bench.html`.
+- Livré: palette contextuelle verte pour `Maintenant`, jaune pour `Ensuite`, codes `L1`/`L2` retirés quand les noms complets sont présents et casquette utilisée dans l’attente.
+- Livré: à `ready`, un lien Match existant publie l’alignement complet sans créer de nouveau partage; toute invalidation le masque de nouveau.
+- Livré: derniers ajustements de densité — compteur Équipe au-dessus des joueurs, absents grisés sans pastille, tirets saisissables dans l’identifiant public et carte d’introduction masquée en Vue simple.

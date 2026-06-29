@@ -57,9 +57,9 @@ Bug UX connu: Chrome peut interpréter le champ de mot de passe du partage spect
 
 La politique de conflit v1 est volontairement simple: dernière sauvegarde gagne. Si une version distante plus récente est reçue, l'application avertit l'utilisateur et remplace la copie locale.
 
-Le document privé cloud contient le match complet pour permettre l'édition sur un autre appareil avant ou pendant le match. La limitation avant match s'applique au partage public: le spectateur peut voir le contexte et l'état `Alignement à venir`, mais l'expérience publique ne doit pas présenter l'alignement complet avant le début du match.
+Le document privé cloud contient le match complet pour permettre l'édition sur un autre appareil avant ou pendant le match. La projection publique expose seulement le contexte à `draft`; à `ready`, elle expose l’alignement complet uniquement si le lien Match existe déjà; à `active`, elle ajoute la progression courante. Aucune transition ne crée automatiquement un lien public.
 
-La projection publique contient aussi des métadonnées de présentation pour le spectateur: `publicStage`, `programme`, `fanMessage`, `currentIndex` et `phases`. La vue publique ajoute une étape `Programme` avant les demi-manches, affiche `Alignement à venir` avant le début du match, puis affiche un état final quand toutes les demi-manches sont terminées. Si le spectateur consulte la demi-manche courante, la vue suit automatiquement la progression. S’il a navigué ailleurs, `publicPromptedIndex` garantit qu’un popup est affiché une seule fois pour chaque nouvel index courant; la progression suivante peut déclencher un nouveau popup.
+La projection publique contient `publicStage`, `ready`, `programme`, `fanMessage`, `currentIndex` et `phases`. À `ready`, `Programme` et toutes les phases sont consultables, mais aucune phase n’est marquée courante. Une invalidation repasse à `draft` et retire les joueurs, frappeurs et défenses de la projection suivante.
 
 La route Banc lit exactement le même document `publicMatches/{publicId}` et partage la clé de session du mot de passe spectateur. `bench-view.js` transforme purement la projection en modèle `waiting`, `playing` ou `final`, calcule la prochaine demi-manche et deux listes distinctes de joueurs au banc. Une mission unique est choisie déterministement par index de demi-manche et partagée par tous les joueurs de cette liste. La défense utilise une grille textuelle adaptative et les mêmes caractères `🧢` et `🧤` que les autres vues. Firestore conserve naturellement le dernier snapshot pendant une coupure; les événements `online` et `offline` mettent seulement à jour le point d'état, dont le libellé demeure accessible sans être visible.
 
@@ -72,6 +72,7 @@ Champs principaux:
 - `team`, `opp`, `date`, `place`
 - `time`: heure du match courant, optionnelle
 - `fanMessage`: message optionnel aux fans, limité à 300 caractères
+- Équipe: `fanMessage` public de 300 caractères, inclus dans les payloads local, privé et `#fans`
 - `side`: `visiteur` ou `locale`
 - `fixed`: frappe fixe activée ou non
 - `innings`: nombre de manches
@@ -97,22 +98,22 @@ Cible de modèle de données: séparer le bassin permanent de joueurs du match c
 
 ## Refactor workflow cible
 
-Le workflow cible remplace l'ancien onglet `Jouer` par une gestion directe dans `Alignement`. Les routes principales sont:
+Le workflow cible sépare la préparation et la gestion active. Les routes principales sont:
 
 - `#match`: édition des métadonnées seulement tant que `started` est faux;
 - `#joueurs`: présence/absence des joueurs du match tant que `started` est faux;
-- `#alignement`: édition de l'alignement avant match, suivi de progression pendant le match, validations, suggestions, statistiques et changements de joueurs;
+- `#alignement`: édition de l'alignement avant match, validations, suggestions et confirmation `ready`; lecture seule après le départ;
 - `#accueil`: porte d'entrée contextuelle selon l'état local, gestion hors workflow du nom de notre équipe et du bassin de joueurs;
 - `#matchs`: tableaux des matchs locaux et cloud, incluant les matchs archivés en lecture seule;
-- `#match-en-cours`: vue coach locale dérivée du même état;
+- `#jouer`: vue coach locale complète ou simple, dérivée du même état;
 
-`#alignement` démarre le match avec confirmation si la progression est encore au début. La cible produit bloque le démarrage si le nombre de joueurs actifs n'est pas entre 6 et 12. Si le nombre de joueurs est valide mais que l'horaire est incomplet ou que des règles ne sont pas respectées, l'app avertit sans bloquer et demande confirmation. Une fois le match commencé, les champs de match, la liste des joueurs, l'ajout de joueurs, `Frappe fixe` et `Optimiser` sont verrouillés ou masqués.
+`#alignement` ne démarre jamais le match. `Prêt à jouer` valide et ouvre `#jouer`, seule route autorisée à démarrer et avancer. La vue complète déplace le même nœud de tableau; la vue simple masque le workflow numéroté et les métadonnées détaillées sans dupliquer la logique.
 
-Le menu du haut est un menu global unique qui regroupe `Accueil`, `Connexion` et `Réinitialiser`. Le changement d'équipe vit dans `Accueil` derrière la carte de contexte `Équipe active`, qui affiche `Aucune équipe` quand rien n'existe et ouvre une modale de sélection ou de création. `Matchs` reste une page séparée avec la route officielle `#matchs`, mais elle est accessible depuis le contexte de l'accueil plutôt que depuis le menu. La route `Spectateur` est conservée sans accès visible en attendant sa refonte. Les étapes `Match`, `Joueurs` et `Alignement` restent visibles dans le contenu via le workflow numéroté, avec une action non numérotée `Partager` affichée par une icône de lien qui ouvre la modale de partage du match. La carte du match courant sur `Accueil` expose aussi les icônes lien et poubelle pour partager ou supprimer ce match. La création d'équipe exemple apparaît seulement dans la carte `Créer une équipe` quand aucune équipe n'existe.
+Le menu du haut est un menu global unique qui regroupe `Accueil`, `Connexion` et `Réinitialiser`. `Matchs` reste une page séparée accessible depuis l’accueil. Les étapes `Match`, `Joueurs`, `Alignement` et `Jouer` restent visibles dans le contenu via le workflow numéroté, avec une action non numérotée `Partager`. La Vue simple masque temporairement ce workflow pour réduire la densité au banc.
 
 Pendant le développement, les routes désuètes ne sont pas maintenues. `#equipe`, `#mesmatchs` et `#partager` ne sont pas des alias: comme toute route inconnue, elles retournent à `#accueil`.
 
-Les routes publiques `#public/{publicId}` et `#fans/{teamPublicId}` utilisent seules `view-spectateur` et la classe `spectatorRoute`. La vue locale du coach possède un conteneur distinct, `view-match-en-cours`, afin de ne jamais exposer les commandes de progression ou de changement aux spectateurs. Elle réutilise les rendus des frappeurs et défenseurs et les validations existantes, sans nouveau modèle de données. Son banc est dérivé de `active()`: les absents sont exclus, puis les joueurs affichés dans la demi-manche consultée sont retirés selon les positions défensives ou les frappeurs de la manche.
+Les routes publiques `#public/{publicId}` et `#fans/{teamPublicId}` utilisent seules `view-spectateur` et la classe `spectatorRoute`. La vue locale `#jouer` ne partage aucune commande avec les spectateurs. Le nœud DOM du tableau complet est déplacé entre les montages d’`Alignement` et de `Jouer`, ce qui évite de dupliquer son rendu et ses gestionnaires. La vue simple réutilise les rendus des frappeurs et défenseurs et les validations existantes. Son banc est dérivé de `active()`: les absents sont exclus, puis les joueurs affichés dans la demi-manche consultée sont retirés selon les positions défensives ou les frappeurs de la manche.
 
 Les objets de suggestion portent explicitement leur index `inning`. La vue coach filtre sur cet index et sur l’état de la demi-manche défensive avant l’affichage, puis `applySuggestion` revérifie le verrouillage au moment de l’application. Cette double vérification empêche une suggestion affichée avant une progression d’altérer ensuite l’historique joué.
 
@@ -124,11 +125,11 @@ La création depuis `Lien d'équipe` fournit un gestionnaire d'erreur à `savePu
 
 La modale `Partager le match` sépare trois responsabilités. `Lien Match` gère directement le document public `#public/{publicId}` et continue de le mettre à jour depuis la copie locale, même sans sauvegarde privée. `Gérer en ligne` contrôle la synchronisation privée du match et exige que le contrôle équivalent de l'équipe soit actif; sinon, une erreur ouvre la modale `Lien d'équipe`. Cette modale contient désormais deux sections distinctes, `Lien public` et `Gérer en ligne`, sur le même modèle que le partage d'un match. Passer un match à `Non` retire seulement son document privé. Passer une équipe à `Non` retire son document privé et ceux de ses matchs, sans retirer les liens publics. `Exports` reste hors cloud et liste `Programme`, `Banc` et `Texte` avec leur description sous le titre.
 
-Les routes `#fans/{id}` et `#public/{id}` suspendent l'écoute du document privé du coach et n'affichent donc pas `Version distante reçue`. Leurs abonnements publics restent actifs en temps réel. La vue `#match-en-cours` conserve l’écoute privée comme `#match`, `#joueurs` et `#alignement`.
+Les routes `#fans/{id}` et `#public/{id}` suspendent l'écoute du document privé du coach et n'affichent donc pas `Version distante reçue`. Leurs abonnements publics restent actifs en temps réel. La vue `#jouer` conserve l’écoute privée comme `#match`, `#joueurs` et `#alignement`.
 
 État transitoire: l'onglet `Jouer` n'est plus visible et l'ancienne route `#jouer` est redirigée vers `#alignement`. Le modèle interne utilise encore `started` et `locks.halves`; il devrait éventuellement être remplacé par un index monotone de demi-manche complétée ou courante, par exemple `currentHalfIndex` ou `completedHalfCount`. Les demi-manches passées deviendraient alors de l'historique non modifiable, la demi-manche courante serait mise en évidence, et les demi-manches futures resteraient modifiables dans `Alignement`.
 
-Le contrôle segmenté `Préparer` / `Jouer` utilise uniquement la variable en mémoire `lineupMode`. Elle n'est pas écrite dans `localStorage`; un match commencé force toujours `Jouer`, tandis que le statut persistant demeure dans le match.
+Le statut de match accepte `draft`, `ready`, `active`, `completed` et `archived`. `ready` est persistant et revient à `draft` dès qu’une mutation de préparation invalide l’alignement. Le choix `Vue complète` / `Vue simple` de `Jouer` reste uniquement en mémoire. Les routes retirées ne disposent d’aucune redirection ou logique de compatibilité.
 
 État stabilisé: l'espace hors workflow de l'équipe vit dans `#accueil`. Le stockage utilise `teamProfile`, `roster`, `matches` et `activeMatchId` comme structure officielle locale.
 

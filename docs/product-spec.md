@@ -22,16 +22,20 @@ Le workflow cible suit la réalité du match et limite les retours en arrière u
 
 1. `📅 Match`: entrer les informations du match: adversaire, date, heure, endroit, nombre de manches initial, frappe fixe, local ou visiteur.
 2. `👨‍👩‍👦‍👦 Joueurs`: indiquer quels joueurs du bassin permanent sont présents ou absents pour ce match.
-3. `📋 Alignement`: optimiser, ajuster manuellement, suivre la progression du match, appliquer les suggestions et gérer les changements de joueurs.
-4. `Partager`: action non numérotée du match courant; elle ouvre une modale pour les exports et le lien spectateur.
+3. `📋 Alignement`: optimiser, ajuster manuellement et confirmer `Prêt à jouer`.
+4. `⚾ Jouer`: démarrer la partie, suivre la progression et gérer les changements de joueurs en vue complète ou simple.
+
+`Partager` reste une action non numérotée du match courant pour les exports et le lien spectateur.
 
 Le mode spectateur est une vue simplifiée en lecture seule accessible depuis `Partager le match` quand le match sélectionné est admissible. Il n'est plus une étape du workflow principal.
 
-`Accueil` est une porte d'entrée contextuelle hors workflow. Si aucune équipe n'est définie, l'accueil dirige vers la création de l'équipe. Créer ou modifier l'équipe ne crée jamais automatiquement un match. Quand l'équipe existe mais qu'aucun match courant non archivé n'existe, l'accueil affiche `Aucun match prévu` et propose explicitement de préparer un match. Sinon, il présente le workflow du match courant en trois cartes: `Match`, `Joueurs` et `Alignement` ou `Jouer` selon le statut. Les états affichés doivent être formulés comme `Aucun match prévu`, `En préparation`, `En cours` et `Match terminé`, avec la demi-manche courante quand un match est commencé.
+`Accueil` est une porte d'entrée contextuelle hors workflow. Si aucune équipe n'est définie, l'accueil dirige vers sa création. Créer ou modifier l'équipe ne crée jamais automatiquement un match. Quand un match courant existe, l'accueil présente quatre cartes: `Match`, `Joueurs`, `Alignement` avec `Vérifier et ajuster`, puis `Jouer` avec `Gérer la partie`. Son résumé affiche le nombre de joueurs présents; la carte Équipe affiche le nombre de joueurs permanents en pastille.
+
+L’heure du match est saisie avec deux menus `Heure` et `Minutes`, par pas de cinq minutes, mais reste stockée sous la forme optionnelle `HH:mm`. L’étape `Joueurs` utilise une seule liste: présents d’abord, absents grisés ensuite, sans pastille textuelle, avec bascule au clic.
 
 Le hero de présentation apparaît seulement sur `Accueil`. Quand un match courant non archivé existe, les cartes de l'accueil suivent le workflow: la carte `Informations` résume adversaire, date, heure et endroit; la carte `Joueurs` résume présents et absents; la carte `Alignement` ou `Jouer` ouvre le tableau. La carte du match courant expose aussi deux actions compactes: lien pour ouvrir `Partager le match`, et poubelle pour supprimer le match courant avec ses données en ligne connues et son lien spectateur. L'accueil doit afficher un seul bouton d'action principal selon l'état courant.
 
-La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match, mais ne devient pas une nouvelle étape numérotée. Elle permet de définir le nom de notre équipe et d'ajouter, renommer ou supprimer les joueurs qui serviront aux matchs futurs. Le nom de l'équipe est éditable directement dans le titre de la boîte d'équipe. Ces champs se sauvegardent automatiquement localement; il n'y a pas de bouton `Enregistrer` dans la boîte d'équipe. Le numéro de chandail est optionnel, limité à 2 chiffres, et se modifie dans la boîte d'équipe, avant le match, comme le nom du joueur. Quand il est défini, il est affiché près du nom dans l'alignement et inclus dans les exports. Pendant un match commencé, l'équipe permanente est verrouillée et l'interface doit expliquer que les joueurs ne peuvent pas être modifiés avant la fin ou l'archivage du match.
+La gestion de notre équipe et de son bassin permanent de joueurs est séparée du workflow de match. Le nombre de joueurs est affiché à droite immédiatement au-dessus de la liste. Le lien d’équipe accepte un message public de 300 caractères avec le même mini-Markdown que le message de match, prérempli avec `Merci de nous encourager!`. Les identifiants publics utilisent lettres minuscules, chiffres et tirets; un tiret final temporaire reste permis pendant la saisie, puis la valeur est normalisée à la création.
 
 Depuis `Accueil`, l'utilisateur peut préparer un nouveau match dans la carte de match quand aucun match non archivé n'est actif. Depuis `Matchs`, une action `Créer un match` doit être offerte quand l'équipe est complète et qu'aucun match non archivé n'est actif.
 
@@ -47,7 +51,7 @@ Hiérarchie des actions:
 - Boîte d'équipe dans `Accueil`: `Ajouter des joueurs` est primaire. La suppression d'équipe reste une icône destructive discrète dans l'en-tête de la boîte, près du lien public.
 - `Matchs`: `Créer un match` peut être primaire seulement quand aucun match non archivé n'est actif. Les actions de ligne restent en icônes.
 - `Match` et `Joueurs`: `Continuer` est primaire parce qu'il suit le workflow.
-- `Alignement`: `Commencer` ou l'action d'avancement du match est primaire. `Mélanger`, `Optimiser` et `Changement de joueurs` restent secondaires.
+- `Alignement`: `Prêt à jouer` est primaire. `Mélanger` et `Optimiser` restent secondaires. Le démarrage et l’avancement du match appartiennent exclusivement à `Jouer`.
 - `Partager le match`: `Créer le lien` et `Connexion` sont primaires quand ils sont l'action attendue; `Programme`, `Banc`, `Texte`, `Copier`, `Fermer` et la navigation du toggle `Gérer en ligne` restent secondaires; `Retirer le lien` est danger.
 - `Spectateurs en direct`: la navigation reste simple; `Suivant` peut être primaire, tandis que `Précédent` et `Manche en cours` restent secondaires.
 
@@ -135,7 +139,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 ## Progression du match dans l'alignement
 
 - La gestion du match se fait dans `Alignement`. L'onglet `Jouer` est retiré du workflow principal.
-- `Alignement` porte l'état courant du match par le bouton de progression, le tableau et les demi-manches grisées ou mises en évidence. L'écran ne doit pas dupliquer cet état dans un pill séparé.
+- `Jouer` porte l'état courant du match par le bouton de progression, le tableau et les demi-manches grisées ou mises en évidence. L'écran ne doit pas dupliquer cet état dans un pill séparé.
 - Un seul bouton principal fait avancer la progression par demi-manche: `Commencer le match`, puis `Terminer début 1re`, `Terminer fin 1re`, etc.
 - Après la dernière demi-manche, l'application doit permettre de terminer le match et de sortir de l'état bloqué tout en gardant les mêmes joueurs en mémoire.
 - L'interface principale ne permet pas de revenir à une demi-manche précédente. Une correction de progression, si nécessaire, doit être une action avancée future avec confirmation forte.
@@ -143,7 +147,7 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Quand une demi-manche est jouée, elle devient de l'historique non modifiable. Les demi-manches futures restent modifiables selon les actions permises.
 - Quand le match est commencé, les vues `Match` et `Joueurs` deviennent non modifiables.
 - L'action `Optimiser` existe seulement avant le début réel du match dans `Alignement`.
-- `Alignement` contient deux modes locaux sans nouvelle route: `Préparer` et `Jouer`.
+- `Alignement` prépare l’horaire; `Jouer` possède une route et des vues `Complète` / `Simple` distinctes.
 - Avant match, `Préparer` affiche les actions d'ajustement de l'alignement (`Mélanger`, `Optimiser`) et `Jouer` affiche l'action de démarrage.
 - Ce mode d'affichage n'est pas persisté. Dès que le match commence, `Jouer` est forcé; le statut durable reste porté par le match.
 - Quand le match est commencé, le mode `Jouer` est forcé et contient la progression de demi-manche ainsi que `Changement de joueurs`.
@@ -169,9 +173,13 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 
 ## Changements de joueurs pendant un match
 
-La vue locale `Match en cours` est l’écran terrain simplifié du coach. Elle affiche une demi-manche à la fois et permet de parcourir toutes les demi-manches par glissement horizontal. La pastille de progression ramène à la demi-manche courante. Les actions de progression et de changement sont désactivées lorsqu’une autre demi-manche est consultée. Une section repliée affiche les joueurs présents au banc pour la demi-manche consultée; les joueurs absents n’y apparaissent jamais. En défensive, le banc contient les joueurs sans position assignée. À l’attaque en frappe fixe, il contient les joueurs hors du groupe des six frappeurs; en frappe variable, tous les joueurs actifs participent à l’ordre. `Alignement` demeure la vue complète pour consulter l’équité et toutes les manches. Au démarrage depuis Alignement, la modale propose `Commencer ici` comme action primaire ou `Commencer dans Match en cours` comme action secondaire. Depuis la vue simplifiée, le démarrage conserve la confirmation existante sans demander de destination.
+L’étape `Jouer` est l’écran terrain du coach. Elle offre une `Vue complète`, sélectionnée par défaut, qui réutilise le tableau d’alignement, et une `Vue simple` qui affiche une demi-manche à la fois et permet de parcourir toutes les demi-manches par glissement horizontal. La pastille de progression ramène à la demi-manche courante. Les actions de progression et de changement sont désactivées lorsqu’une autre demi-manche est consultée. Une section repliée affiche les joueurs présents au banc pour la demi-manche consultée; les joueurs absents n’y apparaissent jamais. En défensive, le banc contient les joueurs sans position assignée. À l’attaque en frappe fixe, il contient les joueurs hors du groupe des six frappeurs; en frappe variable, tous les joueurs actifs participent à l’ordre.
 
-Si les validations détectent un problème dans une demi-manche défensive encore modifiable, `Match en cours` affiche une alerte non bloquante avec le nombre de problèmes et un lien vers `Alignement`. Les écarts limités à l’historique déjà joué ne déclenchent pas cette alerte.
+`Prêt à jouer` dans `Alignement` valide l’horaire, enregistre le statut durable `ready`, puis ouvre `Jouer`. Toute modification de préparation remet le match à `draft`. Dans `Jouer`, la publication en ligne est facultative et le match peut être commencé seulement lorsqu’il est prêt. Après le départ, `Alignement` demeure consultable en lecture seule.
+
+Si un lien Match existe déjà, le passage à `ready` publie l’alignement complet, incluant l’ordre, les frappeurs et les positions prévues. Il ne crée jamais de lien. Revenir à `draft` masque de nouveau ces données publiques; aucune demi-manche n’est courante avant `active`.
+
+Si les validations détectent un problème dans une demi-manche défensive encore modifiable, la Vue simple de `Jouer` affiche une alerte non bloquante avec le nombre de problèmes et un accès à la Vue complète. Les écarts limités à l’historique déjà joué ne déclenchent pas cette alerte.
 
 Les corrections automatiques encore applicables sont aussi présentées dans une section `Suggestions` repliée. Chaque application exige une confirmation qui décrit la modification et rappelle sa synchronisation publique. Après application, les validations et suggestions sont recalculées. Les problèmes sans action automatique renvoient vers `Alignement`.
 
