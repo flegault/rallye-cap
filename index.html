@@ -27,6 +27,7 @@
     <a class="step" href="#match" data-step="match"><span class="n">1</span><b>📅 Match</b></a>
     <a class="step" href="#joueurs" data-step="joueurs"><span class="n">2</span><b>👨‍👩‍👦‍👦 Joueurs</b></a>
     <a class="step" href="#alignement" data-step="alignement"><span class="n">3</span><b>📋 Alignement</b></a>
+    <a class="step" href="#jouer" data-step="jouer"><span class="n">4</span><b>⚾ Jouer</b></a>
     <button class="step shareStep" id="shareStepBtn" type="button"><span class="n shareN">🔗</span><b id="shareStepTitle">Partager</b></button>
   </div>
   <section class="view" id="view-accueil">
@@ -61,6 +62,7 @@
         </div>
         <div class="row noPrint teamTopActions"><button class="icon soft" id="teamPublicLinkBtn" type="button" title="Lien d'équipe" aria-label="Lien d'équipe">🔗</button><button class="icon soft dangerIcon" id="deleteTeamBtn" type="button" title="Supprimer l'équipe" aria-label="Supprimer l'équipe">🗑</button></div>
       </div>
+      <div class="teamPlayerCountBar"><span class="tag" id="teamPlayerCount">0 joueur</span></div>
       <div class="players" id="teamPlayers"></div>
       <div class="homeActions noPrint">
         <button class="btn brandBtn" id="addTeamNames" type="button">Ajouter des joueurs</button>
@@ -89,7 +91,7 @@
       <h3 class="formSectionTitle">Détails</h3>
       <div class="matchDetailsGrid">
         <label><span>Date</span><input id="date" type="date" /></label>
-        <label><span>Heure</span><select id="time"></select></label>
+        <div class="timeFields"><label><span>Heure</span><select id="timeHour"></select></label><label><span>Minutes</span><select id="timeMinute"></select></label></div>
         <label><span>Endroit</span><input id="place" placeholder="ex. Parc, terrain" /></label>
       </div>
       <div class="matchOptionsGrid">
@@ -110,21 +112,19 @@
     <div class="stepActions noPrint"><a class="btn brandBtn" href="#alignement" id="toAlign">Continuer</a></div>
   </section>
   <section class="view" id="view-alignement">
+    <div id="alignLineupMount">
+    <div id="lineupWorkspace">
     <div class="card">
-      <div class="spaced"><div><h2>3. Alignement</h2><p class="hint">Prépare un alignement équitable, suis le match et ajuste les joueurs et les positions au besoin.</p></div></div>
+      <div class="spaced"><div><h2 id="lineupWorkspaceTitle">3. Alignement</h2><p class="hint" id="lineupWorkspaceHint">Prépare un alignement équitable et vérifie les règles avant de jouer.</p></div></div>
       <div class="row lineupActions noPrint">
-        <div class="segment lineupModeTabs" role="tablist" aria-label="Mode d'alignement">
-          <button id="lineupPrepareTab" type="button" data-lineup-mode="preparer">Préparer</button>
-          <button id="lineupPlayTab" type="button" data-lineup-mode="jouer">Jouer</button>
-        </div>
         <div class="row prepareActions" id="prepareActions">
           <button class="btn secondary" id="shuffleOrderBtn" title="Mélanger l’ordre au bâton">Mélanger</button>
           <button class="btn secondary" id="regenBtn">Optimiser</button>
+          <button class="btn brandBtn" id="readyToPlayBtn">Prêt à jouer</button>
         </div>
         <div class="row playActions" id="playActions">
           <button class="btn brandBtn" id="advanceHalfBtn">Commencer</button>
           <button class="btn secondary" id="lineupChangeBtn">Changement</button>
-          <a class="btn secondary" href="#match-en-cours" id="openLiveMatchBtn">Match en cours</a>
         </div>
       </div>
       <div class="suggestions playWarnings hide" id="playWarnings"></div>
@@ -134,17 +134,30 @@
     <div class="card"><h3>Validation</h3><div class="alerts" id="validations"></div></div>
     <div class="card suggestionsCard" id="suggestionsCard"><h3>Suggestions</h3><div class="suggestions" id="suggestions"></div></div>
     <div class="card statsCard"><h3>Statistiques et équité</h3><div class="scores" id="scores"></div><div class="tableWrap statTable" id="stats"></div></div>
+    </div>
+    </div>
   </section>
-  <section class="view" id="view-match-en-cours">
+  <section class="view" id="view-jouer">
+    <div class="card noPrint playGateway" id="playGateway">
+      <div class="spaced"><div><h2>4. Jouer</h2><p class="hint" id="playGatewayText">L’alignement doit être prêt avant de commencer le match.</p></div><span class="tag" id="playReadyStatus">En préparation</span></div>
+      <div class="row playGatewayActions"><button class="btn brandBtn" id="startMatchBtn" type="button">Commencer le match</button></div>
+    </div>
+    <div class="segment playViewTabs noPrint" role="tablist" aria-label="Vue de jeu">
+      <button type="button" data-play-view="complete">Vue complète</button>
+      <button type="button" data-play-view="simple">Vue simple</button>
+    </div>
+    <div id="playFullMount"></div>
+    <div id="playSimpleMount" class="hide">
     <div class="coachMatchShell">
-      <div class="coachMatchHead"><div><button class="matchPill current coachCurrentPill" id="coachMatchStatus" type="button">Match en cours</button><p class="hint" id="coachMatchMeta"></p></div></div>
+      <div class="coachMatchHead"><div><button class="matchPill current coachCurrentPill" id="coachMatchStatus" type="button">Match en cours</button></div></div>
       <div id="coachCurrentHalf"></div>
       <div class="dots" id="coachMatchDots"></div>
       <div class="coachMatchActions"><button class="btn brandBtn" id="coachAdvanceBtn">Commencer</button><button class="btn secondary" id="coachChangeBtn">Changement de joueurs</button></div>
       <div id="coachEquityWarning"></div>
       <details class="coachSuggestions hide" id="coachSuggestions"><summary id="coachSuggestionsSummary">Suggestions</summary><div class="coachSuggestionList" id="coachSuggestionList"></div></details>
       <details class="coachInactive"><summary id="coachInactiveSummary">Joueurs au banc</summary><div class="coachInactiveList" id="coachInactiveList"></div></details>
-      <a class="btn secondary coachFullLineup" href="#alignement">Voir l’alignement complet</a>
+      <button class="btn secondary coachFullLineup" type="button" data-play-view="complete">Voir la vue complète</button>
+    </div>
     </div>
   </section>
   <section class="view" id="view-spectateur">
