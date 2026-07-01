@@ -39,7 +39,7 @@ La gestion de notre équipe et de son bassin permanent de joueurs est séparée 
 
 Depuis `Accueil`, l'utilisateur peut préparer un nouveau match dans la carte de match quand aucun match non archivé n'est actif. Depuis `Matchs`, une action `Créer un match` doit être offerte quand l'équipe est complète et qu'aucun match non archivé n'est actif.
 
-L'ajout de joueurs utilise le même modal depuis la boîte d'équipe dans `Accueil` et depuis l'étape `Joueurs`. Le numéro de chandail peut être saisi en même temps avec des formats simples comme `#27 Émile`, `27 Émile` ou `Émile #27`. Depuis la boîte d'équipe, le joueur est ajouté seulement au bassin permanent. Dans `Joueurs`, avant le début du match, le raccourci `Ajouter un joueur à l'équipe` est placé sous les listes `Présents` et `Absents`; il ajoute le joueur au bassin permanent et au match courant. Si moins de 12 joueurs sont présents, le joueur est ajouté comme présent; sinon il est ajouté comme absent. La suppression et le renommage restent gérés dans la boîte d'équipe.
+L'ajout de joueurs utilise le même modal depuis la boîte d'équipe dans `Accueil` et depuis l'étape `Joueurs`. Le numéro de chandail peut être saisi en même temps avec des formats simples comme `#27 Émile`, `27 Émile` ou `Émile #27`. Depuis la boîte d'équipe, le joueur est ajouté seulement au bassin permanent. Dans `Joueurs`, le raccourci `Ajouter un joueur à l'équipe` est placé sous la liste unique; il ajoute le joueur au bassin permanent et au match courant. Si moins de 12 joueurs sont présents, le joueur est ajouté comme présent; sinon il est ajouté comme absent.
 
 Hiérarchie des actions:
 
@@ -136,9 +136,8 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Réinitialiser doit être confirmé avec le message: `Toutes tes équipes, joueurs et matchs seront supprimés pour toujours. Continuer?`
 - Terminer un match doit permettre de conserver la liste des joueurs pour préparer un nouveau match.
 
-## Progression du match dans l'alignement
+## Progression du match dans Jouer
 
-- La gestion du match se fait dans `Alignement`. L'onglet `Jouer` est retiré du workflow principal.
 - `Jouer` porte l'état courant du match par le bouton de progression, le tableau et les demi-manches grisées ou mises en évidence. L'écran ne doit pas dupliquer cet état dans un pill séparé.
 - Un seul bouton principal fait avancer la progression par demi-manche: `Commencer le match`, puis `Terminer début 1re`, `Terminer fin 1re`, etc.
 - Après la dernière demi-manche, l'application doit permettre de terminer le match et de sortir de l'état bloqué tout en gardant les mêmes joueurs en mémoire.
@@ -147,15 +146,14 @@ Ces objectifs améliorent la qualité de l'alignement, mais ils ne doivent pas m
 - Quand une demi-manche est jouée, elle devient de l'historique non modifiable. Les demi-manches futures restent modifiables selon les actions permises.
 - Quand le match est commencé, les vues `Match` et `Joueurs` deviennent non modifiables.
 - L'action `Optimiser` existe seulement avant le début réel du match dans `Alignement`.
-- `Alignement` prépare l’horaire; `Jouer` possède une route et des vues `Complète` / `Simple` distinctes.
-- Avant match, `Préparer` affiche les actions d'ajustement de l'alignement (`Mélanger`, `Optimiser`) et `Jouer` affiche l'action de démarrage.
-- Ce mode d'affichage n'est pas persisté. Dès que le match commence, `Jouer` est forcé; le statut durable reste porté par le match.
-- Quand le match est commencé, le mode `Jouer` est forcé et contient la progression de demi-manche ainsi que `Changement de joueurs`.
+- `Alignement` prépare et valide l'alignement; `Jouer` possède une route et des vues `Complète` / `Simple` distinctes.
+- La vue complète est sélectionnée par défaut et réutilise le tableau d'alignement. Le choix de vue n'est pas un statut persistant du match.
+- Après le départ, `Jouer` contient la progression de demi-manche et `Changement de joueurs`; `Alignement` reste consultable en lecture seule.
 - Le tableau principal sépare chaque manche en deux demi-manches: la colonne gauche est toujours le début et la colonne droite est toujours la fin.
 - L'en-tête de chaque demi-manche indique seulement le type de jeu pour notre équipe: `🏏` pour l'attaque et `🧤` pour la défensive. L'ordre dépend du statut visiteur/local.
 - Les lignes du tableau principal restent associées aux joueurs. En attaque, les cellules affichent seulement le rang de frappe prévu (`#1`, `#2`, etc.) quand la frappe fixe est activée. En défensive, les cellules affichent les positions.
 - Le concept de cadenas est remplacé par une progression de match: les demi-manches passées sont grisées et la demi-manche `À jouer` est indiquée clairement.
-- Sur mobile, le tableau principal de `Alignement` doit faire défiler horizontalement automatiquement vers la demi-manche `À jouer` quand le match est commencé.
+- Sur mobile, le tableau de la vue complète de `Jouer` doit faire défiler horizontalement automatiquement vers la demi-manche `À jouer` quand le match est commencé.
 - Quand une demie-manche offensive est barrée, l'ordre au bâton utilisé pour cette demie-manche est figé afin que les changements futurs ne modifient pas l'historique.
 - Avant le début du match, l'ordre des frappeurs peut être modifié en glissant les joueurs dans la première colonne; le déplacement réordonne les lignes complètes. Une fois le match débuté, ce glisser-déposer d'ordre est désactivé.
 - Avant le début du match, `Optimiser` recalcule les positions défensives en respectant l'ordre de frappe courant.
@@ -184,7 +182,7 @@ Si les validations détectent un problème dans une demi-manche défensive encor
 Les corrections automatiques encore applicables sont aussi présentées dans une section `Suggestions` repliée. Chaque application exige une confirmation qui décrit la modification et rappelle sa synchronisation publique. Après application, les validations et suggestions sont recalculées. Les problèmes sans action automatique renvoient vers `Alignement`.
 
 - Les changements rapides sur téléphone sont prioritaires, mais les opérations qui changent beaucoup l'alignement doivent demander confirmation.
-- Les changements de joueurs en cours de match sont accessibles depuis `Alignement` par un seul bouton de changement de joueurs.
+- Les changements de joueurs en cours de match sont accessibles depuis `Jouer` par un seul bouton de changement de joueurs.
 - Le changement demande toujours la demi-manche précise à partir de laquelle l'action s'applique, par exemple `Début 3e` ou `Fin 3e`.
 - Les demi-manches précédentes sont alors considérées jouées et ne doivent plus être modifiées par ce changement ni par les suggestions automatiques.
 - Une fois qu'une demi-manche est jouée, aucun changement futur ne peut être appliqué dans une demi-manche précédente.
@@ -216,7 +214,7 @@ Les corrections automatiques encore applicables sont aussi présentées dans une
 
 - Les exports parents doivent rester lisibles avec beaucoup de joueurs et avec des noms longs. La mise en page doit s'adapter au contenu au lieu de couper ou de superposer les textes.
 - Le partage `Programme` correspond à l'image parents.
-- Le partage `Banc` est un tableau imprimable simple avec une ligne par joueur et deux sous-colonnes par manche: `🏏` pour le rang de frappe local `1` à `6`, et `🧤` pour la position défensive. Les présences au banc y sont affichées avec `👏 Applaudi`, `🎉 Encourage` ou `🎵 Chante` au lieu du mot `BANC`. Quand la frappe fixe est désactivée, les cellules `🏏` restent vides pour annotation manuscrite.
+- Le partage `Banc` est un tableau imprimable simple avec une ligne par joueur et deux sous-colonnes par manche: `🏏` pour le rang de frappe local `1` à `6`, et `🧤` pour la position défensive. En frappe fixe, un joueur qui ne frappe pas reçoit une mission d'encouragement `👏`, `🎉` ou `🎵` dans la cellule `🏏`. Les présences au banc en défensive utilisent les mêmes icônes au lieu du mot `BANC`. Quand la frappe fixe est désactivée, les cellules `🏏` restent vides pour annotation manuscrite.
 - Le partage `Texte` est un format brut compact. En frappe fixe, il n'affiche pas l'ordre général et liste les frappeurs de chaque demi-manche offensive un par un. En frappe variable, il garde l'ordre général, mais n'ajoute pas de rappel `Suivre l'ordre au banc`.
 - L'image parents affiche la date, l'heure en format 24h et le lieu dans l'en-tête.
 - L'onglet `Match` contient un champ optionnel `Message aux fans`, limité à 300 caractères. Ce message reste modifiable pendant le match afin de donner une indication aux fans, mais il est verrouillé dans une archive. Il est affiché dans `Spectateurs en direct` sur l'étape `Programme` et dans l'export image `Programme`.
@@ -245,7 +243,7 @@ Les corrections automatiques encore applicables sont aussi présentées dans une
 - Le partage externe du mode spectateur est maintenant conçu comme un lien Firestore `#public/{publicId}`. Il publie une projection limitée du match courant, en lecture seule, et peut se mettre à jour en direct pendant le match.
 - Le lien public peut être protégé par un mot de passe optionnel. Dans ce cas, la projection publique est chiffrée côté client avant sauvegarde dans Firestore; le mot de passe n'est pas stocké. Si un mot de passe est saisi, l'interface doit indiquer qu'il devra être fourni aux fans.
 - Après création du `Lien Match`, le champ de mot de passe est verrouillé. Pour changer le mot de passe, l'entraîneur doit retirer le lien puis en créer un nouveau.
-- Avant le début du match, la synchronisation automatique en ligne ne doit pas publier l'alignement. Les informations du match et le lien public peuvent être créés ou mis à jour, mais le payload cloud reste limité au contexte du match. L'alignement complet est synchronisé au démarrage du match, puis pendant la progression du match.
+- Avant `Prêt à jouer`, la synchronisation automatique en ligne ne publie pas l'alignement. Si un lien public existe déjà, `Prêt à jouer` publie l'alignement complet sans marquer de demi-manche courante; une modification de préparation le masque de nouveau. Sans lien existant, cette action reste locale. Le direct est ensuite synchronisé au démarrage et pendant la progression du match.
 - La synchronisation en ligne sert aux matchs explicitement mis en ligne. Un match archivé est figé: il reste supprimable, mais ne doit plus être modifiable côté app ou côté Firestore.
 - Les partages en ligne doivent être distingués des exports. Dans la modale `Partager le match`, `Lien Match` publie une projection spectateur indépendante de la sauvegarde privée. `Gérer en ligne` sert à la gestion de l'alignement et à la synchronisation du match pour le coach; il exige que l'équipe soit elle-même gérée en ligne. Retirer la sauvegarde privée conserve la copie locale et le lien Match. Les exports `Programme`, `Banc` et `Texte` sont présentés après ces sections, avec leur description sous le titre de chaque action. Les champs de lien et de mot de passe des partages en ligne sont indisponibles tant que l'entraîneur n'est pas connecté; la modale affiche alors une action primaire verte `Connexion`.
   - Livré: les exports et le lien spectateur sont regroupés dans une modale de match.
@@ -269,6 +267,8 @@ Les corrections automatiques encore applicables sont aussi présentées dans une
 - Chaque archive est en lecture seule et peut être consultée, refermée ou supprimée manuellement avec confirmation. Les détails ne devraient pas être ouverts par défaut.
 - Les archives complètes conservent les métadonnées du match, les joueurs figés, l'ordre, la frappe fixe, les manches, les positions, les snapshots de frappe et les demi-manches complétées.
 - Les exports `Programme`, `Banc` et `Texte` peuvent être régénérés depuis une archive complète, mais les fichiers ou rendus d'export ne sont pas stockés dans l'archive.
+- Les exports portent une signature `CoachRally • coachrally.app`. `Programme` et `Banc` incluent un code QR généré localement. Le lien permanent de l'équipe est prioritaire afin que le document reste utile d'un match à l'autre; sans lien d'équipe, le QR mène au match public, puis à `https://coachrally.app/` si aucun partage n'existe. L'export `Texte` ajoute la même destination sous forme d'URL, sans code QR.
+- Dans le `Programme`, les noms de joueurs restent sur une seule ligne et leur taille s'adapte à l'espace disponible. Les noms exceptionnellement longs peuvent être comprimés horizontalement afin d'éviter les chevauchements et de conserver une seule image/page.
 - Les anciens formats d'archives ne sont pas supportés pendant la phase de développement. Une archive valide est un match v5 avec le statut `archived`.
 
 ## Questions ouvertes

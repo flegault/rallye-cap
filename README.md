@@ -1,6 +1,6 @@
-# Rallye-Cap
+# CoachRally
 
-Application web statique pour préparer, ajuster et partager l'alignement d'une équipe de baseball Rallye-Cap.
+Application web statique à l'adresse [coachrally.app](https://coachrally.app) pour préparer, ajuster et partager l'alignement d'une équipe de baseball Rallye-Cap.
 
 L'app aide les entraîneurs à créer un alignement clair et équitable, à suivre la progression du match, à gérer les changements de joueurs et à partager une version simple pour les parents.
 
@@ -17,7 +17,7 @@ L'app aide les entraîneurs à créer un alignement clair et équitable, à suiv
 - Statistiques et indicateurs d'équité.
 - Archives de matchs en lecture seule.
 - Exports `Programme`, `Banc` et `Texte`.
-- Vue `Spectateur` locale en lecture seule.
+- Vues publiques `Spectateurs`, `Banc` et `Fans` en lecture seule.
 - Synchronisation Firebase optionnelle pour les matchs mis en ligne.
 - Liens publics pour spectateurs en direct, avec mot de passe optionnel.
 - Lien permanent public par équipe (`#fans/...`) avec liste des joueurs et des matchs partagés.
@@ -47,6 +47,7 @@ rules.js                    Validations pures des règles obligatoires
 firebase-sync.js            Synchronisation Firebase optionnelle
 firebase-config.example.js  Exemple de configuration Firebase
 firestore.rules             Règles Firestore
+vendor/qrcode.js             Génération locale des codes QR (MIT)
 tests/rules.html            Tests navigateur des règles
 docs/                       Documentation produit, UX et technique
 ```
@@ -56,7 +57,7 @@ docs/                       Documentation produit, UX et technique
 Le flux principal suit la préparation réelle d'un match:
 
 ```text
-Match -> Joueurs -> Alignement
+Match -> Joueurs -> Alignement -> Jouer
 ```
 
 - `Accueil`: point d'entrée contextuel.
@@ -64,9 +65,10 @@ Match -> Joueurs -> Alignement
 - `Mes matchs`: matchs locaux, matchs en ligne et archives de l'équipe active.
 - `Match`: informations du match.
 - `Joueurs`: présences et absences pour le match courant.
-- `Alignement`: génération, ajustements, progression du match et changements de joueurs.
-- `Partager`: exports du match courant et gestion des liens publics de l'équipe active.
-- `Spectateur`: vue simplifiée en lecture seule.
+- `Alignement`: génération, ajustements et validation `Prêt à jouer`.
+- `Jouer`: démarrage, progression et changements de joueurs en vue complète ou simple.
+- `Partager`: action contextuelle pour les exports et les liens publics.
+- `Spectateurs`, `Banc` et `Fans`: routes publiques en lecture seule.
 
 La barre du haut affiche l'équipe active et permet de changer d'équipe ou d'en créer une nouvelle. Les joueurs, les matchs, les liens publics d'équipe et les liens spectateurs restent séparés par équipe; il n'y a pas de déplacement de match entre équipes.
 
@@ -114,7 +116,7 @@ Pour l'activer en local:
 
 ## Déploiement GitHub Pages
 
-Le workflow GitHub Actions `.github/workflows/pages.yml` publie l'application statique sur GitHub Pages.
+Le dépôt GitHub est `flegault/CoachRally`. Le workflow GitHub Actions `.github/workflows/pages.yml` publie l'application statique sur GitHub Pages avec le domaine personnalisé `coachrally.app` défini dans `CNAME`.
 
 Pour l'utiliser:
 
