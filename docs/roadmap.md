@@ -2,6 +2,12 @@
 
 ## Maintenant
 
+- Livré: l'application adopte la marque `CoachRally`, le domaine canonique `coachrally.app` et le dépôt `flegault/CoachRally`; les mentions `Rallye-Cap` sont conservées pour les règles sportives.
+- Livré: une page `À propos` présente l'origine de CoachRally et permet de joindre François par courriel, sans formulaire ni service tiers.
+- Livré: les exports affichent la marque CoachRally; les formats Programme et Banc contiennent un code QR local qui privilégie le lien permanent de l'équipe, puis le match public ou `coachrally.app`, et le format Texte contient la même destination avec une signature compacte.
+- Livré: le Programme adapte automatiquement la taille des noms longs sans ajouter de lignes ni augmenter la hauteur de l'export.
+- Livré: l'export Banc attribue une icône d'encouragement aux enfants qui ne frappent pas pendant une manche en mode frappe fixe.
+
 - Compléter la gestion multi-match restante: actions avancées de reprise/recommencement à partir d'un match archivé.
 - Améliorer les exports et partages: PDF parents responsive.
 - Extraire la logique métier de `app.js` dans des modules testables.
@@ -56,7 +62,7 @@ Le workflow livré est maintenant:
 Match -> Joueurs -> Alignement -> Jouer
 ```
 
-`Matchs` et `Spectateur` sont des vues hors étapes numérotées et hors menu global. `Matchs` est accessible depuis l'accueil; `Spectateur` est conservé sans accès visible en attendant sa refonte comme vue coach. Le partage est une action non numérotée du match courant, accessible depuis le workflow et depuis `Matchs`.
+`Matchs` reste hors des étapes numérotées et s'ouvre depuis l'accueil. Le partage est une action non numérotée du match courant, accessible depuis le workflow et depuis `Matchs`. Les expériences spectateur passent uniquement par les routes publiques `#public`, `#banc` et `#fans`.
 
 ### Navigation
 
@@ -71,7 +77,7 @@ Match -> Joueurs -> Alignement -> Jouer
 
 ### Alignement
 
-- `Alignement` prépare l’horaire et `Jouer` gère la partie sans dupliquer le tableau complet.
+- `Alignement` prépare l'alignement et `Jouer` gère la partie sans dupliquer le tableau complet.
 - `Optimiser` recalcule les positions défensives sans modifier l'ordre de frappe courant.
 - Le bouton shuffle près de `Optimiser` mélange l'ordre de frappe des joueurs actifs, puis optimise les positions.
 - L'ordre peut encore être modifié manuellement par glisser-déposer avant le début du match.
@@ -88,11 +94,9 @@ Match -> Joueurs -> Alignement -> Jouer
 
 ### Partage et spectateur
 
-- `Partager` et `Spectateur` ne font plus partie du chemin numéroté.
-- Le spectateur autonome est retiré de `Partager`; la cible de partage externe devient un futur lien en ligne en lecture seule.
+- `Partager` ne fait pas partie du chemin numéroté; les vues spectateur sont des routes publiques en lecture seule.
 - Livré: intégration Firebase optionnelle pour sauvegarder le match courant, publier un lien spectateur live et ouvrir le match sur mobile avec un compte courriel/Google.
 - Livré: mot de passe public optionnel avec projection spectateur chiffrée côté client.
-- L'accès à `Spectateur` reste possible même si certains exports devront éventuellement être bloqués selon la validité du match.
 - Livré: `Matchs` est hors menu global et accessible depuis le contexte d'accueil, tandis que `Partager` est une action contextuelle du match courant.
 - Livré: `Partager le match` présente maintenant `Lien Match`, `Gérer en ligne` et `Exports` dans cet ordre; le lien permanent d'équipe vit dans la carte équipe.
 - Livré: `Mes matchs` permet d'ouvrir ou supprimer les matchs cloud du compte connecté sans lien d'édition.
@@ -174,6 +178,7 @@ La gestion durable de notre équipe, de son nom et de son bassin de joueurs est 
 À stabiliser:
 
 - initialiser les nouveaux matchs sans date ni heure par défaut;
+- retirer la valeur par défaut du toggle `Visiteur` / `Local` pour les nouveaux matchs, afin d’exiger un choix explicite et d’éviter les oublis avant `Prêt à jouer`;
 - ajouter le nombre de manches initial dans l'étape `Match`, puisque c'est une propriété du match prévu avant l'ajustement de l'alignement;
 - déplacer le réglage `Frappe fixe` dans l'étape `Match`, puisqu'il décrit les règles/configurations du match courant. Il devient non modifiable après le début du match;
 - utiliser une heure en format 24h avec intervalles de 5 minutes;
@@ -198,23 +203,21 @@ Améliorations UX à prévoir:
 - Livré: l'accueil utilise `Aucun match prévu`, `Préparer un match`, `Match en préparation` et `En cours` avec la demi-manche courante, et affiche date, heure et endroit quand disponibles.
 - Livré: la carte de contexte `Équipe active` affiche `Aucune équipe` quand aucune équipe n'existe et ouvre la modale pour changer ou créer une équipe.
 - Livré: la boîte d'équipe permet d'éditer le nom directement dans son titre, met `Ajouter des joueurs` en action primaire et ne contient plus de bouton `Préparer un match`.
-- Livré: la boîte d'équipe ne répète plus le compteur de joueurs dans son en-tête.
-- Livré: quand un match courant non archivé existe, l'accueil affiche trois cartes workflow cliquables: `Match`, `Joueurs`, puis `Alignement` ou `Jouer`.
+- Livré: le compteur de joueurs de la boîte d'équipe est placé à droite juste au-dessus de la liste.
+- Livré: quand un match courant non archivé existe, l'accueil affiche quatre cartes workflow cliquables: `Match`, `Joueurs`, `Alignement` et `Jouer`.
 
 ## Équipe et joueurs
 
 Améliorations UX à prévoir:
 
 - Livré: ajouter le numéro de chandail optionnel dans `Équipe`, éditable seulement avant match;
-- Livré: `Équipe` affiche un compteur de joueurs dans l'en-tête.
+- Livré: `Équipe` affiche un compteur de joueurs juste au-dessus du bassin.
 - Livré: pendant un match commencé, `Équipe` affiche une note expliquant que le bassin permanent est verrouillé jusqu'à la fin ou l'archivage du match.
 - Livré: l'action de suppression d'un joueur dans `Équipe` utilise une icône `×` plutôt qu'une poubelle.
 - Livré: `Équipe` offre une action contextuelle pour préparer un match ou modifier le match courant, et `Mes matchs` offre `Créer un match` quand aucun match non archivé n'est actif.
 - Livré: l'étape `Joueurs` permet d'ajouter rapidement un joueur à l'équipe et au match courant avant le début, sans quitter le workflow.
 - Livré: l'action `Créer une équipe exemple` est placée sous la liste des joueurs et son avertissement précise que l'équipe, les matchs et les archives locales sont remplacés.
-- dans l'étape `Joueurs`, garder des cartes de même taille pour les joueurs présents et absents;
-- dans l'étape `Joueurs`, ne pas afficher de carte vide `Aucun` quand il n'y a pas de présents ou d'absents; la bulle de total existante suffit.
-- Livré: les boîtes `Présents` et `Absents` restent affichées en tout temps, avec des cartes de même hauteur dans une grille à deux colonnes.
+- Livré: `Joueurs` utilise une liste unique; les présents sont verts, les absents gris, sans pastille textuelle.
 - Livré: quand plus de 12 joueurs existent dans le bassin ou sont collés dans la liste, les joueurs excédentaires restent visibles comme absents au lieu d'être perdus.
 - Livré partiellement: `Joueurs` ne contient plus `Frappe fixe`.
 
@@ -225,9 +228,10 @@ Améliorations UX à prévoir:
 - L'interface doit indiquer que `Frappe fixe` est normalement activée en Rallye-Cap.
 - Les validations et l'équité suivent le tableau principal pour servir de rétroaction après l'ajustement.
 - Simplifier la densité de l'écran `Alignement`:
-  - consolider l'introduction, les actions de progression et le tableau dans une seule carte;
+  - consolider l'introduction, les actions de préparation et le tableau dans une seule carte;
   - retirer le pill de statut redondant quand le bouton de progression et le tableau indiquent déjà l'état;
-  - placer `mélanger`, `Optimiser`, `Commencer/terminer la demi-manche` et `Changement de joueurs` au-dessus du tableau;
+  - placer `Mélanger`, `Optimiser` et `Prêt à jouer` au-dessus du tableau;
+  - garder `Commencer/terminer la demi-manche` et `Changement de joueurs` dans `Jouer`;
   - garder une section `Validation` visible comme verdict rapide;
   - afficher les règles obligatoires avec `check` ou `x`;
   - afficher l'équité avec `check`, `warning` ou `x`;
@@ -239,12 +243,7 @@ Améliorations UX à prévoir:
 - Livré: stabiliser la taille des boutons `Mélanger`, `Optimiser`, `Commencer` / `Terminer...`, `Changement de joueurs` et des boutons `+` / `-` de manches afin que l'interface ne bouge pas selon le texte.
 - Livré: la pastille de rang dans la colonne `Ordre` utilise une couleur plus neutre pour ne pas ressembler à une erreur.
 - Livré: remplacer l'icône seule de shuffle par le libellé texte `Mélanger`.
-- Livré: mode local `Préparer` / `Jouer` au-dessus du tableau d'alignement, sans recréer une route `Jouer`:
-  - avant match, `Préparer` contient `Mélanger` et `Optimiser`;
-  - quand l'entraîneur veut commencer, il passe à `Jouer`;
-  - `Jouer` contient `Commencer le match` puis la progression de demi-manche, ainsi que `Changement de joueurs`;
-  - quand le match est commencé, l'interface force le mode `Jouer`;
-  - `Préparer` reste utile avant match pour ajuster l'ordre et les positions.
+- Remplacé: l'ancien toggle local `Préparer` / `Jouer` a été retiré au profit de deux étapes officielles partageant le même tableau.
 
 ## Archives
 
@@ -503,7 +502,7 @@ Questions fermées:
 - Action `Régénérer` renommée `Optimiser`; le bouton devient grisé après optimisation et se réactive lors d'une modification manuelle.
 - Export texte brut compact ajouté pour Funny Print ou une petite imprimante.
 - Le partage `Texte` suit maintenant l'ordre visiteur/local des demi-manches comme la vue spectateur.
-- Le spectateur autonome a été retiré de `Partager`; la future option de partage sera un lien en ligne en lecture seule.
+- Le spectateur autonome a été retiré de `Partager`; le partage externe utilise maintenant un lien public en lecture seule.
 - En mode frappe variable, les rangs de frappe par manche et les listes de frappeurs par manche sont retirés du tableau, des exports et du spectateur.
 - Les cartes d'équité sont harmonisées entre les modes avec `Temps de jeu`, `Variété des positions` et `Indice global`; `Présences au bâton` apparaît seulement en frappe fixe.
 - `Temps de jeu` inclut les présences au bâton en frappe fixe, mais seulement la défensive en frappe variable.
@@ -518,11 +517,11 @@ Questions fermées:
 - `Spectateur` masque maintenant l'en-tête global et le workflow numéroté, et utilise la palette visuelle du site.
 - L'exemple est retiré de l'accueil et du menu principal; il reste seulement dans `Équipe` comme création d'équipe exemple.
 - La route officielle `#jouer` porte la gestion active; aucune ancienne route n’est maintenue par redirection.
-- `Alignement` affiche la demi-manche courante et permet d'avancer seulement vers la prochaine demi-manche.
+- `Jouer` affiche la demi-manche courante et permet d'avancer seulement vers la prochaine demi-manche.
 - Les informations de match, la liste des joueurs et l'alignement partant sont verrouillés après le début du match.
 - L'étape `Joueurs` permet de basculer `Présent` / `Absent` en cliquant directement la carte du joueur; l'ajout, le renommage et la suppression de joueurs sont déplacés dans `Équipe`.
 - L'action `Remplacer` est retirée de l'étape `Joueurs` avant match; elle reste disponible dans le flux de changement de joueurs en cours de match.
-- Le menu du haut est maintenant un menu global unique avec `Accueil`, `Équipe`, `Archives`, `Partage`, `Spectateur` et `Réinitialiser`.
+- Le menu du haut est réduit aux actions globales; `Matchs` et le partage s'ouvrent depuis leur contexte, et les vues spectateur passent par les routes publiques.
 - Les entêtes de demi-manche du tableau principal gardent seulement les icônes bâton et gant.
 - Le bloc `Ajouter des joueurs` est déplacé dans `Équipe`, hors workflow.
 - Livré: supprimer une équipe supprime aussi ses matchs locaux et tente de retirer les liens cloud/public connus.

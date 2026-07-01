@@ -12,6 +12,7 @@ L'application est une SPA avec les vues applicatives principales suivantes acces
 - `#joueurs`
 - `#alignement`
 - `#jouer` pour démarrer et gérer le match, en vue complète ou simple
+- `#a-propos` pour présenter CoachRally et joindre François par courriel
 - `#public/{publicId}` pour le spectateur live public en lecture seule
 - `#banc/{publicId}` pour la tablette du banc en lecture seule et sans navigation
 - `#fans/{teamPublicId}` pour la liste publique permanente des matchs publiés d'une équipe
@@ -22,12 +23,15 @@ La navigation est disponible dans:
 - les étapes numérotées du workflow, affichées dans le contenu;
 - certains boutons de continuité entre les vues.
 
-Le menu global regroupe `Accueil`, `Connexion` et l'action destructive `Réinitialiser`. L'icône et le titre du site ramènent à `Accueil`. Le changement d'équipe vit dans `Accueil`, via une modale ouverte depuis la carte d'équipe. `Matchs` n'est pas dans le menu global; la page reste accessible depuis l'accueil. La route interne `Spectateur` n'a plus d'accès visible en attendant sa refonte. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales et en ligne connues.
+Sur les écrans de 920 px et moins, les étapes du workflow utilisent une seule rangée compacte: l’étape active affiche son libellé, tandis que les autres restent sous forme de pastilles. La rangée peut défiler horizontalement sur les écrans très étroits. La modale `Partager le match` devient alors un panneau ancré au bas de l’écran; son contenu défile sans faire sortir son titre du viewport.
+
+Le menu global regroupe `Accueil`, `À propos`, `Connexion` et l'action destructive `Réinitialiser`. L'icône et le titre du site ramènent à `Accueil`. Le changement d'équipe vit dans `Accueil`, via une modale ouverte depuis la carte d'équipe. `Matchs` n'est pas dans le menu global; la page reste accessible depuis l'accueil. La route interne `Spectateur` n'a plus d'accès visible en attendant sa refonte. `Réinitialiser` conserve ce libellé parce que l'action efface vraiment toutes les données locales et en ligne connues.
 
 ## Sitemap actuel
 
 ```text
-Alignement Rallye-Cap
+CoachRally
++-- À propos (#a-propos)
 +-- Accueil (#accueil)
 |   +-- Si aucune équipe: appel à créer l'équipe
 |   +-- Créer une équipe exemple seulement si aucune équipe n'existe, dans la section de création
@@ -70,8 +74,6 @@ Alignement Rallye-Cap
 |   +-- Alignement
 |   |   +-- Action Prêt à jouer
 |   |   +-- Préparer: mélanger l'ordre au bâton, optimiser
-|   |   +-- Jouer: commencer le match / terminer la demi-manche courante
-|   |   +-- Jouer: changement de joueurs quand le match est commencé
 |   |   +-- Réordonner les joueurs par glisser-déposer
 |   |   +-- Positions par joueur et par manche
 |   |   +-- Sélection de joueur ou de manche
@@ -87,18 +89,18 @@ Alignement Rallye-Cap
 +-- Modale Lien d'équipe
 |   +-- Créer, copier ou retirer le lien public permanent de l'équipe active
 |   +-- Mot de passe optionnel chiffré côté client
-|   +-- Liste des liens d'équipe du compte connecté
+|   +-- Message public de l'équipe
 +-- Jouer (#jouer)
 |   +-- Vue complète
 |   +-- Vue simple
-    +-- Accès par la pastille de l’en-tête ou depuis Alignement
-    +-- Une demi-manche à la fois, navigable par glissement horizontal
-    +-- Pastille ramenant à la demi-manche courante
-    +-- Progression active seulement sur la demi-manche courante
-    +-- Changement rapide de joueurs
-    +-- Alerte d’équité future avec retour vers Alignement
-    +-- Suggestions futures repliées, applicables après confirmation
-    +-- Joueurs présents au banc dans une section repliée
+|   +-- Accès après Prêt à jouer ou par le raccourci de l’en-tête
+|   +-- Commencer le match / terminer la demi-manche courante
+|   +-- Une demi-manche à la fois en vue simple, navigable par glissement horizontal
+|   +-- Pastille ramenant à la demi-manche courante
+|   +-- Progression active seulement sur la demi-manche courante
+|   +-- Changement rapide de joueurs
+|   +-- Suggestions futures repliées, applicables après confirmation
+|   +-- Joueurs présents au banc dans une section repliée
 +-- Fans publics (#fans/{teamPublicId})
     +-- Équipe publiée
     |   +-- Liste des joueurs
@@ -141,7 +143,7 @@ La gestion durable de notre équipe et de son bassin de joueurs est séparée du
 Sitemap cible:
 
 ```text
-Alignement Rallye-Cap
+CoachRally
 +-- Accueil
 |   +-- Équipe à créer si aucune équipe n'est définie
 |   +-- Reprendre le match en cours ou créer un nouveau match
@@ -268,22 +270,22 @@ Découpage potentiel:
 
 ## Décisions UX prises
 
-- Le workflow cible est `Match`, `Joueurs`, `Alignement`; `Partager` et `Spectateur` ne sont pas des étapes numérotées. `Partager` reste visible comme action de match non numérotée quand un match courant existe.
+- Le workflow cible est `Match`, `Joueurs`, `Alignement`, `Jouer`; `Partager` n'est pas une étape numérotée et reste visible comme action de match quand un match courant existe. Les vues spectateur sont publiques.
 - `Match` reste avant `Joueurs`, parce que les présences et absences sont confirmées dans le contexte d'un match daté.
 - `Accueil` est la porte d'entrée contextuelle: configuration de l'équipe si elle manque, création explicite d'un match si aucun match n'est actif, ou reprise du match en cours.
 - Le hero de présentation apparaît seulement dans `Accueil`.
-- Quand un match courant non archivé existe, les cartes de l'accueil suivent le workflow: `Match`, `Joueurs`, puis `Alignement` ou `Jouer`. Un match archivé ouvert ne doit pas alimenter ces raccourcis de préparation.
+- Quand un match courant non archivé existe, les cartes de l'accueil suivent le workflow: `Match`, `Joueurs`, `Alignement`, puis `Jouer`. Un match archivé ouvert ne doit pas alimenter ces raccourcis de préparation.
 - L'accueil affiche un seul bouton d'action principal selon l'état courant.
 - `Équipe` est hors workflow et gère le nom de notre équipe ainsi que le bassin permanent de joueurs.
 - Une fois le match commencé, les étapes `Match` et `Joueurs` ne sont plus modifiables.
-- `Alignement` devient la vue de gestion active pendant la partie. L'onglet `Jouer` est retiré du workflow principal.
+- `Alignement` prépare et valide l'alignement, puis devient consultable en lecture seule après le départ. `Jouer` gère le démarrage, la progression et les changements.
 - Le concept de cadenas est retiré du modèle cible. La progression de match détermine les demi-manches passées, courantes et futures.
 - La progression avance seulement vers l'avant, une demi-manche à la fois. Reculer n'est pas une action normale de l'interface principale.
-- Les changements de joueurs pendant la partie sont accessibles dans `Alignement` par un bouton unique. L'entraîneur choisit la demi-manche précise à partir de laquelle appliquer l'action.
+- Les changements de joueurs pendant la partie sont accessibles dans `Jouer` par un bouton unique. L'entraîneur choisit la demi-manche précise à partir de laquelle appliquer l'action.
 - Les suggestions d'action ne doivent viser que les demi-manches non jouées.
-- Le mode match actuel devient `Spectateur`, une vue simplifiée en lecture seule accessible par le menu.
+- Les vues publiques `Spectateurs`, `Banc` et `Fans` restent en lecture seule et ne figurent pas dans le menu du coach.
 - La Vue simple de `Jouer` masque les étapes, `Partager` et la carte d’introduction de l’étape 4. La navigation entre les demi-manches se fait par glissement ou par les points de progression; sa propre pastille ramène à la demi-manche courante.
-- L'exemple vit seulement dans `Accueil`, comme action secondaire de création d'équipe quand aucune équipe n'existe.
+- L'exemple vit seulement dans la gestion d'équipe, comme action secondaire de création.
 - La gestion de notre équipe et du bassin permanent de joueurs doit être séparée du workflow de match, mais ne doit pas devenir une étape numérotée.
 - La préparation du match se limite aux informations du match courant, aux présences et à l'alignement.
 - L'ordre des frappeurs se modifie dans le tableau principal de l'alignement, en glissant les joueurs dans la première colonne.
@@ -319,7 +321,7 @@ Découpage potentiel:
 - L'interface principale ne propose pas de retour à la demi-manche précédente. Une action de correction de progression pourra être évaluée plus tard comme outil avancé avec confirmation forte.
 - Quand le match est débuté, `Optimiser` est désactivé.
 - `Alignement` et `Jouer` sont deux étapes distinctes qui partagent le même tableau complet sans dupliquer son rendu.
-- Dans `Joueurs`, l'action `Ajouter un joueur à l'équipe` est placée sous les listes `Présents` et `Absents`, avant `Continuer`.
+- Dans `Joueurs`, l'action `Ajouter un joueur à l'équipe` est placée sous la liste unique de présences, avant `Continuer`.
 - Le tableau principal affiche chaque manche en deux colonnes de demie-manche: `Début` et `Fin`.
 - Les sous-en-têtes utilisent `🏏` pour l'attaque et `🧤` pour la défensive selon le statut visiteur/local.
 - Avant le début du match, glisser un joueur dans la première colonne change l'ordre et déplace la ligne complète.
@@ -358,7 +360,7 @@ La modale `Partager le match` regroupe:
 - `Gérer en ligne`: toggle `Oui` / `Non` pour la gestion de l'alignement et la synchronisation privée du match pour le coach;
 - `Exports`: `Programme`, `Banc` et `Texte`, avec la description de chaque document sous son titre.
 
-La modale `Lien d'équipe` vit dans la carte d'équipe de l'accueil. Elle a deux états sans boîte intermédiaire: si un lien public permanent confirmé existe, elle affiche seulement `#fans/{teamPublicId}` avec `Copier` et `Retirer`; sinon elle affiche directement les champs `Identifiant public`, `Mot de passe optionnel` et l'action `Créer le lien`. Elle passe à l'état actif seulement après le succès Firestore; en cas d'erreur, elle reste ouverte et affiche le message sous les champs sans enregistrer la saisie. L'identifiant public est obligatoire pour créer le lien. Elle n'affiche plus la liste des documents Firestore `publicTeams`. La reprise et la suppression complètes des matchs cloud vivent dans `Matchs`.
+La modale `Lien d'équipe` vit dans la carte d'équipe de l'accueil. Si un lien confirmé existe, elle affiche `#fans/{teamPublicId}` avec `Copier` et `Retirer`; sinon elle affiche `Identifiant public`, `Mot de passe optionnel` et `Créer le lien`. Dans les deux états, elle permet d’éditer le message public d’équipe. Elle passe à l'état actif seulement après le succès Firestore et n'affiche plus la liste des documents `publicTeams`.
 
 Les champs de lien et de mot de passe des modales `Partager le match` et `Lien d'équipe` sont disponibles seulement quand l'entraîneur est connecté. Sinon, la modale affiche une explication et un bouton primaire vert `Connexion`.
 

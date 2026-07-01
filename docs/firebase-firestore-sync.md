@@ -6,7 +6,7 @@ Ce document décrit la cible de la première intégration Firebase. L'applicatio
 
 ```mermaid
 flowchart LR
-  Coach["Entraîneur<br/>ordinateur ou mobile"] --> App["SPA Rallye-Cap<br/>GitHub Pages / local"]
+  Coach["Entraîneur<br/>ordinateur ou mobile"] --> App["CoachRally<br/>GitHub Pages / local"]
   App --> Local["localStorage<br/>source locale immédiate"]
   App --> Auth["Firebase Auth<br/>courriel + Google"]
   App --> Private["Firestore privé<br/>users/{uid}/matches/{matchId}"]

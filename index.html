@@ -3,20 +3,29 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Alignement Rallye-Cap</title>
+<title>CoachRally</title>
+<meta name="description" content="CoachRally aide les entraîneurs à préparer, gérer et partager des alignements de baseball clairs et équitables." />
+<link rel="canonical" href="https://coachrally.app/" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="fr_CA" />
+<meta property="og:site_name" content="CoachRally" />
+<meta property="og:title" content="CoachRally" />
+<meta property="og:description" content="Prépare, gère et partage des alignements de baseball clairs et équitables." />
+<meta property="og:url" content="https://coachrally.app/" />
 <link rel="icon" href="favicon.ico" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header class="top">
   <div class="topin">
-    <a class="brand brandLink" href="#accueil" aria-label="Retour à l'accueil"><div class="logo">⚾</div><div><h1>Alignement Rallye-Cap</h1><div class="sub" id="topMatchStatus">Aucun match prévu</div></div></a>
+    <a class="brand brandLink" href="#accueil" aria-label="Retour à l'accueil"><div class="logo">⚾</div><div><h1>CoachRally</h1><div class="sub" id="topMatchStatus">Aucun match prévu</div></div></a>
     <div class="topActions">
       <a class="quickMatchLink hide" href="#alignement" id="quickMatchLink">Match en cours</a>
       <button class="hamb" id="hamb" aria-expanded="false" aria-controls="nav">☰ Menu</button>
     </div>
     <nav class="nav" id="nav">
       <a href="#accueil" data-nav="accueil">Accueil</a>
+      <a href="#a-propos" data-nav="a-propos">À propos</a>
       <button id="cloudAccountBtn">Connexion</button>
       <button class="dangerMenu" id="resetBtn">Réinitialiser</button>
     </nav>
@@ -128,6 +137,7 @@
         </div>
       </div>
       <div class="suggestions playWarnings hide" id="playWarnings"></div>
+      <div class="lineupScrollHint" id="lineupScrollHint" aria-hidden="true">↔ Glisse pour voir les autres manches</div>
       <div class="tableWrap" id="lineup"></div>
       <div class="legend" id="legend"></div>
     </div>
@@ -160,6 +170,21 @@
     </div>
     </div>
   </section>
+  <section class="view" id="view-a-propos">
+    <div class="card aboutCard">
+      <span class="aboutIcon" aria-hidden="true">⚾</span>
+      <h2>À propos de CoachRally</h2>
+      <p>CoachRally est né d’un besoin concret : préparer plus facilement des alignements de baseball clairs, équitables et simples à suivre pendant un match.</p>
+      <p>Je m’appelle François. Je suis le papa d’un joueur Rallye-Cap, nouvel entraîneur et professionnel expérimenté en technologies. J’ai créé CoachRally pour simplifier la préparation des matchs et permettre aux entraîneurs de consacrer plus de temps aux jeunes et moins de temps à gérer des tableaux.</p>
+      <p>CoachRally est conçu pour être simple à utiliser, tout en offrant des options avancées pour préparer les alignements, gérer les matchs et partager l’information avec les parents.</p>
+      <p>Les données demeurent sur l’appareil, sauf lorsqu’une fonction de partage en ligne est utilisée volontairement.</p>
+      <div class="aboutContact">
+        <h3>Me joindre</h3>
+        <p>Une question, une suggestion ou un problème à signaler?</p>
+        <a class="btn brandBtn" id="contactFrancois" href="#">Écrire à François</a>
+      </div>
+    </div>
+  </section>
   <section class="view" id="view-spectateur">
     <div class="matchShell"><div id="matchCard" class="matchCard"></div><div class="dots" id="matchDots"></div><div class="matchNav matchControls"><button class="btn secondary" id="matchPrev">← Précédent</button><button class="btn secondary" id="matchCurrent">Manche en cours</button><button class="btn brandBtn" id="matchNext">Suivant →</button></div></div>
   </section>
@@ -171,6 +196,7 @@
 <script src="rules.js"></script>
 <script src="bench-view.js"></script>
 <script src="team-sync.js"></script>
+<script src="vendor/qrcode.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

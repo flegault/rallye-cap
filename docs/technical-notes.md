@@ -1,5 +1,9 @@
 # Notes techniques
 
+## Identité et domaine
+
+L'application porte la marque `CoachRally` et son URL canonique est `https://coachrally.app/`. GitHub Pages sert le domaine personnalisé grâce au fichier `CNAME`, copié dans l'artifact statique par le workflow de déploiement. Les clés de stockage qui commencent par `rallye_cap_` restent inchangées afin de préserver les données locales existantes.
+
 ## État
 
 L'état applicatif est sauvegardé dans `localStorage` avec la clé `rallye_cap_qc_v5`. Le modèle courant stocke `teams`, `activeTeamId`, `matches`, `activeMatchId` et `route`; les champs de formulaire historiques (`team`, `players`, `cloud`, etc.) sont reconstruits comme alias runtime de l'équipe ou du match actif et ne sont plus la source persistée.
@@ -127,7 +131,7 @@ La modale `Partager le match` sépare trois responsabilités. `Lien Match` gère
 
 Les routes `#fans/{id}` et `#public/{id}` suspendent l'écoute du document privé du coach et n'affichent donc pas `Version distante reçue`. Leurs abonnements publics restent actifs en temps réel. La vue `#jouer` conserve l’écoute privée comme `#match`, `#joueurs` et `#alignement`.
 
-État transitoire: l'onglet `Jouer` n'est plus visible et l'ancienne route `#jouer` est redirigée vers `#alignement`. Le modèle interne utilise encore `started` et `locks.halves`; il devrait éventuellement être remplacé par un index monotone de demi-manche complétée ou courante, par exemple `currentHalfIndex` ou `completedHalfCount`. Les demi-manches passées deviendraient alors de l'historique non modifiable, la demi-manche courante serait mise en évidence, et les demi-manches futures resteraient modifiables dans `Alignement`.
+Le modèle interne utilise encore `started` et `locks.halves`; il devrait éventuellement être remplacé par un index monotone de demi-manche complétée ou courante. La route officielle `#jouer` exploite cet état pour verrouiller l’historique, mettre la demi-manche courante en évidence et laisser les demi-manches futures modifiables.
 
 Le statut de match accepte `draft`, `ready`, `active`, `completed` et `archived`. `ready` est persistant et revient à `draft` dès qu’une mutation de préparation invalide l’alignement. Le choix `Vue complète` / `Vue simple` de `Jouer` reste uniquement en mémoire. Les routes retirées ne disposent d’aucune redirection ou logique de compatibilité.
 
@@ -136,6 +140,8 @@ Le statut de match accepte `draft`, `ready`, `active`, `completed` et `archived`
 La fermeture de match est maintenant explicite à la fin de la dernière demi-manche. Les archives sont des matchs v5 avec le statut `archived`; elles conservent les métadonnées du match, frappe fixe, manches, joueurs figés, ordre, positions, snapshots de frappe et demi-manches complétées.
 
 Les exports `Programme`, `Banc` et `Texte` ne sont pas stockés dans l'archive. Ils sont régénérés à partir du snapshot figé via un état temporaire en lecture seule, puis l'état courant est restauré.
+
+Les codes QR des exports sont générés entièrement côté client par `vendor/qrcode.js` (`qrcode-generator` 1.4.4, licence MIT). Aucune URL n'est transmise à un service de génération. La destination suit cet ordre: lien permanent `#fans` de l'équipe, lien `#public` du match, puis page d'accueil de CoachRally.
 
 Dette restante: le refactor de workflow a été livré surtout au niveau navigation/rendu. La logique demeure fortement centralisée dans `app.js`, avec des conditions dispersées dans les fonctions de rendu et d'interaction. L'extraction en modules testables reste à faire.
 
@@ -147,7 +153,7 @@ Pour limiter la complexité, les actions en cours de match devraient être des c
 - remplacer un joueur pour le futur;
 - ajouter un joueur pour le futur.
 
-Dans la cible simplifiée, ces commandes sont exposées dans `Alignement`. Les commandes de changement de joueurs doivent demander la demi-manche d'effet, verrouiller implicitement les demi-manches précédentes comme jouées, puis appliquer les changements seulement aux demi-manches futures. Les suggestions automatiques doivent filtrer les demi-manches déjà jouées.
+Ces commandes sont exposées dans `Jouer`. Les changements de joueurs demandent la demi-manche d'effet, verrouillent implicitement les demi-manches précédentes comme jouées, puis s’appliquent seulement aux demi-manches futures. Les suggestions automatiques filtrent les demi-manches déjà jouées.
 
 ## Moteur d'alignement
 
