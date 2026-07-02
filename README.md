@@ -163,21 +163,22 @@ Ne jamais ajouter de debug token dans les secrets GitHub ou dans un fichier publ
 
 ## Tests
 
-Les tests actuels sont des tests navigateur simples.
-
-Ouvrir:
-
-```text
-tests/rules.html
-```
-
-Une vérification syntaxique rapide peut aussi être lancée avec Node:
+Installer les dépendances de développement et Chromium une première fois:
 
 ```powershell
-node --check app.js
-node --check rules.js
-node --check firebase-sync.js
+npm install
+npx playwright install chromium
 ```
+
+Exécuter toute la suite, les tests métier seuls ou les parcours navigateur:
+
+```powershell
+npm test
+npm run test:unit
+npm run test:e2e
+```
+
+Les pages `tests/rules.html`, `tests/bench.html` et `tests/team-sync.html` restent disponibles pour le diagnostic manuel. Playwright sert directement l'application statique et n'ajoute aucune dépendance à la version déployée.
 
 ## Documentation
 

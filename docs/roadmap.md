@@ -11,7 +11,7 @@
 - Compléter la gestion multi-match restante: actions avancées de reprise/recommencement à partir d'un match archivé.
 - Améliorer les exports et partages: PDF parents responsive.
 - Extraire la logique métier de `app.js` dans des modules testables.
-- Ajouter des tests automatisés exécutables en CLI pour la génération, la progression par demi-manche, les exports et les projections publiques.
+- Livré en première étape: les règles, la vue Banc et la synchronisation d'équipe ont des tests Node; Playwright couvre les parcours front critiques dans Chromium bureau et mobile. Il reste à étendre les tests à la génération, aux changements de joueurs, aux exports et aux projections publiques.
 
 ## Priorité Spectateurs / Cloud
 
@@ -442,7 +442,7 @@ Questions fermées:
 
 ## Bugs et dettes connues
 
-- La couverture CLI reste partielle: `tests/workflow-smoke.js` vérifie les contrats statiques du workflow, mais la génération, la progression, les exports et les projections publiques demandent encore une vraie suite automatisée.
+- La couverture CLI comprend maintenant les modules purs existants et des parcours Playwright du workflow. La génération détaillée, les changements de joueurs, les exports et les projections publiques demandent encore une couverture automatisée plus complète.
 - Les exports peuvent diverger de l'affichage principal parce qu'ils reconstruisent leur propre HTML.
 - Livré: le champ de mot de passe de `Spectateurs en direct` utilise maintenant un champ texte avec `autocomplete="off"` et des noms d'inputs dédiés afin de réduire les propositions de sauvegarde du gestionnaire de mots de passe Chrome.
 - À surveiller: Chrome peut encore proposer de sauvegarder le code si le navigateur détecte malgré tout un flux d'authentification; dans ce cas, il faudra remplacer le champ par un contrôle encore plus personnalisé.
@@ -464,7 +464,7 @@ Questions fermées:
 - Rester en app statique pure ou introduire un petit outil de build.
 - Garder les caractères typographiques (`’`, `—`, `✔`) ou préférer une ponctuation plus simple en UTF-8.
 - Définir le comportement exact quand un joueur est retiré après des ajustements manuels.
-- Choisir une stratégie de tests navigateur.
+- Livré: Playwright avec Chromium bureau et mobile est la stratégie de tests navigateur; Firebase et les API variables du navigateur restent hors du premier périmètre.
 
 ## Décisions prises
 

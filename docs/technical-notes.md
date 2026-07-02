@@ -275,3 +275,11 @@ Chaque match contient ses infos, joueurs du match, ordre, positions, progression
 `Matchs` est la vue centrale. Elle affiche un tableau triable unique qui combine les matchs locaux et les matchs cloud du compte connecté, incluant les archives. Les colonnes sont `Adversaire`, `Date / heure`, `Endroit`, `Statut`, `Modifié` et `Actions`. Les doublons sont fusionnés par `cloud.matchId`. Un match seulement en ligne est importé localement quand l'utilisateur clique la ligne.
 
 La page `Archives` séparée est retirée. Une archive est un match avec le statut `archived`; elle peut être ouverte dans les vues existantes avec les actions de modification désactivées.
+
+## Stratégie de tests automatisés
+
+Playwright est une dépendance de développement seulement. Il lance un petit serveur HTTP local qui sert directement les fichiers statiques, sans transformer l'application ni ajouter de dépendance au déploiement. La première matrice couvre Chromium en format bureau et mobile.
+
+Les modules navigateur purs sont chargés dans un contexte `vm` par les tests Node. Les anciennes pages HTML de tests restent disponibles pour le diagnostic manuel. `npm test` exécute les tests Node, le smoke test historique, puis les parcours Playwright. Les scénarios E2E isolent `localStorage` et utilisent une configuration Firebase vide; ils ne doivent dépendre ni d'un compte ni du réseau.
+
+La CI `.github/workflows/tests.yml` installe uniquement Chromium et exécute la même commande. En cas d'échec, Playwright conserve la trace, une capture d'écran et la vidéo dans `test-results/`; la CI téléverse ce dossier comme artifact pendant 7 jours. Ces diagnostics restent ignorés par Git. Les tests d'impression, de téléchargement, de presse-papiers et de Firebase seront ajoutés séparément avec des doubles contrôlés.
